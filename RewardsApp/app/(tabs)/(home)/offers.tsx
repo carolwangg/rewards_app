@@ -1,60 +1,30 @@
 import { Text, View, StyleSheet } from "react-native";
 import { Link } from 'expo-router';
-import { useState } from 'react';
-import DropdownComponent from '@/components/DropdownComponent';
-import ImageViewer from '@/components/ImageViewer';
+import {useState} from 'react';
 import ListItem from '@/components/Item';
-import { enableScreens } from "react-native-screens";
 
-
-export default function Index() {
+export default function Offers() {
   const images = ["@/assets/images/card-0.png","@/assets/images/card-1.png","@/assets/images/card-2.png","@/assets/images/card-3.png","@/assets/images/card-4.png","@/assets/images/card-5.png"];
-  const pointlist = [0, 100, 250, 30, 7, 15];
   const [imgNum, setImgNum] = useState(0);
-  const [points, setPoints] = useState(pointlist[0]);
-  const [img, setImg] = useState(require("@/assets/images/card-0.png"));
   const items = [{id: '1', title: 'chicken parm', desc: 'a delicious yummy chicken parm', price: '250'}, 
-    {id: '2', title: 'Alfredo pasta', desc: 'a delicious yummy pasta', price: '500'},
-  {id: '3', title: 'Alfredo pasta', desc: 'a delicious yummy pasta', price: '500'}];
-  const changeImg = (imgNum: number) =>{
-    console.log(imgNum)
-    if (imgNum === 1){
-      setImg(require("@/assets/images/card-1.png"));
-      setPoints(pointlist[1])
-    }else if (imgNum === 2){
-      setImg(require("@/assets/images/card-2.png"))
-      setPoints(pointlist[2])
-    }else if (imgNum === 3){
-      setImg(require("@/assets/images/card-3.png"))
-      setPoints(pointlist[3])
-    }else if (imgNum === 4){
-      setImg(require("@/assets/images/card-4.png"))
-      setPoints(pointlist[4])
-    }else if (imgNum === 5){
-      setImg(require("@/assets/images/card-5.png"))
-      setPoints(pointlist[5])
-    }
-  }
+  {id: '2', title: 'Alfredo pasta', desc: 'a delicious yummy pasta', price: '500'},
+  {id: '3', title: 'chicken parm', desc: 'a delicious yummy chicken parm', price: '250'}, 
+  {id: '4', title: 'Alfredo pasta', desc: 'a delicious yummy pasta', price: '500'},
+  {id: '5', title: 'chicken parm', desc: 'a delicious yummy chicken parm', price: '250'}, 
+  {id: '6', title: 'Alfredo pasta', desc: 'a delicious yummy pasta', price: '500'},
+  {id: '7', title: 'chicken parm', desc: 'a delicious yummy chicken parm', price: '250'}, 
+  {id: '8', title: 'Alfredo pasta', desc: 'a delicious yummy pasta', price: '500'}];
   const listItems = items.map((item) => <ListItem key={item['id']} title={item['title']} description={item['desc']} price={item['price']} itemId={item['id']} />);
   
   return (
     
     <View style={styles.body}>
-      
       <View style={styles.header}>
         <View style={styles.headerbuttons}><Link href="/" style={styles.button}> Cards </Link></View>
         <View style={styles.headerbuttons}><Link href="/offers" style={styles.button}> All rewards </Link></View>
       </View>
       <View style={styles.card_container}>
-        <View style={styles.dropdown}><DropdownComponent value={imgNum} setValue={setImgNum} subFunction={changeImg} /></View>
-        <View style={styles.card}><ImageViewer imgSource={img}/></View>
-        <View style={styles.points}><Text style={styles.text}>Points amount: {points} pts</Text></View>
-      </View>
-      
-      <View style={styles.card_container}>
-        <View><Text style={styles.title}>Your Rewards</Text></View>
         {listItems}
-        
       </View>
     </View>
   );
@@ -62,7 +32,6 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   body: {
-    overflow: 'scroll',
     width: '100%', // width: 400, 
     flex: 1,
     backgroundColor: 'white',
@@ -91,7 +60,6 @@ const styles = StyleSheet.create({
   title: {
     color: 'black',
     fontSize: 18,
-    padding: 10,
   },
   button: {
     fontSize: 20,
@@ -116,13 +84,15 @@ const styles = StyleSheet.create({
   },
   points: {
     width: '100%',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
+    flex: 1/5,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   dropdown: {
     marginBottom: 10,
     marginTop: 10,
-    height: 50,
+    height: 100,
+    flex: 1/5,
     flexDirection: 'row',
     width: '50%',
     alignSelf: 'flex-start',
@@ -138,6 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
   },
   items:{
+    overflowY: 'scroll',
     margin: 5,
     flexDirection: 'row',
     flex: 1,
