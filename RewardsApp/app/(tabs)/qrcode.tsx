@@ -1,34 +1,40 @@
-import { Text, View, StyleSheet } from "react-native";
-import { Link } from 'expo-router';
+import QrCode_Customer from '@/components/QrCode_Customer';
+import QrScanner from '@/components/QrScanner';
+import { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+const type_: "business" |  "customer" = "business";
 
-type Props = {
-  title: string,
-  price: string, 
-  itemId: string
-}
-export default function AboutItem({title, price, itemId}: Props) {
-  const rewards_text = "redeem rewards" //win points
-  let longDescription = `Have the employee scan your QR code to ${rewards_text}!`;
-  const items = [{id: '1', title: 'chicken parm', desc: 'a delicious yummy chicken parm', price: '250'}, 
-  {id: '2', title: 'Alfredo pasta', desc: 'a delicious yummy pasta', price: '500'}];
-  const offers = items.map((item) => <Text key={item['id']}>{item['title']}</Text>);
-  return (
-    <View style={styles.container}>
-      <View style={styles.itemDescription}>
-        <Text style={styles.text}>{longDescription}</Text>
-      </View>
-      <View style={styles.cartContainer}>
-        <View style={styles.cartText}>
-          <Text style={styles.text}>Cart</Text>
+export default function Login() {
+    if (type_ == "customer") {
+        return (<QrCode_Customer/>);
+    } else{
+    let longDescription = `Scan customer QR codes`;
+    const [items, setItems] = useState<any[]>([]);
+    const [offers, setOffers] = useState<any[]>([]);
+    return (
+      <View style={styles.container}>
+        <View style={styles.itemDescription}>
+          <Text style={styles.text}>{longDescription}</Text>
         </View>
-        <View style={styles.cart}>
-          <Text style={styles.text}>{offers}</Text>
+        <View style={styles.itemQR}>
+          <QrScanner
+            items={items}
+            setItems={setItems}
+            offers={offers}
+            setOffers={setOffers}
+          />
+        </View>
+        <View style={styles.cartContainer}>
+          <View style={styles.cartText}>
+            <Text style={styles.text}>Cart</Text>
+          </View>
+          <View style={styles.cart}>
+            <Text style={styles.text}>{offers}</Text>
+          </View>
         </View>
       </View>
-      <View style={styles.itemQR}>
-      </View>
-    </View>
-  );
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -37,6 +43,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
+    height: '100%'
   },
   title: {
     color: 'black',
@@ -69,18 +77,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'purple',
     justifyContent: 'center',
     alignItems: 'center',
+    width: '80%'
   },
   itemQR: {
     flex: 1/2,
     backgroundColor: 'green',
     justifyContent: 'center',
     alignItems: 'center',
+    width: '80%'
   },
   cartContainer: {
     flexDirection: 'row',
     backgroundColor: 'green',
     justifyContent: 'center',
     alignItems: 'center',
+    width: '80%'
   },
   cartText: {
     backgroundColor: 'yellow',
@@ -92,3 +103,4 @@ const styles = StyleSheet.create({
     flex: 2/3,
   }
 })
+

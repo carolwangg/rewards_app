@@ -1,24 +1,19 @@
-import React, { useState } from 'react';
-  import { StyleSheet, ImageSourcePropType } from 'react-native';
-  import { Dropdown } from 'react-native-element-dropdown';
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
   const images = ["@/assets/images/card-0.png","@/assets/images/card-1.png","@/assets/images/card-2.png","@/assets/images/card-3.png","@/assets/images/card-4.png","@/assets/images/card-5.png"];
-  const data = [
-    { label: 'Card 1', value: 1 },
-    { label: 'Card 2', value: 2 },
-    { label: 'Card 3', value: 3 },
-    { label: 'Card 4', value: 4 },
-    { label: 'Card 5', value: 5 },
-  ];
-
+  
   type Props = {
+    data: any
     value: Number
     setValue: Function
     subFunction: Function
   }
-  const DropdownComponent = ({value, setValue, subFunction}: Props) => {
+  const DropdownComponent = ({data, value, setValue, subFunction}: Props) => {
     return (
       <Dropdown
         style={styles.dropdown}
+        containerStyle={styles.containerStyle}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
@@ -44,11 +39,12 @@ import React, { useState } from 'react';
 
   const styles = StyleSheet.create({
     dropdown: {
-      padding: 16,
       height: '100%',
       width: '100%',
-      backgroundColor: 'blue',
-      borderRadius: 30,
+    },
+    containerStyle: {
+      height: '100%',
+      width: 200,
     },
     icon: {
       marginRight: 5,

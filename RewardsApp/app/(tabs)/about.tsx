@@ -1,19 +1,11 @@
-import {Text, View, StyleSheet} from 'react-native'
+import ProfileBusiness from '@/components/Profile_Business';
+import ProfileCustomer from '@/components/Profile_Customer';
 
-export default function AboutScreen(){
-    <View style={styles.container}>
-          <Text style={styles.text}>Hello World!</Text>
-    </View>
+const type_: "business" |  "customer" = "business";
+export default function Login() {
+    if (type_ == "customer") {
+        return (<ProfileCustomer/>);
+    } else {
+        return (<ProfileBusiness/>);
+    }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'black',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    color: 'white',
-  },
-})
