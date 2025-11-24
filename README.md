@@ -64,7 +64,7 @@ Open the app using Expo Go on your mobile device.
 
 ## 📸 Screenshots
 
-Coming soon!
+Coming soon! For now, feel free to check out our [Figma Demo](https://www.figma.com/design/kGwpKZ3BsbMZJdlRYBp9Ik/CardAppDemo?node-id=0-1&t=sQnFBCG46KVhpybr-1)
 
 ## 📦 Planned Improvements
 
