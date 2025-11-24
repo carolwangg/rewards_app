@@ -1,12 +1,11 @@
-import { useSignIn } from '@clerk/clerk-expo'
-import { router } from 'expo-router'
-import { useCallback, useState } from 'react'
-import { EmailCodeFactor, SignInFirstFactor } from '@clerk/types'
-import Login from '@/components/Login';
-import EnterPin from '@/components/EnterPin';
-import { useAuth } from '@clerk/clerk-expo'
+import EnterPin from '@/components/auth/EnterPin';
+import SignIn from '@/components/auth/SignIn';
+import { useAuth, useSignIn } from '@clerk/clerk-expo';
+import { EmailCodeFactor, SignInFirstFactor } from '@clerk/types';
+import { router } from 'expo-router';
+import { useCallback, useState } from 'react';
 
-export default function SignIn() {
+export default function SignInPage() {
     // const { isLoaded, signIn, setActive } = useSignIn();
     // const [verifying, setVerifying] = useState(false);
     // const [phone, setPhone] = useState('');
@@ -99,9 +98,9 @@ export default function SignIn() {
       console.log("enter pin");
       return <EnterPin setCode={setCode} setVerifying={setVerifying} handleVerification={handleVerification} />;
     }
-    return (<Login 
+    return (<SignIn 
       phoneNumber={email}
       setPhoneNumber={setEmail}
-      onLogIn={onSignInPress}
+      onSignIn={onSignInPress}
     />);
 }

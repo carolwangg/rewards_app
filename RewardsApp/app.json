@@ -12,8 +12,10 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera."
-      }
+        "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "com.anonymous.RewardsApp"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +25,7 @@
       "edgeToEdgeEnabled": true,
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.CAMERA"
+        "android.permission.RECORD_AUDIO"
       ],
       "package": "com.anonymous.RewardsApp"
     },
@@ -35,6 +37,14 @@
     "plugins": [
       "expo-router",
       [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
@@ -43,18 +53,24 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-barcode-scanner",
+      "expo-font",
+      "expo-web-browser",
       [
-        "react-native-vision-camera",
+        "expo-image-picker",
         {
-          "cameraPermissionText": "$(PRODUCT_NAME) needs access to your Camera."
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ],
-      "expo-font",
-      "expo-web-browser"
+      "react-native-edge-to-edge"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "28e8d3e2-eacd-462c-9c2a-0c3e5ec1f08f"
+      }
     }
   }
 }

@@ -1,9 +1,12 @@
-import Landing_Business from '@/components/Landing_Business';
-import Landing_Customer from '@/components/Landing_Customer';
+import { AppContext } from '@/app/AppContext';
+import Landing_Business from '@/components/business/Landing_Business';
+import Landing_Customer from '@/components/customer/Landing_Customer';
 import { useUser } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
-const type_: "business" |  "customer" = "business";
+import { useContext } from 'react';
 export default function Login() {
+    const {userType, setUserType} = useContext(AppContext)!;
+    console.log("user type:"+ userType)
     const { user } = useUser();
     console.log("User info:");
     console.log(user?.emailAddresses[0]?.emailAddress);
@@ -12,11 +15,10 @@ export default function Login() {
     user?.phoneNumbers[0]?.phoneNumber ? console.log(user?.phoneNumbers[0]?.phoneNumber) : console.log("No user phone number");
     
     const addEvent = () => {
-        router.push('/(tabs)/(home)/add-item');
+        router.push('/edit');
     }
-
     
-    if (type_ == "customer") {
+    if (userType == "customer") {
         return (<Landing_Customer/>);
     } else {
         return (<Landing_Business onPressFunction={addEvent}/>);

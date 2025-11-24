@@ -1,8 +1,9 @@
+import FONTS from "@/fonts";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
 import { useState } from "react";
-import FONTS from "@/fonts";
-const TABBAR_HEIGHT = 60
+const TABBAR_HEIGHT = 65;
+const ICON_SIZE = 35;
 export default function TabLayout() {
   let [num, setNum] = useState(0);
     return (
@@ -13,9 +14,11 @@ export default function TabLayout() {
           headerShown: false,
           tabBarStyle: {
               backgroundColor: 'rgba(217, 217, 217, 1)',
-              height: TABBAR_HEIGHT
+              height: TABBAR_HEIGHT,
           },
-          tabBarShowLabel: false
+          tabBarShowLabel: false,
+          tabBarItemStyle: {height: TABBAR_HEIGHT},
+          tabBarIconStyle:  {width: ICON_SIZE, height: ICON_SIZE}
       }}
       >
         <Tabs.Screen 
@@ -32,15 +35,15 @@ export default function TabLayout() {
             fontWeight: '800',
           },
           tabBarIcon: ({color, focused}) => (
-            <Ionicons name={focused? 'cash-sharp': 'cash-outline'} color={color} size={24}/>
+            <Ionicons name={focused? 'cash-sharp': 'cash-outline'} color={color} size={ICON_SIZE}/>
           ),
           }}
         />
-        <Tabs.Screen name="qrcode" 
+        <Tabs.Screen name="(qrcode)" 
         options={{ 
           title: 'QR Code',
           tabBarIcon: ({color, focused}) => (
-              <Ionicons name={focused? 'qr-code-sharp': 'qr-code-outline'} color={color} size={24}/>
+              <Ionicons name={focused? 'qr-code-sharp': 'qr-code-outline'} color={color} size={ICON_SIZE}/>
           ),
           }}
           />
@@ -48,7 +51,7 @@ export default function TabLayout() {
         options={{ 
           title: 'Profile',
           tabBarIcon: ({color, focused}) => (
-              <Ionicons name={focused? 'person-circle-sharp': 'person-circle-outline'} color={color} size={24}/>
+              <Ionicons name={focused? 'person-circle-sharp': 'person-circle-outline'} color={color} size={ICON_SIZE}/>
           ),
           }}
           />

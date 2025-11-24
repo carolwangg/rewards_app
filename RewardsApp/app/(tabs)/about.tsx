@@ -1,9 +1,12 @@
-import ProfileBusiness from '@/components/Profile_Business';
-import ProfileCustomer from '@/components/Profile_Customer';
+import ProfileBusiness from '@/components/business/Profile_Business';
+import ProfileCustomer from '@/components/customer/Profile_Customer';
+import { useContext } from 'react';
+import { AppContext } from "../AppContext";
 
-const type_: "business" |  "customer" = "business";
 export default function Login() {
-    if (type_ == "customer") {
+    const {userType, setUserType} = useContext(AppContext)!;
+    console.log(userType);
+    if (userType == "customer") {
         return (<ProfileCustomer/>);
     } else {
         return (<ProfileBusiness/>);
