@@ -2,7 +2,7 @@
 
 A cross-platform mobile app for earning, tracking, and redeeming reward points — built with React Native and a Node.js backend.
 
-# 📱 Overview
+## 📱 Overview
 
 The Rewards Points Loyalty App enables users to collect points from participating businesses using QR codes, view transaction history, and redeem rewards directly within the mobile experience. Businesses can generate QR codes, issue points, and validate redemptions.
 
@@ -16,7 +16,7 @@ Database: Amazon RDS
 
 Authentication: JWT-based login
 
-# 🚀 Features
+## 🚀 Features
 User Features
 
 🔐 User authentication (sign up / log in)
@@ -29,7 +29,7 @@ User Features
 
 🧾 View detailed transaction and redemption history
 
-# Business Features
+## Business Features
 
 🏪 Business login mode
 
@@ -37,7 +37,7 @@ User Features
 
 📈 Review customer reward activity with generated stats
 
-# 🛠️ Tech Stack
+## 🛠️ Tech Stack
 Frontend
 
 React Native (Expo)
@@ -52,7 +52,7 @@ Clerk authentication
 
 MySQL
 
-# 🔧 Installation & Setup
+## 🔧 Installation & Setup
 Frontend
 ``` git clone https://github.com/carolwangg/rewards_app.git
 cd RewardsApp
@@ -62,11 +62,11 @@ npx expo start
 
 Open the app using Expo Go on your mobile device.
 
-# 📸 Screenshots
+## 📸 Screenshots
 
 Coming soon!
 
-# 📦 Planned Improvements
+## 📦 Planned Improvements
 
 Analytics tracking for businesses
 Map page and location tracker
