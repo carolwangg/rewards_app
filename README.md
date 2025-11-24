@@ -54,10 +54,10 @@ MySQL
 
 # 🔧 Installation & Setup
 Frontend
-git clone https://github.com/carolwangg/rewards_app.git
+`` git clone https://github.com/carolwangg/rewards_app.git
 cd RewardsApp
 npm install
-npx expo start
+npx expo start `` 
 
 
 Open the app using Expo Go on your mobile device.
