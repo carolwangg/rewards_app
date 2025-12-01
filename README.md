@@ -4,7 +4,7 @@ A cross-platform mobile app for earning, tracking, and redeeming reward points �
 
 ## 📱 Overview
 
-The Rewards Points Loyalty App enables users to collect points from participating businesses using QR codes, view transaction history, and redeem rewards directly within the mobile experience. Businesses can generate QR codes, issue points, and validate redemptions.
+The Zinks App lets users collect points from participating businesses at every visit and redeem rewards. Businesse can issue points, manage their rewards and reward card UI, validate redemptions, and view analytics.
 
 This project is built using:
 
@@ -12,7 +12,7 @@ Frontend: React Native with Expo Go
 
 Backend: Node.js (Express)
 
-Database: Amazon RDS
+Data hosting: Amazon RDS and Amazon S3
 
 Authentication: JWT-based login
 
@@ -38,19 +38,14 @@ User Features
 📈 Review customer reward activity with generated stats
 
 ## 🛠️ Tech Stack
-Frontend
+Frontend:
+- React Native (Expo)
+- Axios for backend communication
 
-React Native (Expo)
-
-Axios for backend communication
-
-Backend
-
-Node.js + Express
-
-Clerk authentication
-
-MySQL
+Backend:
+- Node.js + Express
+- Clerk authentication
+- MySQL
 
 ## 🔧 Installation & Setup
 Frontend
@@ -60,7 +55,7 @@ npm install
 npx expo start
 ``` 
 
-Open the app using Expo Go on your mobile device.
+Open the app using Expo Go on your mobile device. Should work on both iOS and Android.
 
 ## 📸 Screenshots
 
@@ -68,9 +63,9 @@ Coming soon! For now, feel free to check out our [Figma Demo](https://www.figma.
 
 ## 📦 Planned Improvements
 
-Analytics tracking for businesses
-Map page and location tracker
-Push notifications
+- Analytics tracking for businesses
+- Map page and location tracker
+- Push notifications
 
 # 🤝 Contributing
 
