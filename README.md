@@ -1,4 +1,4 @@
-# <img width="45" height="45" alt="zinks" src="https://github.com/user-attachments/assets/b240ff94-c8f9-41c4-b319-f11803e5d870" /> Zinks App
+# <img width="30" height="30" alt="zinks" src="https://github.com/user-attachments/assets/b240ff94-c8f9-41c4-b319-f11803e5d870" /> Zinks App
 
 Discover local businesses and redeem rewards by supporting them!
 
