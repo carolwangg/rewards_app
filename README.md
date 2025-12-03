@@ -1,9 +1,8 @@
-# 🏆 Zinks App
+# <img width="15" height="15" alt="zinks" src="https://github.com/user-attachments/assets/b240ff94-c8f9-41c4-b319-f11803e5d870" /> Zinks App
 
 Discover local businesses and redeem rewards by supporting them!
 
 ## 📱 Overview
-<img width="10" height="10" alt="zinks" src="https://github.com/user-attachments/assets/b240ff94-c8f9-41c4-b319-f11803e5d870" />
 The Zinks App lets users collect points from participating businesses at every visit and redeem rewards. Businesse can issue points, manage their rewards and reward card UI, validate redemptions, and view analytics.
 
 This project is built using:
