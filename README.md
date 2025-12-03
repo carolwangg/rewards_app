@@ -1,6 +1,6 @@
-# 🏆 Rewards Points Loyalty App
+# 🏆 Zinks App
 
-A cross-platform mobile app for earning, tracking, and redeeming reward points — built with React Native and a Node.js backend.
+Discover local businesses and redeem rewards by supporting them!
 
 ## 📱 Overview
 
