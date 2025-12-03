@@ -15,7 +15,10 @@
         "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera.",
         "ITSAppUsesNonExemptEncryption": false
       },
-      "bundleIdentifier": "com.anonymous.RewardsApp"
+      "bundleIdentifier": "com.anonymous.RewardsApp",
+      "config": {
+        "googleMapsApiKey":  "process.env.GOOGLE_MAPS_API_KEY"
+      }
     },
     "android": {
       "adaptiveIcon": {

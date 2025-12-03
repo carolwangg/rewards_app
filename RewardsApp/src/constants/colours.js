@@ -1,0 +1,12 @@
+const COLOURS = {
+  WHITE: '#FFFFFF',
+  TEAL: '#4EB0A2',
+  LIGHT_GREEN: '#B7E682',
+  GREEN: '#689B61',
+  DARK_BLUE: '#3A4975',
+  GRAY: '#D9D9D9',
+  DARK_GRAY: '#787792',
+  LIGHT_GRAY: '#EDEDED'
+};
+
+export default COLOURS;
