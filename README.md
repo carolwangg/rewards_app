@@ -59,11 +59,11 @@ Open the app using Expo Go on your mobile device. Should work on both iOS and An
 ## 📸 Screenshots
 <img src="https://github.com/user-attachments/assets/d639ec4b-a7d0-4d61-8742-5441981062f5" width="200" height="400">
 <img src="https://github.com/user-attachments/assets/f873bde9-ece2-4294-8168-40fd0698ad07" width="200" height="400">
-<img src="https://github.com/user-attachments/assets/0873300a-20f6-4adf-92ff-b1ef891fd4fa" width="200" height="400">
+<img src="https://github.com/user-attachments/assets/0873300a-20f6-4adf-92ff-b1ef891fd4fa" width="200" height="400"><br />
 
 <img width="200" height="400" alt="IMG_9348" src="https://github.com/user-attachments/assets/730c367a-78e9-46f1-871f-0e93b0d13edd" />
 <img width="200" height="400" alt="IMG_9349" src="https://github.com/user-attachments/assets/3131d153-a23d-4d81-a6b7-84dff9e22346" />
-<img width="200" height="400" alt="IMG_9350" src="https://github.com/user-attachments/assets/25fd63c6-bf24-47be-8073-6a9d527f2b87" />
+<img width="200" height="400" alt="IMG_9350" src="https://github.com/user-attachments/assets/25fd63c6-bf24-47be-8073-6a9d527f2b87" /><br />
 
 <img src="https://github.com/user-attachments/assets/45a729ec-e53e-4866-ae9d-2f7a3e602e1b" width="200" height="400">
 <img src="https://github.com/user-attachments/assets/919d517d-a3d2-4da7-8514-959845a22555" width="200" height="400">
