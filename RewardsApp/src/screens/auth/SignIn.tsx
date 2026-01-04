@@ -7,6 +7,7 @@ import FacebookLogo from '@/assets/images/facebook-logo.svg';
 import GoogleLogo from '@/assets/images/google-logo.svg';
 import WelcomeTopPattern from '@/assets/images/top-pattern.svg';
 import FONTS from '@/constants/fonts';
+import COLOURS from '@/constants/colours';
 
 type props={
     onSignIn: (email: string)=>void
@@ -48,13 +49,13 @@ export default function SignIn({onSignIn}: props) {
                 emailRef.current = text;}}
               />
             </View>
-            <Pressable testID="6:30" style={styles.frame10} onPress={performSignIn}>
+            <Pressable testID="6:30" style={styles.logInButton} onPress={performSignIn}>
               <Text testID="6:31" style={styles.logIn}>
                 {`Log In`}
               </Text>
             </Pressable>
-            <View testID="6:32" style={styles.rectangle27}/>
-            <View testID="6:33" style={styles.loginBox3}>
+            <View testID="6:32" style={styles.whiteSpace}/>
+            <View testID="6:33" style={[styles.companyLogIn, styles.googleLogIn]}>
               <View testID="6:34" style={styles.frame15}>
                 <GoogleLogo/>
               </View>
@@ -62,13 +63,13 @@ export default function SignIn({onSignIn}: props) {
                 {`Log in with Google`}
               </Text>
             </View>
-            <View testID="6:37" style={styles.frame152}>
+            <View testID="6:37" style={[styles.companyLogIn, styles.facebookLogIn]}>
               <FacebookLogo/>
               <Text testID="6:44" style={styles.logInWithFacebook}>
                 {`Log in with Facebook`}
               </Text>
             </View>
-            <View testID="112:262" style={styles.frame162}>
+            <View testID="112:262" style={[styles.companyLogIn, styles.appleLogIn]}>
               <AppleLogo/>
               <Text testID="112:269" style={styles.logInWithAppleId}>
                 {`Log in with Apple ID`}
@@ -146,40 +147,22 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '400',
   },
-  frame10: {
+  logInButton: {
     flexDirection: 'row',
     width: 121,
-    paddingTop: 10,
-    paddingLeft: 10,
-    paddingBottom: 10,
-    paddingRight: 10,
+    padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    rowGap: 10,
-    columnGap: 10,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    backgroundColor: 'rgba(183, 230, 130, 1)',
+    borderRadius: 30,
+    backgroundColor: COLOURS.LIGHT_GREEN,
   },
-  rectangle27: {
+  whiteSpace: {
     width: 209,
     height: 10,
     backgroundColor: 'rgba(255, 255, 255, 1)',
   },
-  loginBox3: {
-    flexDirection: 'row',
-    padding: 10,
-    alignItems: 'center',
-    columnGap: 10,
-    alignSelf: 'stretch',
-    borderRadius: 30,
+  googleLogIn: {
     backgroundColor: 'rgba(255, 255, 255, 1)',
-    shadowOpacity: 0.5,
-    shadowColor: 'rgba(0, 0, 0, 0.501960813999176)',
-    shadowRadius: 2,
-    shadowOffset: {"width":0,"height":2},
   },
   frame15: {
     flexDirection: 'row',
@@ -196,18 +179,20 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '400',
   },
-  frame152: {
+  companyLogIn: {
     flexDirection: 'row',
     padding: 10,
     alignItems: 'center',
     columnGap: 10,
     alignSelf: 'stretch',
     borderRadius: 30,
-    backgroundColor: 'rgba(58, 73, 117, 1)',
     shadowOpacity: 1,
-    shadowColor: 'rgba(0, 0, 0, 0.501960813999176)',
+    shadowColor: 'rgba(0, 0, 0, 0.5)',
     shadowRadius: 2,
     shadowOffset: {"width":0,"height":2},
+  },
+  facebookLogIn: {
+    backgroundColor: 'rgba(58, 73, 117, 1)',
   },
   logInWithFacebook: {
     color: 'rgba(217, 217, 217, 1)',
@@ -223,21 +208,8 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '400',
   },
-  frame162: {
-    flexDirection: 'row',
-    padding: 10,
-    alignItems: 'center',
-    columnGap: 10,
-    alignSelf: 'stretch',
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
+  appleLogIn: {
     backgroundColor: 'rgba(217, 217, 217, 1)',
-    shadowOpacity: 1,
-    shadowColor: 'rgba(0, 0, 0, 0.501960813999176)',
-    shadowRadius: 2,
-    shadowOffset: {"width":0,"height":2},
   },
   welcome: {
     color: 'rgba(58, 73, 117, 1)',

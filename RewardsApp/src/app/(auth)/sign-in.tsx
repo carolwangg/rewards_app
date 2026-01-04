@@ -4,7 +4,7 @@ import SignIn from '@/screens/auth/SignIn';
 import { AppContext } from '@/store/AppContext';
 import { useAuth, useSignIn } from '@clerk/clerk-expo';
 import { ClerkAPIResponseError, EmailCodeFactor, SignInFirstFactor } from '@clerk/types';
-import { Redirect, router } from 'expo-router';
+import { router } from 'expo-router';
 import { useCallback, useContext, useState } from 'react';
 import { Alert } from 'react-native';
 

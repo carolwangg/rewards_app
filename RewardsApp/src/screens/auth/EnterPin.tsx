@@ -78,59 +78,57 @@ export default function EnterPin({ setLoading, setVerifying, handleVerification 
   }
   return (
     <SafeAreaView testID={"53:187"} style={styles.root}>
-        <TouchableWithoutFeedback testID="7:121" style={styles.frame24} onPress={Keyboard.dismiss}>
+        <TouchableWithoutFeedback testID="7:121" style={styles.touchable} onPress={Keyboard.dismiss}>
         <View style={styles.body}>
-          
-            <View testID="6:81" style={styles.frame16}>
-              <Text testID="6:82" style={styles.enterYourPin}>
-                  {`Enter your PIN`}
+          <View testID="6:81" style={styles.bodyText}>
+            <Text testID="6:82" style={styles.enterYourPin}>
+                {`Enter your PIN`}
+            </Text>
+          </View>
+          <View testID="7:85" style={styles.bodyText2}>
+            <Text testID="7:86" style={styles.pinText}>
+              {`A six-digit pin was sent to your `}{contactType}
+            </Text>
+          </View>
+          <View testID="6:84" style={styles.bodyText2}>
+            <View testID="6:66" style={styles.digitBox}>
+                <TextInput ref={firstRef} testID="6:67" placeholderTextColor={GRAY} style={styles.textInput} onChangeText={changeFirstPinDigit} maxLength={1} keyboardType="numeric"/>
+            </View>
+            <View testID="6:69" style={styles.digitBox}>
+                <TextInput ref={secondRef} testID="6:70" placeholderTextColor={GRAY} style={styles.textInput} onChangeText={changeSecondPinDigit} maxLength={1} keyboardType="numeric"/>
+            </View>
+            <View testID="6:75" style={styles.digitBox}>
+                <TextInput ref={thirdRef} testID="6:76" placeholderTextColor={GRAY} style={styles.textInput} onChangeText={changeThirdPinDigit} maxLength={1} keyboardType="numeric"/>
+            </View>
+            <View testID="6:78" style={styles.digitBox}>
+                <TextInput ref={fourthRef} testID="6:79" placeholderTextColor={GRAY} style={styles.textInput} onChangeText={changeFourthPinDigit} maxLength={1} keyboardType="numeric"/>
+            </View>
+            <View testID="6:78" style={styles.digitBox}>
+                <TextInput ref={fifthRef} testID="6:79" placeholderTextColor={GRAY} style={styles.textInput} onChangeText={changeFifthPinDigit} maxLength={1} keyboardType="numeric"/>
+            </View>
+            <View testID="6:78" style={styles.digitBox}>
+                <TextInput ref={sixthRef} testID="6:79" placeholderTextColor={GRAY} style={styles.textInput} onChangeText={changeSixthPinDigit} maxLength={1} keyboardType="numeric"/>
+            </View>
+          </View>
+          <View testID="7:117" style={styles.resendPin}>
+            <Pressable testID="7:118" onPress={ () => {console.log("resend pin")}}>
+              <Text style={styles.resendPinText}>
+              {`Resend PIN`}
               </Text>
-            </View>
-            <View testID="7:85" style={styles.frame162}>
-              <Text testID="7:86" style={styles.pinText}>
-                {`A six-digit pin was sent to your `}{contactType}
+            </Pressable>
+          </View>
+          <View testID="7:120" style={styles.backVerifyRow}>
+            <Pressable testID="7:111" style={styles.backButton} onPress={() => {setVerifying(false)}}>
+              <Text testID="7:112" style={styles.back}>
+                {`Back`}
               </Text>
-            </View>
-            <View testID="6:84" style={styles.frame162}>
-              <View testID="6:66" style={styles.digitBox}>
-                  <TextInput ref={firstRef} testID="6:67" placeholderTextColor={GRAY} style={styles.textInput} onChangeText={changeFirstPinDigit} maxLength={1} keyboardType="numeric"/>
-              </View>
-              <View testID="6:69" style={styles.digitBox}>
-                  <TextInput ref={secondRef} testID="6:70" placeholderTextColor={GRAY} style={styles.textInput} onChangeText={changeSecondPinDigit} maxLength={1} keyboardType="numeric"/>
-              </View>
-              <View testID="6:75" style={styles.digitBox}>
-                  <TextInput ref={thirdRef} testID="6:76" placeholderTextColor={GRAY} style={styles.textInput} onChangeText={changeThirdPinDigit} maxLength={1} keyboardType="numeric"/>
-              </View>
-              <View testID="6:78" style={styles.digitBox}>
-                  <TextInput ref={fourthRef} testID="6:79" placeholderTextColor={GRAY} style={styles.textInput} onChangeText={changeFourthPinDigit} maxLength={1} keyboardType="numeric"/>
-              </View>
-              <View testID="6:78" style={styles.digitBox}>
-                  <TextInput ref={fifthRef} testID="6:79" placeholderTextColor={GRAY} style={styles.textInput} onChangeText={changeFifthPinDigit} maxLength={1} keyboardType="numeric"/>
-              </View>
-              <View testID="6:78" style={styles.digitBox}>
-                  <TextInput ref={sixthRef} testID="6:79" placeholderTextColor={GRAY} style={styles.textInput} onChangeText={changeSixthPinDigit} maxLength={1} keyboardType="numeric"/>
-              </View>
-            </View>
-            <View testID="7:117" style={styles.frame22}>
-              <Pressable testID="7:118" onPress={ () => {console.log("resend pin")}}>
-                <Text style={styles.resendPin}>
-                {`Resend PIN`}
-                </Text>
-              </Pressable>
-            </View>
-            <View testID="7:120" style={styles.backVerifyRow}>
-              <Pressable testID="7:111" style={styles.backButton} onPress={() => {setVerifying(false)}}>
-                <Text testID="7:112" style={styles.back}>
-                  {`Back`}
-                </Text>
-              </Pressable>
-              <Pressable testID="7:114" style={styles.verifyButton} onPress={() => { sendDigits() }}>
-                <Text testID="7:115" style={styles.verify}>
-                  {`Verify`}
-                </Text>
-              </Pressable>
-            </View>
-          
+            </Pressable>
+            <Pressable testID="7:114" style={styles.verifyButton} onPress={() => { sendDigits() }}>
+              <Text testID="7:115" style={styles.verify}>
+                {`Verify`}
+              </Text>
+            </Pressable>
+          </View>
         </View>
         </TouchableWithoutFeedback>
     </SafeAreaView>
@@ -164,12 +162,12 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '800',
   },
-  frame24: {
+  touchable: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  frame16: {
+  bodyText: {
     flexDirection: 'row',
     padding: 10,
     alignItems: 'center',
@@ -184,12 +182,9 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '400',
   },
-  frame162: {
+  bodyText2: {
     flexDirection: 'row',
-    paddingTop: 10,
-    paddingLeft: 10,
-    paddingBottom: 10,
-    paddingRight: 10,
+    padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
     rowGap: 10,
@@ -231,7 +226,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderColor: 'rgba(0, 0, 0, 1)',
   },
-  resendPin: {
+  resendPinText: {
     color: 'rgba(78, 176, 162, 1)',
     fontFamily: FONTS.GOWUN_DODUM,
     fontSize: 18,
@@ -240,7 +235,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     textDecorationStyle: 'solid',
   },
-  frame22: {
+  resendPin: {
     flexDirection: 'row',
     paddingTop: 10,
     paddingLeft: 10,

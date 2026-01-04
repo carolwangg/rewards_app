@@ -96,10 +96,10 @@ export default function BusinessInfo({customerId, businessId}: Props) {
             <View testID="154:1119" style={styles.item}>
               <View testID="154:1120" style={styles.frame29}>
                 <Text testID="154:1121" style={styles.bodyText}>
-                  Title
+                  {`Title`}
                 </Text>
                 <Text testID="154:1122" style={styles.descriptionOfItemGoesRightOverHere}>
-                  description
+                  {`description`}
                 </Text>
               </View>
               <View testID="154:1123" style={styles.rectangle28}/>

@@ -15,6 +15,6 @@ module.exports = (() => {
     sourceExts: [...resolver.sourceExts, "svg"]
   };
   config.resolver.assetExts.push('lottie');
-
+  config.resolver.assetExts.push('png');
   return config;
 })();

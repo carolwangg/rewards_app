@@ -1,6 +1,5 @@
 {
   "expo": {
-    "entryPoint": "./index.tsx",
     "name": "RewardsApp",
     "slug": "RewardsApp",
     "version": "1.0.0",

@@ -49,10 +49,6 @@ export default function AnimatedButton({texts, textColours, bgColours, container
         }
         setSelected(!selected);
     }
-    console.log("selected:"+selected);
-    console.log("text:"+text);
-    console.log("bgColour:"+bgColour);
-    console.log("textColour:"+textColour);
     return <Pressable onPress={onPressFunction}>
                 <Animated.View testID="104:910" style={[containerStyle, {backgroundColor: bgColour}]}>
                     <Animated.Text testID="104:911" style={[textStyle, {color: textColour}]}>

@@ -6,7 +6,7 @@ export default function Error({error}: Props){
     return <View style={styles.root}>
                 <Text>ERROR SCREEN</Text>
                 <Text>{error}</Text>
-        </View>
+            </View>
 }
 const styles = StyleSheet.create({
     root:{

@@ -1,5 +1,7 @@
 import { SITE_URL } from "@/constants/constants";
 import { Reward } from "@/constants/interfaces";
+import getDefaultLanguage from "@/helpers/language";
+
 export const addPointsToCustomerCard = async (cardId: string, customerId: string, points: number) => {
   try {
     const backendUrl = `${SITE_URL}/customers/${customerId}/cards/${cardId}/add-points`;
@@ -279,6 +281,8 @@ export const addCustomerCard = async (userId: string, businessId: string) => {
 
 export const addCustomer = async (customerId: string, email: string, country: string) => {
   try {
+    const language = getDefaultLanguage(country);
+
     const backendUrl = `${SITE_URL}/customers/create`;
     console.log('backendUrl:'+backendUrl);
     const response = await fetch(backendUrl, {
@@ -290,7 +294,8 @@ export const addCustomer = async (customerId: string, email: string, country: st
       body: JSON.stringify({
         customerId: customerId,
         email: email,
-        country: country
+        country: country,
+        language: language
       }),
     });
     const json = await response.json();
@@ -330,6 +335,8 @@ export const updateCustomer = async (id: string, customer: any) => {
 
 export const addBusiness = async (businessId: string, email: string, name: string, country: string) => {
   try {
+    const language = getDefaultLanguage(country);
+
     const backendUrl = `${SITE_URL}/businesses/create`;
     console.log('backendUrl:'+backendUrl);
     const response = await fetch(backendUrl, {
@@ -342,7 +349,8 @@ export const addBusiness = async (businessId: string, email: string, name: strin
         businessId: businessId,
         name: name,
         email: email,
-        country: country
+        country: country,
+        language: language
       }),
     });
     const json = await response.json();

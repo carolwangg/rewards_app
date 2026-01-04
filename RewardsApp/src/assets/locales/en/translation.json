@@ -1,0 +1,49 @@
+{
+  "auth": {
+    "6:82": "Enter your PIN",
+    "7:86": "A six-digit pin was sent to your email",
+    "7:112": "Back",
+    "7:115": "Verify",
+    "8:162": "Welcome",
+    "6:31": "Log In",
+    "6:36": "Log in with Google",
+    "6:44": "Log in with Facebook",
+    "112:269": "Log in with Apple ID",
+    "139:1223": "Sign Up",
+    "139:1238": "Accept ",
+    "139:1271": "Terms and Conditions ",
+    "139:1275": "and",
+    "139:1273": "Privacy Policy",
+    "139:1269": "Join now",
+    "7:125": "Please wait while we verify...",
+    "131:979": "Welcome",
+    "130:579": "Are you a:",
+    "130:528": "Business",
+    "130:531": "Customer"
+  },
+  "business": {
+    "154:1215": "Give Points",
+    "15:1620": "Add photo",
+    "104:945": "*Must be .jpeg, .jpg or .png",
+    "15:1638": "pts",
+    "104:911": "Save",
+    "9:553": "Welcome, ",
+    "9:555": "Your Rewards",
+    "9:556": "Sort by: ",
+    "175:396": "Points: ",
+    "15:138": "Sign out",
+    "160:371": "Points",
+    "160:379": "Customer card points",
+    "160:367": "Give Reward"
+  },
+  "customer": {
+    "9:218": "Points:",
+    "9:231": "Welcome, ",
+    "175:396": "Points: ",
+    "175:397": "km",
+    "9:623": "Edit",
+    "15:138": "Sign out",
+    "9:370": "Cart",
+    "9:432": "Scan QR at checkout"
+  }
+}
