@@ -1,14 +1,12 @@
 import { useState, useCallback } from "react";
 import { Reward } from "./interfaces";
 
-export function useReward(initial: {
-  reward: Reward
-}) {
-  const [id] = useState(initial.reward.id);
-  const [name, setName] = useState(initial.reward.name);
-  const [description, setDescription] = useState(initial.reward.description);
-  const [points, setPoints] = useState(initial.reward.points);
-  const [image_url, setimage_url] = useState(initial.reward.image_url);
+export function useReward(  reward: Reward) {
+  const [id] = useState(reward.id);
+  const [name, setName] = useState(reward.name);
+  const [description, setDescription] = useState(reward.description);
+  const [points, setPoints] = useState(reward.points);
+  const [image_url, setimage_url] = useState(reward.image_url);
 
   // Custom setters (optional, but recommended)
   const updateName = useCallback((newName: string) => {

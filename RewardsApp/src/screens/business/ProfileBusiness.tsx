@@ -12,6 +12,7 @@ import { updateBusiness, updateCard } from '@/services/apiCalls';
 import Header from '@/components/Header';
 import HeaderB from '@/components/HeaderB';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { EMPTY_BUSINESS } from '@/constants/interfaces';
 
 type Props = {
   userId: string, 
@@ -21,20 +22,7 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 export default function Profile({userId}: Props) {
   const { signOut } = useClerk()
-  const business = useBusiness({ business: {
-    id: "",
-    name: "",
-    description: "", 
-    email: "",
-    image_url: "",
-    location: "",
-    phoneNumber: "",
-    latitude: -1,
-    longitude: -1,
-    country: "",
-    rating: 4.3
-  }
-  });
+  const business = useBusiness(EMPTY_BUSINESS);
 
   const card = useCard({
     card: {
@@ -117,9 +105,8 @@ export default function Profile({userId}: Props) {
               <View testID="15:136" style={styles.infoBox}>
                 <Editable textStyle={styles.bodyText} editing={editingDetails} name={"Business Name"} placeHolder={'New business name'} value={business.name} setValue={business.setName}/>
                 <Editable textStyle={styles.bodyText} editing={editingDetails} name={"Email"} placeHolder={'New email'} value={business.email} setValue={business.setEmail}/>
-                <Editable textStyle={styles.bodyText} editing={editingDetails} name={"Phone Number"} placeHolder={'New phone number'} value={business.phoneNumber} setValue={business.setPhoneNumber}/>
-                <Editable textStyle={styles.bodyText} editing={editingDetails} name={"Street Address"} placeHolder={'New location'} value={business.location} setValue={business.setLocation}/>
-                <Editable textStyle={styles.bodyText} editing={editingDetails} name={"Description"} placeHolder={'New description'} value={business.description} setValue={business.setDescription}/>
+                <Editable textStyle={styles.bodyText} editing={editingDetails} name={"Street Address"} placeHolder={'New location'} value={business.streetAddress? business.streetAddress : ""} setValue={business.setStreetAddress}/>
+                <Editable textStyle={styles.bodyText} editing={editingDetails} name={"Description"} placeHolder={'New description'} value={business.description? business.description : ""} setValue={business.setDescription}/>
               </View>                
             </View>
             <HeaderB headerTextStyle={styles.headerText} headerText='Analytics'/>

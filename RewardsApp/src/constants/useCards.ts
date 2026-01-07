@@ -1,13 +1,12 @@
 import { useState, useCallback } from "react";
 import { Card } from "./interfaces";
-export function useCard(initial: {card: Card
-}) {
-  const [id] = useState(initial.card.id);
-  const [name, setName] = useState(initial.card.name);
-  const [description, setDescription] = useState(initial.card.description);
-  const [image_url, setimage_url] = useState(initial.card.image_url);
-  const [contactInfo, setContactInfo] = useState(initial.card.contactInfo);
-  const [colour, setColour] = useState(initial.card.colour);
+export function useCard(card: Card) {
+  const [id] = useState(card.id);
+  const [name, setName] = useState(card.name);
+  const [description, setDescription] = useState(card.description);
+  const [image_url, setimage_url] = useState(card.image_url);
+  const [contactInfo, setContactInfo] = useState(card.contactInfo);
+  const [colour, setColour] = useState(card.colour);
 
   // Custom setters (optional, but recommended)
   const updateName = useCallback((newName: string) => {

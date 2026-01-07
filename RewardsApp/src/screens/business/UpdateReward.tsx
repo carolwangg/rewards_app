@@ -35,7 +35,7 @@ const performUpdateReward = async(reward: any, setLoading: Function, setRewardUp
 
 
 export default function UpdateReward({prevReward}: Props) {
-  const reward = useReward({reward: prevReward});
+  const reward = useReward(prevReward);
   const [charCount, setCharCount] = useState(0);
   const [rewardUpdatedText, setRewardUpdatedText] = useState("Save");
   const [loading, setLoading] = useState(false);

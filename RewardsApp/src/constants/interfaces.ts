@@ -87,31 +87,77 @@ export function generateDefaultCustomerRewards(count: number){
   }
   return rewards
 }
+
 export interface Customer{
   id: string,
   name: string,
   email: string,
-  latitude: number,
-  longitude: number,
+  latitude: number | null,
+  longitude: number | null,
   country: string
-  street_address: string,
-  image_url: string,
+  street_address: string | null,
+  image_url: string | null,
 }
 
 export interface Business{
   id: string,
   name: string,
-  description: string, 
+  description: string | null, 
   email: string,
   country: string,
-  latitude: number,
-  longitude: number,
-  street_address: string,  
-  business_email: string,
-  business_phone: string,
-  image_url: string,
-  banner_url: string,
-  rating: number,
+  latitude: number | null,
+  longitude: number | null,
+  street_address: string | null,  
+  business_email: string | null,
+  business_phone: string | null,
+  image_url: string | null,
+  banner_url: string | null,
+  rating: number | null,
+}
+
+export const EMPTY_CUSTOMER: Customer = {
+  id: "",
+  name: "",
+  email: "",
+  latitude: null,
+  longitude: null,
+  country: "",
+  street_address: "",
+  image_url: "",
+}
+
+export const EMPTY_BUSINESS: Business = {
+  id: "",
+  name: "",
+  description: "",
+  email: "",
+  country: "",
+  latitude: null,
+  longitude: null,
+  street_address: "",  
+  business_email: "",
+  business_phone: "",
+  image_url: "",
+  banner_url: "",
+  rating: null,
+}
+
+export const EMPTY_CARD: Card = {
+  id: "",
+  name: "",
+  description: "", 
+  image_url: "",
+  contactInfo: "",
+  colour: "",
+}
+
+export const EMPTY_REWARD: Reward = {
+  id: "",
+  name: "",
+  description: "", 
+  image_url: "",
+  points: 0,
+  business_id: "",
 }
 
 export const defaultBusiness = {

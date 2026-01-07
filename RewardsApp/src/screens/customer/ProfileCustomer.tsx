@@ -8,6 +8,7 @@ import { getCustomer, updateCustomer } from '@/services/apiCalls';
 import Error from '@/components/Error';
 import { useCustomer } from '@/constants/useCustomer';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { EMPTY_CUSTOMER } from '@/constants/interfaces';
 
 type Props = {
   userId: string, 
@@ -15,7 +16,7 @@ type Props = {
 
 export default function Profile({userId}: Props) {
   const { signOut } = useClerk()
-  const customer = useCustomer({id: "", name:"", email: ""});
+  const customer = useCustomer(EMPTY_CUSTOMER);
   const [editingDetails, setEditingDetails] = useState(false);
   
   useEffect(()=>{
@@ -71,6 +72,11 @@ function performGetCustomer(userId: string, customer: any){
     getCustomer(userId).then(data => {
       data.user.name?customer.setName(data.user.name):customer.setName("");
       data.user.email?customer.setEmail(data.user.email):customer.setEmail("");
+      data.latitude?customer.setLatitude(data.latitude):customer.setLatitude(0);
+      data.longitude?customer.setLongitude(data.longitude):customer.setLongitude(0);
+      data.country?customer.setCountry(data.country):customer.setCountry("");
+      data.street_address?customer.setStreetAddress(data.street_address):customer.setStreetAddress("");
+      data.image_url?customer.setImageUrl(data.image_url):customer.setImageUrl("");
     });
   }catch (err){
     console.error("Error fetching customer:"+err);
