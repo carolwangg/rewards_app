@@ -2,14 +2,13 @@ import EnterPin from '@/screens/auth/EnterPin';
 import SignUp from '@/screens/auth/SignUp';
 import { addBusiness, addCard, addCustomer } from '@/services/apiCalls';
 import { AppContext } from '@/store/AppContext';
-import { useSignUp, useUser } from '@clerk/clerk-expo';
-import { Redirect, router } from 'expo-router';
-import { useCallback, useContext, useState } from 'react';
+import { useSignUp } from '@clerk/clerk-expo';
+import { router } from 'expo-router';
+import { useContext, useState } from 'react';
 import { Alert } from 'react-native';
 import {ClerkAPIResponseError} from "@clerk/types";
-import { SelectCountry } from 'react-native-element-dropdown';
 import Loading from '@/components/Loading';
-import { useNavigation } from 'expo-router';
+
 export default function SignUpPage() {
   const { userType, setUserId } = useContext(AppContext)!;
   const { isLoaded, signUp, setActive } = useSignUp()
@@ -187,9 +186,9 @@ export default function SignUpPage() {
     console.log("enter pin");
     const handleVerification = (code: string) => {
       if (userType == "customer"){
-          handleVerificationCustomer(email, country, code);
+        handleVerificationCustomer(email, country, code);
       }else{
-          handleVerificationBusiness(email, name, country, code);
+        handleVerificationBusiness(email, name, country, code);
       }      
     }
     return <EnterPin setLoading={setLoading} setVerifying={setVerifying} handleVerification={handleVerification} />;

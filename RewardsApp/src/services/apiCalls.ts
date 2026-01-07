@@ -281,8 +281,6 @@ export const addCustomerCard = async (userId: string, businessId: string) => {
 
 export const addCustomer = async (customerId: string, email: string, country: string) => {
   try {
-    const language = getDefaultLanguage(country);
-
     const backendUrl = `${SITE_URL}/customers/create`;
     console.log('backendUrl:'+backendUrl);
     const response = await fetch(backendUrl, {
@@ -292,10 +290,9 @@ export const addCustomer = async (customerId: string, email: string, country: st
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        customerId: customerId,
+        id: customerId,
         email: email,
         country: country,
-        language: language
       }),
     });
     const json = await response.json();
@@ -321,8 +318,11 @@ export const updateCustomer = async (id: string, customer: any) => {
         customerId: customer.id,
         name: customer.name,
         email: customer.email,
-        longitude: null,
-        latitude: null,
+        longitude: customer.longitude,
+        latitude: customer.latitude,
+        country: customer.country,
+        street_address: customer.street_address,
+        image_url: customer.image_url
         }),
       });
       const json = await response.json();
@@ -333,10 +333,8 @@ export const updateCustomer = async (id: string, customer: any) => {
 }
 
 
-export const addBusiness = async (businessId: string, email: string, name: string, country: string) => {
+export const addBusiness = async (businessId: string, email: string, country: string, name: string) => {
   try {
-    const language = getDefaultLanguage(country);
-
     const backendUrl = `${SITE_URL}/businesses/create`;
     console.log('backendUrl:'+backendUrl);
     const response = await fetch(backendUrl, {
@@ -347,10 +345,9 @@ export const addBusiness = async (businessId: string, email: string, name: strin
       },
       body: JSON.stringify({
         businessId: businessId,
-        name: name,
         email: email,
         country: country,
-        language: language
+        name: name
       }),
     });
     const json = await response.json();
@@ -372,12 +369,19 @@ export const updateBusiness = async (id: string, business: any) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        businessId: business.id,
+        id: business.id,
         name: business.name,
-        email: business.email,
-        phoneNumber: business.phoneNumber,
         description: business.description,
-        location: business.location
+        email: business.email,
+        country: business.country,
+        longitude: business.longitude,
+        latitude: business.latitude,
+        street_address: business.streetAddress,
+        business_email: business.businessEmail,
+        business_phone: business.phoneNumber,
+        image_url: business.imageUrl,
+        banner_url: business.bannerUrl,      
+        rating: business.rating
         }),
       });
       const json = await response.json();
@@ -471,3 +475,20 @@ export const addCard = async (businessId: string, name: string) => {
     throw error;
   } 
 };
+
+export const getUserType = async (userId: string) => {
+  try {
+    const backendUrl = `${SITE_URL}/users/${userId}`;
+    const response = await fetch(backendUrl, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+    },
+    });
+    const json = await response.json();
+    console.log(json);
+    return json;
+  } catch (error) {
+    throw error;
+  } 
+}

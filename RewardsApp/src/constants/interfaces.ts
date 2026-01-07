@@ -94,6 +94,8 @@ export interface Customer{
   latitude: number,
   longitude: number,
   country: string
+  street_address: string,
+  image_url: string,
 }
 
 export interface Business{
@@ -101,13 +103,15 @@ export interface Business{
   name: string,
   description: string, 
   email: string,
-  image_url: string,
-  location: string,
-  phoneNumber: string,
+  country: string,
   latitude: number,
   longitude: number,
-  country: string,
-  rating: number
+  street_address: string,  
+  business_email: string,
+  business_phone: string,
+  image_url: string,
+  banner_url: string,
+  rating: number,
 }
 
 export const defaultBusiness = {
@@ -115,13 +119,17 @@ export const defaultBusiness = {
   name: "Temp name",
   description: "Temp desc", 
   email: "",
-  image_url: "",
   location: "1234 Temp Location Street",
   latitude: 43.5423, 
   longitude: -79.6580,
   country: "Canada",
-  phoneNumber: "1234567890",
-  rating: 4.3
+  rating: 4.3,
+  language: "en",
+  street_address: "1234 Temp Location Street",  
+  business_email: "business@example.com",
+  business_phone: "1234567890",
+  image_url: "",
+  banner_url: "",
 }
 
 export function generateDefaultBusinesses(count: number){
@@ -137,8 +145,12 @@ export function generateDefaultBusinesses(count: number){
       latitude: defaultBusiness.latitude + 0.005*i,
       longitude: defaultBusiness.longitude + 0.002*i,
       country: defaultBusiness.country,
-      phoneNumber: defaultBusiness.phoneNumber,
-      rating: defaultBusiness.rating + 0.1
+      rating: defaultBusiness.rating + 0.1,
+      language: defaultBusiness.language,
+      street_address: defaultBusiness.street_address,  
+      business_email: defaultBusiness.business_email,
+      business_phone: defaultBusiness.business_phone,
+      banner_url: defaultBusiness.banner_url,
     }
     businesses.push(business)
   }

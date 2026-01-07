@@ -3,7 +3,7 @@ import { AppContext } from "@/store/AppContext";
 import { router } from 'expo-router';
 import { useContext } from "react";
 export default function WelcomePage() {
-    const {userType, setUserType}= useContext(AppContext)!;
+    const {setUserType}= useContext(AppContext)!;
     const toLoginFunction = () => {
         router.push('./sign-in')
     }
