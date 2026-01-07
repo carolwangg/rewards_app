@@ -1,6 +1,8 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useCallback, useState } from "react";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import { useEffect } from "react";
+import { getUserType } from "@/services/apiCalls";
+import Error from "@/components/Error";
 // Create a Context
 
 type UserContextType = {
@@ -16,19 +18,14 @@ type Props = {
   children: ReactNode;
 };
 export const AppProvider = ({ children}: Props ) => {
-  const [userType, setUserType] = useState("business");
-  const [userId, setUserId] = useState("user_0");
-  const {isLoaded, isSignedIn} = useAuth();
-  const {user} = useUser();
-  useEffect(() => {
-    if (isLoaded && isSignedIn){
-      if (user) {
-        console.log("yep")
-        setUserId(user.id);
-        setUserType((String)(user.publicMetadata.userType));
-      }
-    }
-  }, [user]);
+  const [userType, setUserType] = useState("");
+  const [userId, setUserId] = useState("");
+
+  // if (userId == "" && userType == ""){
+  //   return <Error error={"Error loading user data."} code={503}/>;
+  // }
+  console.log("userType in app context:"+userType);
+  console.log("userId in app context:"+userId);
   return (
     <AppContext.Provider value={{userType, setUserType, userId, setUserId}} >
       {children}

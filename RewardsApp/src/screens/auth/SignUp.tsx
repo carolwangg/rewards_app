@@ -4,6 +4,7 @@ import Checkmark from '@/assets/images/checkmark.svg'
 import BottomPolygon from '@/assets/images/bottom-pattern-light.svg';
 import TopPolygon from '@/assets/images/top-pattern-light.svg';
 import FONTS from '@/constants/fonts';
+import { COUNTRY_CODES } from '@/constants/constants';
 import { useState, useMemo, useRef } from 'react';
 type props={
   userType: string,
@@ -26,8 +27,8 @@ export default function SignUp({userType, onSignUp}: props) {
         return;
       }
       const email = emailRef.current?emailRef.current: "";
-      console.log("email: "+email)
-      onSignUp(email, name, selectedCountry);
+      console.log(COUNTRY_CODES[selectedCountry]);
+      onSignUp(email, name, COUNTRY_CODES[selectedCountry]);
     }
 
     const acceptTerms = () => {
@@ -48,7 +49,7 @@ export default function SignUp({userType, onSignUp}: props) {
     const data = [
         { label: 'USA', value: 0 },
         { label: 'Canada', value: 1 },
-        { label: 'Barcelona', value: 2 },
+        { label: 'Spain', value: 2 },
       ];
 
   const [name, setName] = useState("");

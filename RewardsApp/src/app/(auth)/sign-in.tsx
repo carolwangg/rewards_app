@@ -29,41 +29,41 @@ export default function SignInPage() {
           identifier: email,
         })
 
-      // Filter the returned array to find the 'phone_code' entry
-      const supportedFirstFactors = signInResource.supportedFirstFactors
+        // Filter the returned array to find the 'phone_code' entry
+        const supportedFirstFactors = signInResource.supportedFirstFactors
 
-      const isEmailCodeFactor = (factor: SignInFirstFactor): factor is EmailCodeFactor => {
-        return factor.strategy === 'email_code'
+        const isEmailCodeFactor = (factor: SignInFirstFactor): factor is EmailCodeFactor => {
+          return factor.strategy === 'email_code'
+        }
+        const emailCodeFactor = supportedFirstFactors?.find(isEmailCodeFactor)
+
+        if (emailCodeFactor) {
+          // Grab the emailAddressId
+          const { emailAddressId } = emailCodeFactor
+
+          // Send the OTP code to the user
+          await signIn.prepareFirstFactor({
+            strategy: 'email_code',
+            emailAddressId,
+          })
+          setVerifying(true);  
+          setLoading(false);
+
+        }
+      } catch (err: any) {
+        // See https://clerk.com/docs/guides/development/custom-flows/error-handling
+        // for more info on error handling
+        console.error('Error:', JSON.stringify(err, null, 2))
+        const clerkErr = err as ClerkAPIResponseError;
+        if (clerkErr.errors[0]?.code === 'form_identifier_not_found') {
+          Alert.alert("User not found", "No account associated with that email. Please sign up first.");
+          console.log("navigating to sign up");
+          router.replace('./sign-up');
+        }else{
+          Alert.alert("Error", clerkErr.message);
+        }
       }
-      const emailCodeFactor = supportedFirstFactors?.find(isEmailCodeFactor)
-
-      if (emailCodeFactor) {
-        // Grab the emailAddressId
-        const { emailAddressId } = emailCodeFactor
-        
-        // Set verifying to true to display second form
-        // and capture the OTP code
-
-        
-
-        // Send the OTP code to the user
-        await signIn.prepareFirstFactor({
-          strategy: 'email_code',
-          emailAddressId,
-        })
-        setVerifying(true);  
-        setLoading(false);
-
-      }
-    } catch (err: any) {
-      // See https://clerk.com/docs/guides/development/custom-flows/error-handling
-      // for more info on error handling
-      console.error('Error:', JSON.stringify(err, null, 2))
-      const clerkErr = err as ClerkAPIResponseError;
-      Alert.alert("Error", clerkErr.message);
-    }
     setLoading(false);
-    
   };
   
   const handleVerification = async (code: string) => {

@@ -2,6 +2,23 @@ import { SITE_URL } from "@/constants/constants";
 import { Reward } from "@/constants/interfaces";
 import getDefaultLanguage from "@/helpers/language";
 
+
+export const pingBackend = async (): Promise<boolean> => {
+    try {
+      const backendUrl = `${SITE_URL}`;
+      const response = await fetch(backendUrl, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+      });
+      const json = await response.json();
+      return json.message === "Server Up";
+    } catch (error) {
+      throw error;
+    }
+};
+
 export const addPointsToCustomerCard = async (cardId: string, customerId: string, points: number) => {
   try {
     const backendUrl = `${SITE_URL}/customers/${customerId}/cards/${cardId}/add-points`;
@@ -295,9 +312,7 @@ export const addCustomer = async (customerId: string, email: string, country: st
         country: country,
       }),
     });
-    const json = await response.json();
-    console.log("json in addCustomer(): "+json);
-    return json;
+    return response;
   } catch (error) {
     console.log("error creating customer in addCustomer()")
     throw error;
@@ -350,9 +365,7 @@ export const addBusiness = async (businessId: string, email: string, country: st
         name: name
       }),
     });
-    const json = await response.json();
-    console.log("json in addBusiness(): "+json);
-    return json;
+    return response;
   } catch (error) {
     console.log("error creating business in addBusiness()")
     throw error;
@@ -469,7 +482,7 @@ export const addCard = async (businessId: string, name: string) => {
     });
     const json = await response.json();
     console.log("json in addCard(): "+json);
-    return json;
+    return response;
   } catch (error) {
     console.log("error creating business in addCard()")
     throw error;
@@ -489,6 +502,23 @@ export const getUserType = async (userId: string) => {
     console.log(json);
     return json;
   } catch (error) {
+    throw error;
+  } 
+}
+
+export const deleteClerkUser = async (userId: string) => {
+  try {
+    const backendUrl = `${SITE_URL}/users/${userId}/delete`;
+    const response = await fetch(backendUrl, {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json',
+    },
+    });
+    const json = await response.json();
+    console.log(json);
+    return json;
+  } catch (error) { 
     throw error;
   } 
 }

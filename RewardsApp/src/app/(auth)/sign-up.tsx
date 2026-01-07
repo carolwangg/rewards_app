@@ -1,8 +1,8 @@
 import EnterPin from '@/screens/auth/EnterPin';
 import SignUp from '@/screens/auth/SignUp';
-import { addBusiness, addCard, addCustomer } from '@/services/apiCalls';
+import { addBusiness, addCard, addCustomer, deleteClerkUser } from '@/services/apiCalls';
 import { AppContext } from '@/store/AppContext';
-import { useSignUp } from '@clerk/clerk-expo';
+import { Clerk, useSignUp } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
 import { useContext, useState } from 'react';
 import { Alert } from 'react-native';
@@ -19,39 +19,41 @@ export default function SignUpPage() {
   const [name, setName] = useState("");
 
   const performAddCustomer = async (email: string, country: string) => {
-    console.log("performAddCustomer function")
-    if (!(signUp && signUp.createdUserId)) {
-      console.log("weirdly not sign up")
-      console.log("sign up:"+signUp)
-      signUp && console.log("customerid:"+signUp.createdUserId);
-      return null
-    }
-    const id = signUp.createdUserId;
+    const id = signUp?.createdUserId;
+    if (!id) { throw Error("No user id found in sign up"); }
     try{
       console.log("user Id:"+id)
       setUserId(id);
-      addCustomer(id, email, country);
+      const result = await addCustomer(id, email, country);
+      console.log("addCustomer status:"+result.status);
+      if (result.status != 201) {
+        Alert.alert("Error creating user", "User could not be created");
+        console.error("Error creating customer:", result.json)
+        throw new Error(result.json.toString());
+      }
     }catch(err){
-      Alert.alert("Error creating user", "Error could not be created");
+      Alert.alert("Error creating user", "User could not be created");
       console.error("Error creating customer:", JSON.stringify(err, null, 2))
+      throw err;
     }
   }
 
   const performAddBusiness = async (email: string, name: string, country: string) => {
-    console.log("performAddBusiness function")
-    if (!(signUp && signUp.createdUserId)) {
-      console.log("weirdly not sign up")
-      console.log("sign up:"+signUp)
-      signUp && console.log("customerid:"+signUp.createdUserId);
-      return null
-    }
-    const id = signUp.createdUserId;
-    console.log("perform business add id function:"+id);
+    const id = signUp?.createdUserId;
+    if (!id) { throw Error("No user id found in sign up"); }
     try{
       console.log("user Id:"+id)
       setUserId(id);
-      addBusiness(id, email, name, country);
-      addCard(id, name);
+      const businessResult = await addBusiness(id, email, name, country);
+      const cardResult = await addCard(id, name);
+      console.log("businessResult status:"+businessResult.status);
+      console.log("cardResult status:"+cardResult.status)
+      if (businessResult.status != 201 || cardResult.status != 201) {
+        Alert.alert("Error creating business", "User could not be created");
+        console.error("Error creating business:", businessResult.json + '\n' + cardResult.json)
+        throw new Error(businessResult.json + '\n' + cardResult.json);
+      }
+
     }catch(err){
       Alert.alert("Error creating user", "Could not locate user");
       console.error("Error creating customer:", JSON.stringify(err, null, 2))
@@ -71,7 +73,15 @@ export default function SignUpPage() {
       // If verification was completed, set the session to active
       // and redirect the user
       if (signUpAttempt.status === 'complete') {
-        performAddBusiness(email, name, country);
+        try{
+          await performAddBusiness(email, name, country);
+        }catch(err){
+          console.error("Error adding business:"+JSON.stringify(err, null, 2))
+          Alert.alert("Error creating user", "Error could not be created");
+          router.dismissTo("/welcome");
+          await deleteClerkUser(signUpAttempt.createdUserId!);
+          return;
+        }
         console.log("sign up complete")
         console.log("rerouting to business:");
         router.dismissTo("/welcome");
@@ -108,7 +118,8 @@ export default function SignUpPage() {
     setEmail(email);
     setName(name);
     setCountry(country);
-    if (!isLoaded && !signUp) return console.error("clerk and sign up not loaded");
+    console.log("Country:"+country)
+    if (!isLoaded && !signUp) return console.error("Clerk and sign up not loaded");
     if (email == ""){Alert.alert("Error", "Please enter an email address");}
     setLoading(true);
     try {
@@ -147,7 +158,16 @@ export default function SignUpPage() {
       // If verification was completed, set the session to active
       // and redirect the user
       if (signUpAttempt.status === 'complete') {
-        performAddCustomer(email, country);
+        try{
+          const result = await performAddCustomer(email, country);
+          // console.log("perform add customer result:"+result);
+        }catch(err){
+          console.error("Error adding customer:"+JSON.stringify(err, null, 2))
+          Alert.alert("Error creating user", "Error could not be created");
+          router.dismissTo("/welcome");
+          await deleteClerkUser(signUpAttempt.createdUserId!);
+          return;
+        }
         console.log("sign up complete")
         console.log("rerouting to customer:");
         router.dismissTo("/welcome");
