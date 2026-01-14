@@ -1,5 +1,6 @@
 import Error from '@/components/Error';
 import LogoPage from '@/components/LogoPage';
+import { initI18n } from '@/helpers/i18n';
 import { getUserType, pingBackend } from '@/services/apiCalls';
 import { AppContext } from '@/store/AppContext';
 import { useAuth } from '@clerk/clerk-expo';
@@ -15,15 +16,16 @@ export default function Index() {
     const [checked_server, setCheckedServer] = useState(false);
     console.log("user at index:"+user);
     console.log("user id at index:"+user?.id);
-
+        
     const setUserTypeCallback = useCallback(async () => {
         try {
             if (user) {
                 setUserId(user.id);
-                let fetchedUserType: string;
+                let userType: string;
                 try {
-                    fetchedUserType = await getUserType(user.id);
-                    setUserType(fetchedUserType);
+                    const fetchedUserType = await getUserType(user.id);
+                    userType = fetchedUserType.user.toString();
+                    setUserType(userType);
                 } catch (error) {
                     console.error("Error fetching user type:", error);
                 }
@@ -34,6 +36,10 @@ export default function Index() {
     }, [user]);
 
     useEffect(() => {
+        //set up language
+        // console.log("Setting up language...");
+        // initI18n();
+
         console.log("Pinging backend to check server status...");
         pingBackend().then(() => {
             console.log("Server is up");
@@ -48,22 +54,18 @@ export default function Index() {
     useEffect(() => {
         setUserTypeCallback();
     }, [user]);
-    
-    console.log("is loaded " +isLoaded);
-    console.log("checked server " +checked_server);
-        console.log("server ping " +server_ping);
-    if (!isLoaded && !checked_server) return <LogoPage/>
-    if (!server_ping) return <Error error={"Cannot connect to server. Please try again later."} code={503}/>;
 
+    if (!isLoaded || !checked_server) return <LogoPage/>
+    if (!server_ping) return <Error error={"Cannot connect to server. Please try again later."} code={503}/>;
     if (isSignedIn) {
         if (userType=="") return <Error error={"Error loading user data."} code={404}/>;
-        // console.log("signed in");
+        console.log("signed in userType:"+ userType);
         if (userType == "customer"){
             return <Redirect href="./customer/landing" />;
         }else if (userType == "business"){
             return <Redirect href="./business/landing" />;
         }
     }
-    // console.log("not signed in");
+    // user and server loaded properly, but user not signed in
     return <Redirect href="./welcome" />;
 }

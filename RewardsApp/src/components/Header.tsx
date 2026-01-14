@@ -5,11 +5,12 @@ type Props = {
     contentContainerStyle?: StyleProp<ViewStyle>
     headerTextStyle?: StyleProp<TextStyle>
     headerText: string,
-    onPress: () => void
-    sideText: string
+    onPress?: () => void
+    sideText?: string
 }
 export default function Header({contentContainerStyle, headerTextStyle, headerText, onPress, sideText}: Props){
-    return <View testID="175:429" style={[styles.headerRow, contentContainerStyle]}>
+    if (onPress && sideText){
+        return <View testID="175:429" style={[styles.headerRow, contentContainerStyle]}>
                 <Text testID="175:430" style={[styles.headerText, headerTextStyle]}>
                     {headerText}
                 </Text>
@@ -19,6 +20,13 @@ export default function Header({contentContainerStyle, headerTextStyle, headerTe
                     </Text>
                 </Pressable>
             </View>
+    }
+    return <View testID="175:429" style={[styles.headerRow, contentContainerStyle]}>
+                <Text testID="175:430" style={[styles.headerText, headerTextStyle]}>
+                    {headerText}
+                </Text>
+            </View>
+    
 }
 const styles = StyleSheet.create({
     headerText: {

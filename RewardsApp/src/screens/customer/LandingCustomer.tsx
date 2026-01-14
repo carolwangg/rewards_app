@@ -1,13 +1,15 @@
 import FONTS from '@/constants/fonts';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState, useEffect, useCallback } from 'react';
+import { Alert, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import DropdownComponent from '@/components/DropdownComponent';
 import ListItem from './ListItem';
 import { getCustomerCards, getCustomerCardRewards, getCustomer } from '@/services/apiCalls';
 import { CustomerCard, CustomerReward } from '@/constants/interfaces';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/Header';
+import COLOURS from '@/constants/colours';
+import { useTranslation } from 'react-i18next';
 
 function performGetCustomerName(userId: string, setCustomerName: any){
   try{
@@ -127,6 +129,7 @@ const cardToElement = (selectedCard: CustomerCard | null) => {
           </View>;
   }
 export default function Landing({userId, cart, setCart, setCartReward, setCardPoints}: Props) {
+  const { t } = useTranslation();
   const [sortType, setSortType] = useState("Lowest");
   const [cards, setCards] = useState<CustomerCard[]>([]);
   const [selectedCard, setSelectedCard] = useState<CustomerCard | null>(null);
@@ -182,19 +185,17 @@ export default function Landing({userId, cart, setCart, setCartReward, setCardPo
           <View style={styles.body}>
             <View testID="9:230" style={styles.welcomeBox}>
               <Text testID="9:231" style={styles.headerText}>
-                {`Welcome, `}{name}
+                {t('customers.9:231')}{name}
               </Text>
             </View>
             <View testID="9:188" style={styles.frame14}>
               <View style={styles.dropdown}>
-                <DropdownComponent data={data} value={selectedCardId} setValue={setSelectedCardId} subFunction={changeBusiness}/>
+                <DropdownComponent data={data} value={selectedCardId} setValue={setSelectedCardId} subFunction={changeBusiness} placeholder='Select Card' maxHeight={300} searchPlaceholder='Search...' placeholderTextStyle={{color: COLOURS.BLACK}}/>
               </View>
             </View>
               {cardToElement(selectedCard)}     
-            <Header headerTextStyle={styles.yourOffers} headerText={"Your Offers"} onPress={onSortByPress} sideText={`Sort by: `+sortType}/>
-    
-            <View testID="9:254" style={styles.frame34}>
-            </View>
+            <Header headerTextStyle={styles.yourOffers} headerText={t('customers.yourOffers')} onPress={onSortByPress} sideText={`Sort by: `+sortType}/>
+            <View testID="9:254" style={styles.frame34}/>
             <View style={styles.offerBox}>
               <View testID="9:248" style={styles.offerListBox}>
                 {rewardToElement(cart, setCart, setCartReward, selectedRewards)}

@@ -145,7 +145,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 1)',
   },
   body: {
-
     paddingTop: 50,
     backgroundColor: 'rgba(255, 255, 255, 1)',
     width: '89%',

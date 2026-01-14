@@ -23,7 +23,7 @@ export default function BusinessPopUp({business, businessRewards}: Props){
                     <View style={styles.description}>
                         <Text style={styles.title}>{business.name}</Text>
                         <View style={styles.details}>
-                            <Text style={styles.location} numberOfLines={1} ellipsizeMode="tail">{business.location}</Text>
+                            <Text style={styles.location} numberOfLines={1} ellipsizeMode="tail">{business.street_address}</Text>
                             <View style={styles.ratingBox}>
                                 <Star/>
                                 <Text style={styles.rating}>{business.rating}</Text>

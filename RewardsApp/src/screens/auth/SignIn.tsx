@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { Keyboard, Pressable, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import AppleLogo from '@/assets/images/apple-logo.svg';
 import WelcomeBottomPattern from '@/assets/images/bottom-pattern.svg';
 import FacebookLogo from '@/assets/images/facebook-logo.svg';
@@ -15,6 +15,7 @@ type props={
 
 export default function SignIn({onSignIn}: props) {
   const emailRef = useRef<string>(null);
+  const [emailColour, setEmailColour] = useState("black");
 
   const performSignIn = () => {
     const email = emailRef.current?emailRef.current: "";
@@ -42,11 +43,14 @@ export default function SignIn({onSignIn}: props) {
             <View testID="6:19" style={styles.loginBox2}>
               <TextInput
                 testID="6:20"
-                style={styles.email}
+                style={[styles.email, {outlineColor: emailColour}]}
                 placeholder="Email"
                 placeholderTextColor="rgba(146, 144, 180, 1)"
                 onChangeText={(text) => {
-                emailRef.current = text;}}
+                emailRef.current = text;
+                setEmailColour(text.match(/.+@.+\..+/)? 'black': COLOURS.RED)}}
+                maxLength={45}
+                selectionColor={emailColour}
               />
             </View>
             <Pressable testID="6:30" style={styles.logInButton} onPress={performSignIn}>

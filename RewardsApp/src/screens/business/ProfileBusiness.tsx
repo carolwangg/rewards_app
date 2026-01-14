@@ -12,8 +12,8 @@ import { updateBusiness, updateCard } from '@/services/apiCalls';
 import Header from '@/components/Header';
 import HeaderB from '@/components/HeaderB';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { EMPTY_BUSINESS } from '@/constants/interfaces';
-
+import { EMPTY_BUSINESS, EMPTY_CARD } from '@/constants/interfaces';
+import Settings from '@/assets/images/settings-icon.svg'
 type Props = {
   userId: string, 
 }
@@ -24,16 +24,7 @@ export default function Profile({userId}: Props) {
   const { signOut } = useClerk()
   const business = useBusiness(EMPTY_BUSINESS);
 
-  const card = useCard({
-    card: {
-      id: "",
-      name: "",
-      description: "", 
-      image_url: "",
-      contactInfo: "",
-      colour: "",
-    }
-  });
+  const card = useCard(EMPTY_CARD);
 
   const [editingCard, setEditingCard] = useState(false);
   const [editingDetails, setEditingDetails] = useState(false);
@@ -83,6 +74,7 @@ export default function Profile({userId}: Props) {
     <SafeAreaView testID={"53:202"} style={styles.root}>
       <ScrollView contentContainerStyle={styles.scroll} refreshControl={<RefreshControl style={{borderWidth: 1}} refreshing={refreshing} onRefresh={onRefresh}/>}>
         <View>
+          <Pressable style={styles.settingsRow} onPress={()=>{router.replace("./options");}}><Settings/></Pressable>
           <View style={styles.body}>
             <View testID="9:28" style={styles.frame}>
               <Header headerTextStyle={styles.headerText} headerText='Your card' onPress={editToggleCard} sideText={editingCard? "Save": "Edit"}/>
@@ -112,7 +104,7 @@ export default function Profile({userId}: Props) {
             <HeaderB headerTextStyle={styles.headerText} headerText='Analytics'/>
             <Pressable testID="15:137" style={styles.signOutButton} onPress= {onSignOut}>
             <Text testID="15:138" style={styles.signOutText}>
-                Sign out
+              {`Sign out`}
             </Text>
           </Pressable>
           </View>
@@ -139,6 +131,7 @@ function performGetCard(userId: string, card: any){
     getCard(userId).then(data => {
       console.log("card data:"+data);
       console.log("card data fetched:"+data.user);
+      if (!data.user) {console.error("No card exists for user:"+ userId); return;}
       data.user.name? card.setName(data.user.name): card.setName("");
       data.user.description? card.setDescription(data.user.description): card.setDescription("");
       data.user.contact_info? card.setContactInfo(data.user.contact_info): card.setContactInfo("");
@@ -164,6 +157,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: SCREEN_WIDTH,
     height: 'auto',
+  },
+  settingsRow: {
+    width: '100%',
+    height: 'auto',
+    alignItems: 'flex-end',
   },
   body: {
     paddingTop: 20,

@@ -3,8 +3,8 @@ import {StyleSheet, Alert, View, Text, ScrollView, RefreshControl} from 'react-n
 import ChevronDown from '@/assets/images/chevron-down.svg';
 import FONTS from '@/constants/fonts';
 import { CustomerReward } from '@/constants/interfaces';
-import RewardCarousel from './RewardCarousel';
-import Header from './Header';
+import RewardCarousel from '../components/RewardCarousel';
+import Header from '../components/Header';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useState, useEffect, useCallback } from 'react';
 import { getRewards } from '@/services/apiCalls';

@@ -4,12 +4,11 @@ import { AppContext } from "@/store/AppContext";
 export default function TabLayout() {
   const {userType} = useContext(AppContext)!;
   if (userType=="customer"){
-    <Stack>
-      <Stack.Screen name="customer" options={{ headerTitle: "trial", headerShown: false}}/>
+    <Stack screenOptions={{headerShown: false}}>
+      <Stack.Screen name="customer" options={{ headerShown: false}}/>
     </Stack>
-  }return (
-    <Stack>
+  }
+  return <Stack screenOptions={{headerShown: false}}>
       <Stack.Screen name="business" options={{ headerShown: false}}/>
     </Stack>
-  );
 }

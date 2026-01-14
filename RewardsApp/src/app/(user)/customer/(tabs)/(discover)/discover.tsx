@@ -1,4 +1,4 @@
-import DiscoveryPage from '@/components/DiscoveryPage'
+import DiscoveryPage from '@/screens/DiscoveryPage'
 export default function Discover(){
     return <DiscoveryPage/>
 }

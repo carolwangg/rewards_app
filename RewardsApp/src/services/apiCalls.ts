@@ -1,5 +1,5 @@
 import { SITE_URL } from "@/constants/constants";
-import { Reward } from "@/constants/interfaces";
+import { APIResponse, Reward } from "@/constants/interfaces";
 import getDefaultLanguage from "@/helpers/language";
 
 
@@ -394,7 +394,6 @@ export const updateBusiness = async (id: string, business: any) => {
         business_phone: business.phoneNumber,
         image_url: business.imageUrl,
         banner_url: business.bannerUrl,      
-        rating: business.rating
         }),
       });
       const json = await response.json();
@@ -489,7 +488,7 @@ export const addCard = async (businessId: string, name: string) => {
   } 
 };
 
-export const getUserType = async (userId: string) => {
+export const getUserType = async (userId: string): Promise<APIResponse> => {
   try {
     const backendUrl = `${SITE_URL}/users/${userId}`;
     const response = await fetch(backendUrl, {

@@ -1,7 +1,11 @@
 import LottieView from "lottie-react-native"
-import { StyleSheet, View } from "react-native"
-export default function Loading(){
+import { StyleSheet, View, Text } from "react-native"
+type Props = {
+    message?: string
+}
+export default function Loading({message}: Props){
     return <View style={styles.root}>
+                <Text>{message}</Text>
                 <LottieView
                 source={require("@/assets/images/loading.json")}
                 loop

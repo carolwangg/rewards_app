@@ -23,14 +23,14 @@ export default function Editable({textStyle, textInputContainerStyle, contentCon
   const chosenLength = maxLength? maxLength: 100;
   if (!editing) {
         return <View style={[styles.root, contentContainerStyle]}>
-                {renderName(name)}
+                <View>{renderName(name)}</View>
                 <View style={[styles.textInputBox, textInputContainerStyle, {backgroundColor: "transparent", borderWidth: 0}]}>
                   <Text style={[styles.textInput, textStyle]}>{value}</Text>
                 </View>
             </View>
     }
     return <View style={[styles.root, contentContainerStyle]}>
-              {renderName(name)}
+              <View>{renderName(name)}</View>
               <View style={[styles.textInputBox, textInputContainerStyle]}>
                 <TextInput maxLength={chosenLength} style={[styles.textInput, textStyle]} placeholder = {placeHolder} value={value} onChangeText={(text: string)=>{console.log("change value"); setValue(text)}}/>
               </View>
@@ -45,8 +45,7 @@ root: {
     justifyContent: 'flex-start',
     padding: 10,
     columnGap: 10,
-    alignSelf: 'stretch',
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
   },
   name: {
     color: 'rgba(0, 0, 0, 1)',
@@ -69,6 +68,7 @@ root: {
     borderRadius: 15,
     backgroundColor: 'rgba(109, 109, 109, 0.34)',
     borderWidth: 1,
-    boxSizing: 'border-box'
+    boxSizing: 'border-box',
+    flex: 1
   },
 });

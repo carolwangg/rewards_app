@@ -63,7 +63,16 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ],
-      "react-native-edge-to-edge"
+      "react-native-edge-to-edge",
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": ["en", "es", "fr", "ch"],
+            "android": ["en", "es", "fr", "ch"]
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

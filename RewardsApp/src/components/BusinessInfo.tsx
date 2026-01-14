@@ -72,7 +72,7 @@ export default function BusinessInfo({customerId, businessId}: Props) {
                   {`Open on Google Maps`}
                 </Text>
                 <Text testID="154:903" style={styles.locationInformationHere}>
-                  {business==null? '': business.location}
+                  {business==null? '': business.street_address}
                 </Text>
               </View>
               <Pressable onPress={redirect}>

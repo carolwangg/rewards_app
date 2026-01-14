@@ -1,4 +1,3 @@
-import FONTS from "@/constants/fonts";
 import { CartContext } from "@/store/CartContext";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Tabs } from "expo-router";
@@ -40,7 +39,7 @@ export default function TabLayout() {
           ),
           }}
           />
-        <Tabs.Screen name="about" 
+        <Tabs.Screen name="(about)" 
         options={{ 
           title: 'Profile',
           tabBarIcon: ({color, focused}) => (

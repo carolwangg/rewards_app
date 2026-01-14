@@ -2,7 +2,7 @@ import EnterPin from '@/screens/auth/EnterPin';
 import SignUp from '@/screens/auth/SignUp';
 import { addBusiness, addCard, addCustomer, deleteClerkUser } from '@/services/apiCalls';
 import { AppContext } from '@/store/AppContext';
-import { Clerk, useSignUp } from '@clerk/clerk-expo';
+import { useSignUp } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
 import { useContext, useState } from 'react';
 import { Alert } from 'react-native';
@@ -22,7 +22,6 @@ export default function SignUpPage() {
     const id = signUp?.createdUserId;
     if (!id) { throw Error("No user id found in sign up"); }
     try{
-      console.log("user Id:"+id)
       setUserId(id);
       const result = await addCustomer(id, email, country);
       console.log("addCustomer status:"+result.status);
@@ -44,7 +43,7 @@ export default function SignUpPage() {
     try{
       console.log("user Id:"+id)
       setUserId(id);
-      const businessResult = await addBusiness(id, email, name, country);
+      const businessResult = await addBusiness(id, email, country, name);
       const cardResult = await addCard(id, name);
       console.log("businessResult status:"+businessResult.status);
       console.log("cardResult status:"+cardResult.status)

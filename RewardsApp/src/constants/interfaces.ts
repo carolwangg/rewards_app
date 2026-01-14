@@ -228,3 +228,9 @@ export function generateDefaultMapBusinesses(count: number){
   }
   return businesses
 }
+
+export type APIResponse = 
+{
+  message: string,
+  user: object | string
+}

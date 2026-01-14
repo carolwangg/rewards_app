@@ -6,6 +6,8 @@ import TopPolygon from '@/assets/images/top-pattern-light.svg';
 import FONTS from '@/constants/fonts';
 import { COUNTRY_CODES } from '@/constants/constants';
 import { useState, useMemo, useRef } from 'react';
+import COLOURS from '@/constants/colours';
+import DropdownComponent from '@/components/DropdownComponent';
 type props={
   userType: string,
   onSignUp: (email: string, name: string, country: string)=>void
@@ -16,6 +18,7 @@ export default function SignUp({userType, onSignUp}: props) {
     const [checkFill, setCheckFill] = useState('rgba(255, 255, 255, 1)');
     const [selectedCountryID, setSelectedCountryID] = useState(-1);
     const [selectedCountry, setSelectedCountry] = useState("Country");
+    const [emailColour, setEmailColour] = useState("black");
     const emailRef = useRef<string>(null);
     const performSignUp = () => {
       if (!checked){
@@ -57,13 +60,12 @@ export default function SignUp({userType, onSignUp}: props) {
     let formContents = <View></View>;
     if (userType == "business"){
       Alert.alert("set contents for business");
-      formContents = <TextInput style={[styles.bodyText, styles.containerStyle]} placeholder='Business Name' placeholderTextColor={'rgba(146, 144, 180, 1)'} onChangeText={(newName: string)=>{setName(newName)}}/>;
+      formContents = <TextInput style={[styles.bodyText, styles.containerStyle]} placeholder='Business Name' placeholderTextColor={'rgba(146, 144, 180, 1)'} onChangeText={(newName: string)=>{setName(newName)}} maxLength={30}/>;
     }else{
       Alert.alert("set contents for customers");
     }
     return { formContents: formContents}}, []);
 
-  console.log(emailRef.current);
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View testID={"139:1288"} style={styles.root}>
@@ -81,9 +83,16 @@ export default function SignUp({userType, onSignUp}: props) {
             </View>
             <View style={styles.formContents}>
               {formContents}
-                <TextInput style={[styles.containerStyle, styles.bodyText, {width: '100%'}]} placeholder='Email' placeholderTextColor={'rgba(146, 144, 180, 1)'} onChangeText={(text) => {
-                emailRef.current = text;}}/>
-              <DropdownComponent data ={data} value={selectedCountryID} setValue={setSelectedCountryID} subFunction={changeSelectedCountry} placeholder="Country"/> 
+                <TextInput  style={[styles.containerStyle, styles.bodyText, {width: '100%', outlineColor: emailColour}]} 
+                placeholder='Email' 
+                placeholderTextColor={'rgba(146, 144, 180, 1)'} 
+                onChangeText={(text) => {
+                emailRef.current = text; 
+                setEmailColour(text.match(/.+@.+\..+/)? 'black': COLOURS.RED)}} 
+                maxLength={45} 
+                selectionColor={COLOURS.RED}/>
+              <DropdownComponent data ={data} value={selectedCountryID} setValue={setSelectedCountryID} subFunction={changeSelectedCountry} placeholder="Country" maxHeight={200} searchPlaceholder='Search countries...' 
+              style={styles.containerStyle} containerStyle={styles.dropdownItemContainer} placeholderTextStyle={styles.placeholderText} textStyle={styles.bodyText}/> 
             </View>
             <View testID="139:1237" style={styles.termsFrame}>
                 <Pressable testID="139:1241" style={[styles.checkBox, {backgroundColor: checkFill}]} onPress={acceptTerms}>
@@ -130,27 +139,28 @@ type dropdownProps = {
     subFunction: Function
     placeholder: string
 }
-const DropdownComponent = ({data, value, setValue, subFunction, placeholder}: dropdownProps) => {
-    return <Dropdown
-        style={[styles.containerStyle]}
-        containerStyle={styles.dropdownItemContainer}
-        placeholderStyle={styles.placeholderText}
-        selectedTextStyle={styles.bodyText}
-        inputSearchStyle={styles.bodyText}
-        searchPlaceholderTextColor='rgba(146, 144, 180, 1)'
-        iconStyle={styles.iconStyle}
-        data={data}
-        maxHeight={200}
-        labelField="label"
-        valueField="value"
-        placeholder={placeholder}
-        searchPlaceholder="Search countries"
-        value={value}
-        onChange={item => {
-            setValue(item.value);
-            subFunction(item.value);
-        }}/>;
-    }
+// const DropdownComponent = ({data, value, setValue, subFunction, placeholder}: dropdownProps) => {
+//   return <Dropdown
+//       style={[styles.containerStyle]}
+//       containerStyle={styles.dropdownItemContainer}
+//       placeholderStyle={styles.placeholderText}
+//       selectedTextStyle={styles.bodyText}
+//       inputSearchStyle={styles.bodyText}
+//       searchPlaceholderTextColor='rgba(146, 144, 180, 1)'
+//       iconStyle={styles.iconStyle}
+//       data={data}
+//       maxHeight={200}
+//       labelField="label"
+//       valueField="value"
+//       placeholder={placeholder}
+//       searchPlaceholder="Search countries"
+//       value={value}
+//       onChange={item => {
+//           setValue(item.value);
+//           subFunction(item.value);
+//       }}/>;
+//   }
+
 const styles = StyleSheet.create({
   root: {
     width: 393,

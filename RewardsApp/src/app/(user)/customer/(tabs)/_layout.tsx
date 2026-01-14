@@ -10,16 +10,16 @@ export default function TabLayout() {
   return (
     <Tabs
     screenOptions={{
-        tabBarActiveTintColor: 'rgba(58, 73, 117, 1)',
-        tabBarInactiveTintColor: 'rgba(58, 73, 117, 1)',
-        headerShown: false,
-        tabBarStyle: {
-            backgroundColor: 'rgba(217, 217, 217, 1)',
-            height: TABBAR_HEIGHT,
-        },
-        tabBarShowLabel: false,
-        tabBarItemStyle: {height: TABBAR_HEIGHT},
-        tabBarIconStyle:  {width: ICON_SIZE, height: ICON_SIZE}
+      tabBarActiveTintColor: 'rgba(58, 73, 117, 1)',
+      tabBarInactiveTintColor: 'rgba(58, 73, 117, 1)',
+      headerShown: false,
+      tabBarStyle: {
+          backgroundColor: 'rgba(217, 217, 217, 1)',
+          height: TABBAR_HEIGHT,
+      },
+      tabBarShowLabel: false,
+      tabBarItemStyle: {height: TABBAR_HEIGHT},
+      tabBarIconStyle:  {width: ICON_SIZE, height: ICON_SIZE}
     }}
     >
       <Tabs.Screen 
@@ -58,7 +58,7 @@ export default function TabLayout() {
         ),
         }}
         />
-      <Tabs.Screen name="about" 
+      <Tabs.Screen name="(about)" 
       options={{ 
         title: 'Profile',
         tabBarIcon: ({color, focused}) => (

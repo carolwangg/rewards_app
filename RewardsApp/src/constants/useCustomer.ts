@@ -30,7 +30,6 @@ export function useCustomer(customer: Customer)  {
   }, []);
 
   const updateCountry = useCallback((newCountry: string) => {
-    // example: lowercase email automatically
     setCountry(newCountry);
   }, []);
 
@@ -61,4 +60,23 @@ export function useCustomer(customer: Customer)  {
     setStreetAddress: updateStreetAddress,
     setImageUrl: updateImageUrl
   };
+}
+
+export type CustomerHook = {
+  id: string,
+  name: string,
+  email: string,
+  latitude: number | null,
+  longitude: number | null,
+  country: string
+  street_address: string | null,
+  image_url: string | null,
+
+  setName: (name: string) => void,
+  setEmail: (email: string) => void,
+  setLatitude: (latitude: number) => void,
+  setLongitude: (longitude: number) => void,
+  setCountry: (country: string) => void,
+  setStreetAddress: (street_address: string) => void,
+  setImageUrl: (image_url: string) => void,
 }
