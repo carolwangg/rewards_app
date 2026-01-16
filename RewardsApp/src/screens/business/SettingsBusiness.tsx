@@ -3,9 +3,10 @@ import { useBusiness } from '@/constants/useBusiness';
 import { useCard } from '@/constants/useCards';
 import { getBusiness, getCard } from '@/services/apiCalls';
 import { useClerk } from '@clerk/clerk-expo';
-import DefaultLogo from '@/assets/images/default-logo.svg';
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from 'expo-router';
 import { useState, useEffect, useCallback } from 'react';
-import { RefreshControl, Keyboard, Pressable, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View, Dimensions, Image } from 'react-native';
+import { RefreshControl, Pressable, ScrollView, StyleSheet, Text, TouchableWithoutFeedback, View, Dimensions } from 'react-native';
 import Editable from '@/components/Editable';
 import { updateBusiness, updateCard } from '@/services/apiCalls';
 import Header from '@/components/Header';
@@ -14,18 +15,12 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { EMPTY_BUSINESS, EMPTY_CARD } from '@/constants/interfaces';
 import Settings from '@/assets/images/settings-icon.svg'
 import { useTranslation } from 'react-i18next';
-import { router } from 'expo-router';
-import ColorPicker, {Panel1, HueSlider} from "reanimated-color-picker";
-import ColorWidget from "@/assets/images/color-widget.svg"
 type Props = {
   userId: string, 
 }
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-const BUSINESS_ATTRIBUTES = ["Email", "Business Name", "Phone number"];
-
 export default function Profile({userId}: Props) {
-
   const {t} = useTranslation();
   const { signOut } = useClerk()
   const business = useBusiness(EMPTY_BUSINESS);
@@ -34,8 +29,6 @@ export default function Profile({userId}: Props) {
 
   const [editingCard, setEditingCard] = useState(false);
   const [editingDetails, setEditingDetails] = useState(false);
-  const [editingColor, setEditingColor] = useState(false);
-
   useEffect(()=>{
     performGetBusiness(userId, business);
     performGetCard(userId, card);
@@ -77,85 +70,49 @@ export default function Profile({userId}: Props) {
   const handleColorSelected = useCallback((colour: string)=>{
     console.log(colour)
   }, [])
-
-  const factory = useCallback((name: string) => {
-      let value, translatedName: string;
-      let setValue: (value: string) => void;
-      switch(name){
-          case "Business Name":
-            translatedName = t('name');
-            value = business.name;
-            setValue = business.setName;
-            break;
-          case "Email":
-            translatedName = t('email');
-            value = business.email;
-            setValue = business.setEmail;
-            break;
-          default:
-            translatedName = "default"
-            value = "default";
-            setValue = (value: string) => {};
-            break;
-      }
-      const placeholder = t('new') + translatedName;
-      return <Editable key={name} editing={editingDetails} name={translatedName} placeHolder={placeholder} value={value} setValue={setValue}/>
-    }, [business, editingDetails]);
-
+  
   return (
     <SafeAreaProvider>
-      <SafeAreaView testID={"53:202"} style={styles.root}>
-        <ScrollView contentContainerStyle={styles.scroll} refreshControl={<RefreshControl style={{borderWidth: 1}} refreshing={refreshing} onRefresh={onRefresh}/>}>
-          <View>
-            <Pressable style={styles.settingsRow} onPress={()=>{router.replace("./options");}}><Settings/></Pressable>
-            <View style={styles.body}>
-              <View testID="9:28" style={styles.frame}>
-                <Header headerTextStyle={styles.headerText} headerText={t('business.yourCard')} onPress={editToggleCard} sideText={editingCard? t('save'): t('edit')}/>
-                <View testID="9:580" style={[styles.cardBox, {backgroundColor: card.colour}]}>
-                  <Pressable style={styles.colorWidget} onPress={()=>{setEditingColor(true)}}><ColorWidget/></Pressable>
-                  <View testID="9:581" style={styles.titleBox}>
-                    {card.image_url? <Image source={{uri: card.image_url}} style={{width: 70, height: 70, borderRadius: '100%'}}/> : <DefaultLogo width={70}/>}
-                    <View style={styles.cardEdit}>
-                      <Editable maxLength={20} textStyle={styles.businessName} editing={editingCard} name={""} placeHolder={'Business name'} value={card.name} setValue={card.setName}/>
-                      {/* <Editable maxLength={7} textStyle={{color: 'white'}} contentContainerStyle={styles.colourBox} editing={editingCard} name={""} placeHolder={'HEX colour'} value={card.colour} setValue={card.setColour}/> */}
-                    </View>
-                  </View>
-                  <View style={styles.cardInfoBox}>
-                    <Editable editing={editingCard} name={""} placeHolder={t('business.contactInfo')} value={card.contactInfo} setValue={card.setContactInfo} noValuePlaceholder={t('business.contactInfo')}/>
-                    <Editable editing={editingCard} name={""} placeHolder={t('business.tagline')} value={card.description} setValue={card.setDescription} noValuePlaceholder={t('business.tagline')}/>
+    <SafeAreaView testID={"53:202"} style={styles.root}>
+      <ScrollView contentContainerStyle={styles.scroll} refreshControl={<RefreshControl style={{borderWidth: 1}} refreshing={refreshing} onRefresh={onRefresh}/>}>
+        <View>
+          <Pressable style={styles.settingsRow} onPress={()=>{router.replace("./options");}}><Settings/></Pressable>
+          <View style={styles.body}>
+            <View testID="9:28" style={styles.frame}>
+              <Header headerTextStyle={styles.headerText} headerText={t('business.yourCard')} onPress={editToggleCard} sideText={editingCard? t('save'): t('edit')}/>
+              <View testID="9:580" style={[styles.cardBox, {backgroundColor: card.colour}]}>
+                <View testID="9:581" style={styles.titleBox}>
+                  <Ionicons name={'ellipse'} size={70}/>
+                  <View style={styles.cardEdit}>
+                    <Editable maxLength={20} textStyle={styles.businessName} editing={editingCard} name={""} placeHolder={'Business name'} value={card.name} setValue={card.setName}/>
+                    <Editable maxLength={7} textStyle={{color: 'white'}} contentContainerStyle={styles.colourBox} editing={editingCard} name={""} placeHolder={'HEX colour'} value={card.colour} setValue={card.setColour}/>
                   </View>
                 </View>
+                <View style={styles.cardInfoBox}>
+                  <Editable editing={editingCard} name={""} placeHolder={'Contact info'} value={card.contactInfo} setValue={card.setContactInfo}/>
+                  <Editable editing={editingCard} name={""} placeHolder={'Tagline'} value={card.description} setValue={card.setDescription}/>
+                </View>
               </View>
-              <View testID="9:500" style={styles.frame}> 
-                <Header headerTextStyle={styles.headerText} headerText={t('details')} onPress={editToggle} sideText={editingDetails? t('save'): t('edit')}/>
-                <View testID="15:136" style={styles.infoBox}>
-                  {BUSINESS_ATTRIBUTES.map((attribute) => factory(attribute))}
-                </View>                
-              </View>
-              <HeaderB headerTextStyle={styles.headerText} headerText='Analytics'/>
-              <Pressable testID="15:137" style={styles.signOutButton} onPress= {onSignOut}>
-              <Text testID="15:138" style={styles.signOutText}>
-                {t('signOut')}
-              </Text>
-            </Pressable>
             </View>
+            <View testID="9:500" style={styles.frame}> 
+              <Header headerTextStyle={styles.headerText} headerText={t('details')} onPress={editToggle} sideText={editingDetails? t('save'): t('edit')}/>
+              <View testID="15:136" style={styles.infoBox}>
+                <Editable textStyle={styles.bodyText} editing={editingDetails} name={"Business Name"} placeHolder={'New business name'} value={business.name} setValue={business.setName}/>
+                <Editable textStyle={styles.bodyText} editing={editingDetails} name={"Email"} placeHolder={'New email'} value={business.email} setValue={business.setEmail}/>
+                <Editable textStyle={styles.bodyText} editing={editingDetails} name={"Street Address"} placeHolder={'New location'} value={business.streetAddress? business.streetAddress : ""} setValue={business.setStreetAddress}/>
+                <Editable textStyle={styles.bodyText} editing={editingDetails} name={"Description"} placeHolder={'New description'} value={business.description? business.description : ""} setValue={business.setDescription}/>
+              </View>                
+            </View>
+            <HeaderB headerTextStyle={styles.headerText} headerText='Analytics'/>
+            <Pressable testID="15:137" style={styles.signOutButton} onPress= {onSignOut}>
+            <Text testID="15:138" style={styles.signOutText}>
+              {t('signOut')}
+            </Text>
+          </Pressable>
           </View>
-        </ScrollView>
-        {editingColor?<View style={styles.overlay}>
-          <ColorPicker style={{ width: '100%' }} value={card.colour} onComplete={
-            ({ hex }: {hex: string}) => {
-              'worklet';
-              // do something with the selected color.
-              console.log(hex);
-              card.setColour(hex.substring(1))
-            }
-          }>
-          <Panel1 />
-          <HueSlider />
-        </ColorPicker>
-        <Pressable style={styles.button} onPress={()=>{setEditingColor(false)}}><Text>{t("save")}</Text></Pressable>
-        </View>: null}
-      </SafeAreaView>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
     </SafeAreaProvider>
   );
 }
@@ -218,16 +175,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     rowGap: 30,
    },
-   overlay:{
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-   },
   frame: {
     alignSelf: 'stretch',
     justifyContent: 'center',
@@ -239,11 +186,6 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1
-  },
-  colorWidget:{
-    height: 20,
-    width: 20,
     borderWidth: 1
   },
   address: {
@@ -499,8 +441,5 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     paddingHorizontal: 10,
     justifyContent: 'flex-end',
-  },
-  button:{
-    borderRadius: '100%'
   }
 });

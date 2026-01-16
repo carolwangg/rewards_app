@@ -8,6 +8,7 @@ import WelcomeTopPattern from '@/assets/images/top-pattern.svg';
 import FONTS from '@/constants/fonts';
 import React from 'react';
 import { Dimensions } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 
 type Props = {
@@ -17,22 +18,21 @@ type Props = {
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function Welcome({setChoice, toLogin}: Props) {
-
+  const {t} = useTranslation();
   return (
     <View testID={"131:986"} style={styles.root}>
       <View testID={"131:000"} style={styles.topPattern}>
-        <WelcomeTopPattern/>
+        <WelcomeTopPattern width={SCREEN_WIDTH} height={SCREEN_WIDTH * 196/366}/>
       </View>
-      
       <View testID={"131:009"} style={styles.body}>
         <View testID="131:978" style={styles.welcomeText}>
             <Text testID="131:979" style={styles.welcome}>
-            {`Welcome`}
+            {t("welcome")}
             </Text>
         </View>
         <View testID="130:578" style={styles.questionBox}>
           <Text testID="130:579" style={styles.questionText}>
-            {`Are you a:`}
+            {t("auth.areYou")}
           </Text>
         </View>
         <View testID="130:551" style={styles.buttons}>
@@ -41,7 +41,7 @@ export default function Welcome({setChoice, toLogin}: Props) {
                   <BusinessIcon/>
               </View>
               <Text testID="130:528" style={styles.business}>
-                  {`Business`}
+                  {t("businessWord")}
               </Text>
           </Pressable>
           <Pressable testID="130:530" style={styles.customerButton} onPress={()=>{setChoice("customer"); toLogin();}}>
@@ -49,13 +49,13 @@ export default function Welcome({setChoice, toLogin}: Props) {
                   <CustomerIcon/>
               </View>
               <Text testID="130:531" style={styles.customer}>
-                  {`Customer`}
+                  {t("customerWord")}
               </Text>
           </Pressable>
         </View>
       </View>
       <View testID={"131:001"} style={styles.bottomPattern}>
-        <WelcomeBottomPattern/>
+        <WelcomeBottomPattern width={SCREEN_WIDTH} height={SCREEN_WIDTH * 196/366} preserveAspectRatio='xMinYMax meet'/>
       </View>
     </View>
   );
@@ -176,12 +176,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    width: "100%",
+    width: SCREEN_WIDTH,
   },
   bottomPattern: {
     position: 'absolute',
     bottom: 0,
-    left: 0,
+    right: 0,
     width: "100%",
   },
 });

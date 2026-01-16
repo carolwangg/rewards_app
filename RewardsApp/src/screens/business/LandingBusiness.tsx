@@ -6,6 +6,7 @@ import ListItem from "./ListItem";
 import { getBusiness, getBusinessRewards } from '@/services/apiCalls';
 import { Reward } from '@/constants/interfaces';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const TABBAR_HEIGHT = 60
@@ -42,6 +43,7 @@ function performGetBusinessName(userId: string, setBusinessName: any){
   }
 }
 export default function Landing({userId, onPressFunction}: Props) {
+  const {t} = useTranslation();
   const [sortType, setSortType] = useState("Lowest");
   const [listItems, setListItems] = useState<React.JSX.Element[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -70,12 +72,12 @@ export default function Landing({userId, onPressFunction}: Props) {
         <View testID={"53:198"} style = {styles.body} >
           <View testID="9:552" style={styles.welcomeBox}>
             <Text testID="9:553" style={styles.welcome}>
-              {`Welcome, `}{businessName}
+              {`${t('welcome')}, ${businessName}`}
             </Text>
           </View>
             <View testID="9:554" style={styles.frame34}>
             <Text testID="9:555" style={styles.yourOffers}>
-              {`Your Rewards`}
+              {t('business.yourRewards')}
             </Text>
             <Pressable onPress={() => {
                 if (sortType === "Lowest") {
@@ -89,7 +91,7 @@ export default function Landing({userId, onPressFunction}: Props) {
                 console.log(newArray);
               }}>
               <Text testID="9:556" style={styles.sortByLowest}>
-                {`Sort by: `}{sortType}
+                {`${t('sortBy')}${t(sortType.toLowerCase())}`}
               </Text>
             </Pressable>
           </View>

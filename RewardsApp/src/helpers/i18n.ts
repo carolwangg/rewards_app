@@ -7,6 +7,7 @@ import en from '@/assets/locales/en/translation.json'
 import fr from '@/assets/locales/fr/translation.json'
 import es from '@/assets/locales/es/translation.json'
 import zh from '@/assets/locales/zh/translation.json'
+import { FALLBACK_LANGUAGE_CODE } from "@/constants/constants";
 
 const resources = {
   en: { translation: en },
@@ -26,12 +27,13 @@ const getSavedLanguage = async () => {
 export const initI18n = async () => {
   const savedLanguage = await getSavedLanguage();
   const language = savedLanguage || await getDeviceLanguage();
-  const processedLanguage = language? language: undefined;
-  
+  const processedLanguage = language? language: FALLBACK_LANGUAGE_CODE;
+  if (!language) {console.log("No language found, defaulting to:"+FALLBACK_LANGUAGE_CODE)}
+  else{console.log("language found:"+language)}
   i18n.use(initReactI18next).init({
     resources,
     lng: processedLanguage,
-    fallbackLng: "en",
+    fallbackLng: FALLBACK_LANGUAGE_CODE,
     interpolation: {
       escapeValue: false,
     },

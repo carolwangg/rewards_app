@@ -18,7 +18,6 @@ type Props = {
   searchPlaceholder: string
 }
 const DropdownComponent = ({data, value, setValue, subFunction, placeholder, style, containerStyle, placeholderTextStyle, textStyle, maxHeight, searchPlaceholder}: Props) => {
-  console.log("setValue:"+setValue)
   return (
     <Dropdown
       style={[styles.dropdown, style]}
@@ -27,6 +26,7 @@ const DropdownComponent = ({data, value, setValue, subFunction, placeholder, sty
       selectedTextStyle={[styles.bodyText, styles.selectedTextStyle, textStyle]}
       inputSearchStyle={[styles.bodyText, styles.inputSearchStyle, textStyle]}
       iconStyle={styles.iconStyle}
+      iconColor={COLOURS.BLACK}
       data={data}
       maxHeight={maxHeight}
       labelField="label"
@@ -51,15 +51,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     justifyContent: 'center',
-    alignItems: 'stretch',
+    alignItems: 'center',
     borderRadius: 30,
+    height: 'auto',
   },
   containerStyle: {
     width: 200,
-    height: 'auto',
-  },
-  icon: {
-    marginRight: 5,
   },
   placeholderTextStyle: {
     color: 'rgba(146, 144, 180, 1)',
@@ -72,11 +69,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontStyle: 'normal',
     fontWeight: '400',
+    
   },
   iconStyle: {
     width: 20,
     height: 20,
-    color: COLOURS.BLACK
+    color: COLOURS.BLACK,
+    
   },
   inputSearchStyle: {
     height: 40,

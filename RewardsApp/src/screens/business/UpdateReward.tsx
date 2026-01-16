@@ -2,12 +2,12 @@ import FONTS from '@/constants/fonts';
 import { Stack, router } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Alert, Animated, Dimensions, Image, Keyboard, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
 import { Reward } from '@/constants/interfaces';
 import { updateReward } from '@/services/apiCalls';
 import { useReward } from '@/constants/useReward';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Loading from '@/components/Loading';
+import { pickImage } from '@/helpers/imagePicker';
 type Props={
   prevReward: Reward;
 }
@@ -50,29 +50,6 @@ export default function UpdateReward({prevReward}: Props) {
     outputRange: ['#1C274C', '#B6BED8']
   })
 
-  const pickImage = async () => {
-      // Launch the image library
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  
-      if (!permissionResult.granted) {
-        Alert.alert('Permission required', 'Permission to access the media library is required.');
-        return;
-      }
-  
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-  
-      console.log(result);
-  
-      if (!result.canceled) {
-        reward.setimage_url(result.assets[0].uri);
-      }
-    };
-
   const saveRewardUpdate = () => {
     //Check its valid
     if (reward.name != "" &&  reward.points != -1){
@@ -113,7 +90,7 @@ export default function UpdateReward({prevReward}: Props) {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={styles.scroll}>
           <View style={styles.body}>
-            <Pressable testID="15:1618" onPress={pickImage} style={styles.imagePicker}>
+            <Pressable testID="15:1618" onPress={() => {pickImage(reward.setimage_url)}} style={styles.imagePicker}>
                 {imageChoice}
             </Pressable>
             <View style={styles.textBody}>

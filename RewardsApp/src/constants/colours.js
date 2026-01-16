@@ -8,6 +8,7 @@ const COLOURS = {
   DARK_GRAY: '#787792',
   LIGHT_GRAY: '#EDEDED',
   RED: '#FF8383',
+  DARK_RED: '#d8514d',
   BLACK: '#000000'
 };
 

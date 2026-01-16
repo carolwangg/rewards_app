@@ -58,7 +58,7 @@ export interface CustomerReward{
 }
 
 export const defaultCustomerReward = {
-  id: 1,
+  id: "reward_0",
   name: "Temp name",
   description: "Temp desc", 
   image_url: "",

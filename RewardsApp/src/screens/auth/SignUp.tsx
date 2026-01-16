@@ -1,4 +1,4 @@
-import { TouchableWithoutFeedback, Keyboard, Alert, StyleSheet, Pressable, Text, View, TextInput } from 'react-native';
+import { TouchableWithoutFeedback, Keyboard, Alert, StyleSheet, Pressable, Text, View, TextInput, Dimensions } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import Checkmark from '@/assets/images/checkmark.svg'
 import BottomPolygon from '@/assets/images/bottom-pattern-light.svg';
@@ -8,52 +8,54 @@ import { COUNTRY_CODES } from '@/constants/constants';
 import { useState, useMemo, useRef } from 'react';
 import COLOURS from '@/constants/colours';
 import DropdownComponent from '@/components/DropdownComponent';
+import { useTranslation } from 'react-i18next';
 type props={
   userType: string,
   onSignUp: (email: string, name: string, country: string)=>void
 }
-
+const SCREEN_WIDTH = Dimensions.get('window').width;
 export default function SignUp({userType, onSignUp}: props) {
-    const [checked, setChecked] = useState(false);
-    const [checkFill, setCheckFill] = useState('rgba(255, 255, 255, 1)');
-    const [selectedCountryID, setSelectedCountryID] = useState(-1);
-    const [selectedCountry, setSelectedCountry] = useState("Country");
-    const [emailColour, setEmailColour] = useState("black");
-    const emailRef = useRef<string>(null);
-    const performSignUp = () => {
-      if (!checked){
-        Alert.alert("Error signing up", "Please agree to terms and conditions and privacy policy first.");
-        return;
-      }
-      if (selectedCountryID == -1){
-        Alert.alert("Error signing up", "Please pick a country.");
-        return;
-      }
-      const email = emailRef.current?emailRef.current: "";
-      console.log(COUNTRY_CODES[selectedCountry]);
-      onSignUp(email, name, COUNTRY_CODES[selectedCountry]);
+  const {t} = useTranslation();
+  const [checked, setChecked] = useState(false);
+  const [checkFill, setCheckFill] = useState('rgba(255, 255, 255, 1)');
+  const [selectedCountryID, setSelectedCountryID] = useState(-1);
+  const [selectedCountry, setSelectedCountry] = useState("Country");
+  const [emailColour, setEmailColour] = useState("black");
+  const emailRef = useRef<string>(null);
+  const performSignUp = () => {
+    if (!checked){
+      Alert.alert("Error signing up", "Please agree to terms and conditions and privacy policy first.");
+      return;
     }
-
-    const acceptTerms = () => {
-        //toggle checkBox
-        const temp = !checked
-        setChecked(temp);
-        const color = temp ? '#ededed' : 'rgba(255, 255, 255, 1)';
-        setCheckFill(color);
+    if (selectedCountryID == -1){
+      Alert.alert("Error signing up", "Please pick a country.");
+      return;
     }
+    const email = emailRef.current?emailRef.current: "";
+    console.log(COUNTRY_CODES[selectedCountry]);
+    onSignUp(email, name, COUNTRY_CODES[selectedCountry]);
+  }
 
-    const changeSelectedCountry = (countryID: number) => {
-        //change selected country based on dropdown selection
-        //dummy country data for now
-        const countries = ["USA", "Canada", "UK", "Germany", "France"];
-        setSelectedCountry(countries[countryID]);
-    }
+  const acceptTerms = () => {
+      //toggle checkBox
+      const temp = !checked
+      setChecked(temp);
+      const color = temp ? '#ededed' : 'rgba(255, 255, 255, 1)';
+      setCheckFill(color);
+  }
 
-    const data = [
-        { label: 'USA', value: 0 },
-        { label: 'Canada', value: 1 },
-        { label: 'Spain', value: 2 },
-      ];
+  const changeSelectedCountry = (countryID: number) => {
+      //change selected country based on dropdown selection
+      //dummy country data for now
+      const countries = ["USA", "Canada", "UK", "Germany", "France"];
+      setSelectedCountry(countries[countryID]);
+  }
+
+  const data = [
+    { label: 'USA', value: 0 },
+    { label: 'Canada', value: 1 },
+    { label: 'Spain', value: 2 },
+  ];
 
   const [name, setName] = useState("");
   const { formContents } = useMemo(() => {
@@ -70,59 +72,59 @@ export default function SignUp({userType, onSignUp}: props) {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View testID={"139:1288"} style={styles.root}>
         <View testID={"131:000"} style={styles.topPattern}>
-            <TopPolygon/>
+            <TopPolygon width={SCREEN_WIDTH} height={SCREEN_WIDTH * 196/366}/>
         </View>
         <View testID={"131:001"} style={styles.bottomPattern}>
-          <BottomPolygon/>
+          <BottomPolygon width={SCREEN_WIDTH} height={SCREEN_WIDTH * 196/366} preserveAspectRatio='xMinYMax meet'/>
         </View>
         <View testID="139:1197" style={styles.signUpBox}>
             <View testID="139:1222" style={styles.signUpText}>
                 <Text testID="139:1223" style={styles.signUp}>
-                    {`Sign Up`}
+                    {t("auth.signUp")}
                 </Text>
             </View>
             <View style={styles.formContents}>
               {formContents}
                 <TextInput  style={[styles.containerStyle, styles.bodyText, {width: '100%', outlineColor: emailColour}]} 
-                placeholder='Email' 
+                placeholder={t("email")}
                 placeholderTextColor={'rgba(146, 144, 180, 1)'} 
                 onChangeText={(text) => {
                 emailRef.current = text; 
                 setEmailColour(text.match(/.+@.+\..+/)? 'black': COLOURS.RED)}} 
                 maxLength={45} 
                 selectionColor={COLOURS.RED}/>
-              <DropdownComponent data ={data} value={selectedCountryID} setValue={setSelectedCountryID} subFunction={changeSelectedCountry} placeholder="Country" maxHeight={200} searchPlaceholder='Search countries...' 
+              <DropdownComponent data ={data} value={selectedCountryID} setValue={setSelectedCountryID} subFunction={changeSelectedCountry} placeholder={t("country")} maxHeight={200} searchPlaceholder='Search countries...' 
               style={styles.containerStyle} containerStyle={styles.dropdownItemContainer} placeholderTextStyle={styles.placeholderText} textStyle={styles.bodyText}/> 
             </View>
             <View testID="139:1237" style={styles.termsFrame}>
-                <Pressable testID="139:1241" style={[styles.checkBox, {backgroundColor: checkFill}]} onPress={acceptTerms}>
-                  <View style={styles.checkMarkBox}>
-                    <Checkmark style={{display: checked? 'flex': 'none'}}/>
-                  </View>
-                </Pressable>
-                <View testID="139:1281" style={styles.frame68}>
-                    <Text testID="139:1238" style={styles.termsText}>
-                    {`Accept `}
-                    </Text>
-                    <View testID="139:1278" style={styles.frame66}>
-                    <Text testID="139:1271" style={styles.termsText2}>
-                        {`Terms and Conditions `}
-                    </Text>
-                    </View>
-                    <Text testID="139:1275" style={styles.termsText3}>
-                    {`and`}
-                    </Text>
-                    <View testID="139:1280" style={styles.frame67}>
-                    <Text testID="139:1273" style={styles.termsText4}>
-                        {`Privacy Policy`}
-                    </Text>
-                    </View>
+              <Pressable testID="139:1241" style={[styles.checkBox, {backgroundColor: checkFill}]} onPress={acceptTerms}>
+                <View style={styles.checkMarkBox}>
+                  <Checkmark style={{display: checked? 'flex': 'none'}}/>
                 </View>
+              </Pressable>
+              <View testID="139:1281" style={styles.termsTextFull}>
+                  <Text testID="139:1238" style={styles.termsText}>
+                  {t("auth.accept")}
+                  </Text>
+                  <View testID="139:1278" style={styles.frame66}>
+                  <Text testID="139:1271" style={styles.termsText2}>
+                      {t("auth.termsAndConditions")}
+                  </Text>
+                  </View>
+                  <Text testID="139:1275" style={styles.termsText3}>
+                  {t("auth.and")}
+                  </Text>
+                  <View testID="139:1280" style={styles.frame67}>
+                  <Text testID="139:1273" style={styles.termsText4}>
+                      {t("auth.privacyPolicy")}
+                  </Text>
+                </View>
+              </View>
             </View>
             <View testID="7:120" style={styles.joinRow}>  
                 <Pressable testID="139:1268" style={styles.joinNowButton} onPress={performSignUp}>
                     <Text testID="139:1269" style={styles.joinNow}>
-                        {`Join now`}
+                        {t("auth.joinNow")}
                     </Text>
                 </Pressable>
             </View>
@@ -163,7 +165,7 @@ type dropdownProps = {
 
 const styles = StyleSheet.create({
   root: {
-    width: 393,
+    width: SCREEN_WIDTH,
     height: '100%',
     backgroundColor: 'rgba(255, 255, 255, 1)',
     position: 'relative',
@@ -238,7 +240,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0, 0, 0, 1)',
   },
   termsText: {
-    width: 47,
     flexShrink: 0,
     color: 'rgba(0, 0, 0, 1)',
     fontFamily: FONTS.GOWUN_DODUM,
@@ -257,23 +258,18 @@ const styles = StyleSheet.create({
   },
   termsFrame: {
     flexDirection: 'row',
-    paddingTop: 10,
-    paddingLeft: 10,
-    paddingBottom: 10,
-    paddingRight: 10,
+    padding: 10,
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     alignSelf: 'stretch',
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
+    borderRadius: 30,
   },
-  frame68: {
+  termsTextFull: {
     flexDirection: 'row',
     width: '85%',
     alignItems: 'center',
     alignContent: 'center',
+    justifyContent: 'flex-start',
     columnGap: 9,
     flexWrap: 'wrap',
   },
@@ -282,7 +278,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   termsText3: {
-    width: 25,
     flexShrink: 0,
     color: 'rgba(0, 0, 0, 1)',
     fontFamily: FONTS.GOWUN_DODUM,
@@ -291,7 +286,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   termsText4: {
-    width: 136,
     color: 'rgba(74, 189, 172, 1)',
     fontFamily: FONTS.GOWUN_DODUM,
     fontSize: 16,

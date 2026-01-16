@@ -16,6 +16,6 @@ export default function Login() {
     console.log(user?.emailAddresses[0]?.emailAddress);
     user?.id ? console.log(user.id) : console.log("No user ID");
     
-    return (<LandingCustomer userId={userId} cart={cart} setCart={setCart} setCartReward={setCartReward} setCardPoints={setCardPoints}/>);
+    return <LandingCustomer userId={userId} cart={cart} setCart={setCart} setCartReward={setCartReward} setCardPoints={setCardPoints}/>;
 
 }

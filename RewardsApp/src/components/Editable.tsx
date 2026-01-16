@@ -10,7 +10,8 @@ type Props = {
   placeHolder: string,
   value: string,
   setValue: (value: string) => void,
-  maxLength?: number
+  maxLength?: number,
+  noValuePlaceholder?: string
 }
 
 function renderName(name: string){
@@ -19,13 +20,13 @@ function renderName(name: string){
                   {name}
                 </Text>
 }
-export default function Editable({textStyle, textInputContainerStyle, contentContainerStyle, editing, name, placeHolder, value, setValue, maxLength}: Props) {
+export default function Editable({textStyle, textInputContainerStyle, contentContainerStyle, editing, name, placeHolder, value, setValue, maxLength, noValuePlaceholder}: Props) {
   const chosenLength = maxLength? maxLength: 100;
   if (!editing) {
         return <View style={[styles.root, contentContainerStyle]}>
                 <View>{renderName(name)}</View>
                 <View style={[styles.textInputBox, textInputContainerStyle, {backgroundColor: "transparent", borderWidth: 0}]}>
-                  <Text style={[styles.textInput, textStyle]}>{value}</Text>
+                  <Text style={[styles.textInput, textStyle]}>{!value && noValuePlaceholder? noValuePlaceholder : value}</Text>
                 </View>
             </View>
     }

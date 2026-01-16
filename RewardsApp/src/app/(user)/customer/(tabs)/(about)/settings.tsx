@@ -1,9 +1,9 @@
-import ProfileBusiness from '@/screens/business/ProfileBusiness';
 import { useContext } from 'react';
 import { AppContext } from "@/store/AppContext";
+import SettingsCustomer from '@/screens/customer/SettingsCustomer';
 
-export default function Account() {
+export default function Settings() {
     const {userType, userId} = useContext(AppContext)!;
     console.log(userType);
-    return (<ProfileBusiness userId = {userId}/>);
+    return (<SettingsCustomer userId = {userId}/>);
 }

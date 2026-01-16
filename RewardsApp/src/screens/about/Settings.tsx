@@ -8,6 +8,8 @@ import ProfileIcon from '@/assets/images/profile-icon.svg';
 import FONTS from '@/constants/fonts';
 import COLOURS from '@/constants/colours';
 import { RelativePathString, router } from 'expo-router';
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -18,35 +20,38 @@ type Props = {
     setSelectedId: Function
 }
 
-function factory(id: string, selectedId: string, setSelectedId: Function){
+
+export default function SettingsPage({selectedId, setSelectedId}: Props) {
+  const {t} = useTranslation();
+  const factory = useCallback((id: string, selectedId: string, setSelectedId: Function) => {
     let icon, text;
     let url: RelativePathString;
     let onPressAction = () => {setSelectedId(id); router.push(url)};
     switch(id){
         case "account":
             icon = <ProfileIcon/>;
-            text = "Account Details";
+            text = t("settings.accountDetails");
             url = "./account";
             onPressAction = () => {setSelectedId(id); router.replace(url)};
             break;
         case "settings":
             icon = <SettingsIcon/>;
-            text = "Settings & Privacy";
+            text = t("settings.settings&Privacy");
             url = "./settings";
             break;
         case "language":
             icon = <LanguageIcon/>;
-            text = "Language";
+            text = t("settings.language");
             url = "./language";
             break;
         case "theme":
             icon = <ThemeIcon/>;
-            text = "Theme";
+            text = t("settings.theme");
             url = "./theme";
             break;
         case "notifs":
             icon = <NotifsIcon/>;
-            text = "Notifications";
+            text = t("settings.notifs");
             url = "./notifs";
             break;
         default:
@@ -54,25 +59,23 @@ function factory(id: string, selectedId: string, setSelectedId: Function){
             break;
     }
     if (id === selectedId){
-        return <Pressable id={id} style={[styles.option, styles.selected]} onPress={onPressAction}>
+        return <Pressable key={id} id={id} style={[styles.option, styles.selected]} onPress={onPressAction}>
         {icon}
         <Text style={styles.optionText}>
           {text}
         </Text>
       </Pressable>
     }
-    return <Pressable id={id} style={[styles.option]} onPress={onPressAction}>
+    return <Pressable key={id} id={id} style={[styles.option]} onPress={onPressAction}>
         {icon}
         <Text style={styles.optionText}>
           {text}
         </Text>
       </Pressable>
-}
-
-export default function SettingsPage({selectedId, setSelectedId}: Props) {
+}, [t]);
   return (
     <View testID="247:1216" style={[styles.root]}>
-        <View style={styles.body}>
+        <View style={[styles.body, {paddingTop: '10%'}]}>
             {IDS.map((id) => factory(id, selectedId, setSelectedId))}
         </View>
     </View>

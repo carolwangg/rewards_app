@@ -9,6 +9,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useState, useEffect, useCallback } from 'react';
 import { getRewards } from '@/services/apiCalls';
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 const onRewardsPress = () => {
   router.push("./itemList");
@@ -29,7 +30,7 @@ const loadRewards = async(setRewards: Function, setLoading: Function) => {
 export default function DiscoverComponent() {
   const [rewards, setRewards] = useState<CustomerReward[] | null>(null);
   const [loading, setLoading] = useState(true);
-
+  const { t } = useTranslation();
   useEffect(() => {loadRewards(setRewards, setLoading);}, []);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -48,20 +49,20 @@ export default function DiscoverComponent() {
               <View testID="175:454" style={styles.locationRow}>
                   <View testID="175:455" style={styles.locationButton}>
                   <Text testID="175:456" style={styles.locationText}>
-                      {`Current Location`}
+                      {t('currentLocation')}
                   </Text>
                   <ChevronDown testID="175:457"/>
                   </View>
               </View>
-              <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20, backgroundColor: 'rgba(183, 230, 130, 1)'}} headerText={"Near you"} onPress={onRewardsPress} sideText='See All'/>
+              <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20, backgroundColor: 'rgba(183, 230, 130, 1)'}} headerText={t('customer.nearYou')} onPress={onRewardsPress} sideText={t('seeAll')}/>
               <View style={[styles.rewardCarouselBox, {backgroundColor: 'rgba(183, 230, 130, 1)'}]}>
                   <RewardCarousel rewards={rewards != null? rewards: []}/>
               </View>    
-              <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20}} headerText={"Recommended For You"} onPress={onRewardsPress} sideText='See All'/>
+              <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20}} headerText={t('customer.recommended')} onPress={onRewardsPress} sideText={t('seeAll')}/>
               <View style={styles.rewardCarouselBox}>
                   <RewardCarousel rewards={rewards != null? rewards: []}/>
               </View> 
-              <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20}} headerText={"New Arrivals"} onPress={onRewardsPress} sideText='See All'/>
+              <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20}} headerText={t('customer.newArrivals')} onPress={onRewardsPress} sideText={t('seeAll')}/>
               <View style={styles.rewardCarouselBox}>
                   <RewardCarousel rewards={rewards != null? rewards: []}/>
               </View>                     

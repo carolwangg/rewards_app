@@ -2,9 +2,10 @@ import FONTS from '@/constants/fonts';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import ListItem from './StackedList';
 import QRCode from 'react-native-qrcode-svg';
-import { useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { RedeemInfo, AddPointInfo, isRedeemInfo } from '@/constants/interfaces';
+import { useTranslation } from 'react-i18next';
 const SCREEN_HEIGHT = Dimensions.get('window').height
 const TABBAR_HEIGHT = 60
 
@@ -12,35 +13,35 @@ type Props = {
   data: RedeemInfo | AddPointInfo
 }
 
-function getCartView(cart: RedeemInfo | AddPointInfo){
-  console.log("customer cart:"+cart);
-  if (isRedeemInfo(cart)){
-    console.log("cart: "+cart)
-    return <View testID="15:3" style={styles.frame51}>
-            <View testID="9:369" style={styles.dataBox}>
-              <Text testID="9:370" style={styles.data}>
-                {`Cart`}
-              </Text>
-            </View>
-            <ListItem id={cart.reward_id} name={cart.reward_name} offset={0}/>
-          </View>
-  }
-}
-
 
 export default function QRcodeCustomer({data}: Props) {
   const [qrSize, setQrSize] = useState<number>(100);
-  
+  const { t } = useTranslation();
+
+  const getCartView = useCallback(() => {
+    console.log("customer cart:"+data);
+    if (isRedeemInfo(data)){
+      console.log("cart: "+data)
+      return <View testID="15:3" style={styles.frame51}>
+              <View testID="9:369" style={styles.dataBox}>
+                <Text testID="9:370" style={styles.data}>
+                  {t('customer.cart')}
+                </Text>
+              </View>
+              <ListItem id={data.reward_id} name={data.reward_name} offset={0}/>
+            </View>
+    }
+  }, [data]);
   
   return (
     <SafeAreaProvider>
     <SafeAreaView testID={"53:190"} style={styles.root} edges={["top"]}>
       <View style = {styles.phone} >
         <View style = {styles.body} >
-          {getCartView(data)}
+          {getCartView()}
           <View testID="9:431" style={styles.scanQrBox}>
             <Text testID="9:432" style={styles.scanQrCodeAtCheckout}>
-              {`Scan QR at checkout`}
+              {t('customer.scanQR')}
             </Text>
           </View>
           <View

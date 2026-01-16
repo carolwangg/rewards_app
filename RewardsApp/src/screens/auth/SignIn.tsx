@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Keyboard, Pressable, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Dimensions, Keyboard, Pressable, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { useRef, useState } from 'react';
 import AppleLogo from '@/assets/images/apple-logo.svg';
 import WelcomeBottomPattern from '@/assets/images/bottom-pattern.svg';
@@ -8,12 +8,14 @@ import GoogleLogo from '@/assets/images/google-logo.svg';
 import WelcomeTopPattern from '@/assets/images/top-pattern.svg';
 import FONTS from '@/constants/fonts';
 import COLOURS from '@/constants/colours';
+import { useTranslation } from 'react-i18next';
 
 type props={
     onSignIn: (email: string)=>void
 }
-
+const SCREEN_WIDTH = Dimensions.get('window').width;
 export default function SignIn({onSignIn}: props) {
+  const {t} = useTranslation();
   const emailRef = useRef<string>(null);
   const [emailColour, setEmailColour] = useState("black");
 
@@ -27,16 +29,16 @@ export default function SignIn({onSignIn}: props) {
     <TouchableWithoutFeedback testID={"53:186"} onPress={Keyboard.dismiss}>
       <View style={styles.root}>
         <View testID={"131:000"} style={styles.topPattern}>
-          <WelcomeTopPattern/>
+          <WelcomeTopPattern width={SCREEN_WIDTH} height={SCREEN_WIDTH * 196/366}/>
         </View>
         <View testID={"131:001"} style={styles.bottomPattern}>
-          <WelcomeBottomPattern/>
+          <WelcomeBottomPattern width={SCREEN_WIDTH} height={SCREEN_WIDTH * 196/366} preserveAspectRatio='xMinYMax meet'/>
         </View>
         <View testID={"131:009"} style={styles.body}>
           
           <View testID="8:161" style={styles.welcomeFrame}>
             <Text testID="8:162" style={styles.welcome}>
-              {`Welcome`}
+              {t("welcome")}
             </Text>
           </View>
           <View testID="6:18" style={styles.loginBox}>
@@ -44,7 +46,7 @@ export default function SignIn({onSignIn}: props) {
               <TextInput
                 testID="6:20"
                 style={[styles.email, {outlineColor: emailColour}]}
-                placeholder="Email"
+                placeholder={t("email")}
                 placeholderTextColor="rgba(146, 144, 180, 1)"
                 onChangeText={(text) => {
                 emailRef.current = text;
@@ -55,7 +57,7 @@ export default function SignIn({onSignIn}: props) {
             </View>
             <Pressable testID="6:30" style={styles.logInButton} onPress={performSignIn}>
               <Text testID="6:31" style={styles.logIn}>
-                {`Log In`}
+                {t("auth.logIn")}
               </Text>
             </Pressable>
             <View testID="6:32" style={styles.whiteSpace}/>
@@ -64,19 +66,19 @@ export default function SignIn({onSignIn}: props) {
                 <GoogleLogo/>
               </View>
               <Text testID="6:36" style={styles.logInWithGoogle}>
-                {`Log in with Google`}
+                {`${t("auth.logInWith")} Google`}
               </Text>
             </View>
             <View testID="6:37" style={[styles.companyLogIn, styles.facebookLogIn]}>
               <FacebookLogo/>
               <Text testID="6:44" style={styles.logInWithFacebook}>
-                {`Log in with Facebook`}
+                {`${t("auth.logInWith")} Facebook`}
               </Text>
             </View>
             <View testID="112:262" style={[styles.companyLogIn, styles.appleLogIn]}>
               <AppleLogo/>
               <Text testID="112:269" style={styles.logInWithAppleId}>
-                {`Log in with Apple ID`}
+                {`${t("auth.logInWith")} Apple ID`}
               </Text>
             </View>
           </View>
@@ -98,7 +100,7 @@ export default function SignIn({onSignIn}: props) {
 
 const styles = StyleSheet.create({
   root: {
-    width: 393,
+    width: SCREEN_WIDTH,
     height: "100%",
     position: 'relative',
     flex: 1,
@@ -108,7 +110,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 1)',
   },
   body: {
-    width: 300,
+    width: '100%',
     height: 'auto',
     display: 'flex',
     flexDirection: 'column',

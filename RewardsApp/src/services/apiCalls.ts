@@ -1,7 +1,5 @@
 import { SITE_URL } from "@/constants/constants";
 import { APIResponse, Reward } from "@/constants/interfaces";
-import getDefaultLanguage from "@/helpers/language";
-
 
 export const pingBackend = async (): Promise<boolean> => {
     try {
@@ -45,6 +43,7 @@ export const updateReward = async (reward: Reward) => {
     try {
       const backendUrl = `${SITE_URL}/rewards/update`;
       const formData = new FormData();
+      formData.append("business_id", reward.business_id);
       formData.append("reward_id", reward.id);
       formData.append("name", reward.name);
       formData.append("points", reward.points.toString());
@@ -320,9 +319,9 @@ export const addCustomer = async (customerId: string, email: string, country: st
 };
 
 
-export const updateCustomer = async (id: string, customer: any) => {
+export const updateCustomer = async (customer: any) => {
     try {
-      const backendUrl = `${SITE_URL}/customers/${id}/update`;
+      const backendUrl = `${SITE_URL}/customers/${customer.id}/update`;
       const response = await fetch(backendUrl, {
       method: 'POST',
       headers: {
@@ -347,6 +346,84 @@ export const updateCustomer = async (id: string, customer: any) => {
     } 
 }
 
+export const updateCustomerImage = async (id: string, image_url: string) => {
+    try {
+      const backendUrl = `${SITE_URL}/customers/${id}/updateImage`;
+      const formData = new FormData();
+      formData.append("image", {
+        uri: image_url,
+        name: "customer_image",
+        type: "image/jpeg,jpg,png,heif"
+      } as any);
+      const response = await fetch(backendUrl, {
+          method: 'POST',
+          headers: {
+          Accept: 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: formData
+      });
+
+      const json = await response.json();
+      console.log(json);
+      return json;
+    } catch (error) {
+      throw error;
+    } 
+}
+
+
+export const updateBusinessImage = async (id: string, image_url: string) => {
+    try {
+      const backendUrl = `${SITE_URL}/businesses/${id}/updateImage`;
+      const formData = new FormData();
+      formData.append("image", {
+        uri: image_url,
+        name: "business_image",
+        type: "image/jpeg,jpg,png,heif"
+      } as any);
+      const response = await fetch(backendUrl, {
+          method: 'POST',
+          headers: {
+          Accept: 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: formData
+      });
+      const json = await response.json();
+      console.log(json);
+      return json;
+    } catch (error) {
+      throw error;
+    } 
+}
+
+
+export const updateBusinessBanner = async (id: string, image_url: string) => {
+    try {
+      const backendUrl = `${SITE_URL}/businesses/${id}/updateBanner`;
+      const formData = new FormData();
+      formData.append("image", {
+        uri: image_url,
+        name: "business_banner",
+        type: "image/jpeg,jpg,png,heif"
+      } as any);
+      const response = await fetch(backendUrl, {
+          method: 'POST',
+          headers: {
+          Accept: 'application/json',
+              'Content-Type': 'application/json',
+          },
+          body: formData
+      });
+
+      const json = await response.json();
+      console.log(json);
+      return json;
+    } catch (error) {
+      throw error;
+    } 
+}
 
 export const addBusiness = async (businessId: string, email: string, country: string, name: string) => {
   try {

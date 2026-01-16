@@ -6,15 +6,20 @@ import { Link } from 'expo-router';
 import { Image } from "expo-image";
 import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import COLOURS from "@/constants/colours";
 type Props = {
   cart: string;
   setCart: Function,
   setCartReward: Function
-  reward: CustomerReward
+  reward: CustomerReward,
+  pointsString?: string,
+  kmString?: string
 };
 
 type ListInteriorCustomerProps = {
-  reward: CustomerReward
+  reward: CustomerReward,
+  pointsString?: string,
+  kmString?: string
 };
 
 interface RotatingViewProps {
@@ -26,6 +31,27 @@ interface RotatingViewProps {
   setSelected: Function;
 }
 
+export const EmptyListItem = ({message, points, km}: {message: string, points: string, km: string}) => {
+  return <View style = {styles.item}>
+          <View style={{width: '100%', justifyContent: 'center', alignItems: 'flex-start'}}>
+            <View style={styles.detailsBox}>
+              <View style={[styles.photoBox, {backgroundColor: COLOURS.GRAY}]}/>
+              <View style={styles.info}>
+                <Text style={[styles.title, {width: '100%', color: COLOURS.DARK_GRAY}]} numberOfLines={1} ellipsizeMode='tail'>{message}</Text>
+                <Text style={[styles.text, {backgroundColor: COLOURS.GRAY, width: '100%'}]} numberOfLines={2} ellipsizeMode='tail'/>
+                <View testID="175:395" style={styles.pointFrame}>
+                  <Text testID="175:396" style={[styles.pointText, {color: COLOURS.DARK_GRAY}]}>
+                    {points}{"     "}
+                  </Text>
+                  <Text testID="175:397" style={[styles.distanceText, {color: COLOURS.DARK_GRAY}]}>
+                    {"    "}{km}
+                  </Text>
+                </View>                
+              </View>
+            </View>
+          </View>
+        </View>
+};
 const RotatingView: React.FC<PropsWithChildren<RotatingViewProps>> = props => {
   const currentAnglePlus = useRef(new Animated.Value(0)).current;
   const currentOpacityPlus = useRef(new Animated.Value(1)).current;
@@ -147,7 +173,7 @@ const RotatingView: React.FC<PropsWithChildren<RotatingViewProps>> = props => {
   );
 };
 
-export default function ListItem({cart, setCart, setCartReward, reward}: Props) {
+export default function ListItem({cart, setCart, setCartReward, reward, pointsString, kmString}: Props) {
   const [selected, setSelected] = useState(false);
   const updateCart = async() => {
     console.log("prev selected:"+selected);
@@ -166,13 +192,13 @@ export default function ListItem({cart, setCart, setCartReward, reward}: Props) 
   return <View style = {styles.item}>
             <Link style={styles.section} href={{pathname: './item/[item]',
         params: { item: reward.id, reward: JSON.stringify(reward)}}}>
-              <ListInteriorCustomer reward={reward}/>
+              <ListInteriorCustomer reward={reward} pointsString={pointsString} kmString={kmString}/>
             </Link>
             <RotatingView selected={selected} setSelected={setSelected} cart={cart} itemId={reward.id} updateCart={updateCart}/>
           </View>
 }
 
-export function ListInteriorCustomer ({reward}: ListInteriorCustomerProps) {
+export function ListInteriorCustomer ({reward, pointsString, kmString}: ListInteriorCustomerProps) {
   console.log("item: "+reward.name+", url:"+reward.image_url)
   return  <View style={{width: '100%', justifyContent: 'center', alignItems: 'flex-start'}}>
             <View style={styles.detailsBox}>
@@ -184,10 +210,10 @@ export function ListInteriorCustomer ({reward}: ListInteriorCustomerProps) {
                 <Text style={styles.text} numberOfLines={2} ellipsizeMode='tail'>{reward.description}</Text>
                 <View testID="175:395" style={styles.pointFrame}>
                   <Text testID="175:396" style={styles.pointText}>
-                    {`Points: `}{reward.points}
+                    {pointsString? pointsString: `Points: `}{reward.points}
                   </Text>
                   <Text testID="175:397" style={styles.distanceText}>
-                    {reward.distance}{`km`}
+                    {reward.distance}{kmString? kmString: `km`}
                   </Text>
                 </View>                
               </View>
@@ -209,7 +235,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: 'rgb(255, 255, 255)',
     columnGap: 10,
-    borderWidth:1
+    borderWidth:1,
+    minHeight: 100
   },
   section:{
     display: 'flex',

@@ -1,15 +1,15 @@
 import FONTS from '@/constants/fonts';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState, useEffect, useCallback } from 'react';
 import { Alert, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 import DropdownComponent from '@/components/DropdownComponent';
-import ListItem from './ListItem';
+import ListItem, { EmptyListItem } from './ListItem';
 import { getCustomerCards, getCustomerCardRewards, getCustomer } from '@/services/apiCalls';
 import { CustomerCard, CustomerReward } from '@/constants/interfaces';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/Header';
 import COLOURS from '@/constants/colours';
 import { useTranslation } from 'react-i18next';
+import Card from '@/components/Card';
 
 function performGetCustomerName(userId: string, setCustomerName: any){
   try{
@@ -90,44 +90,8 @@ const processData = (cards: CustomerCard[], allRewards: Map<string, CustomerRewa
   console.log(allRewards);
 }
 
-const rewardToElement = (cart: string, setCart: Function, setCartReward: Function, selectedRewards: CustomerReward[]) => {
-  if (selectedRewards.length === 0){
-    return <View style={{justifyContent: 'center', width: '80%', alignItems: 'center', height: 200}}><Text style={[styles.itemName, {textAlign: 'center'}]}> {`Get points by visiting businesses`} </Text></View>;
-  }
-  return selectedRewards.map((reward) => <ListItem cart={cart} setCart={setCart} setCartReward={setCartReward} key={reward.id} reward={reward} />);
-}
 
-const cardToElement = (selectedCard: CustomerCard | null) => {
-  if (selectedCard == null){
-    return <View style={{justifyContent: 'center', alignItems: 'center', width: '80%', height: 200}}><Text style={styles.itemName}>{`Add a card from the discover page to get started!`}</Text></View>;
-  }
-  return <View>
-            <View testID="9:207" style={[styles.cardBox, {backgroundColor: selectedCard.colour}]}>
-              <View testID="9:214" style={styles.frame29}>
-                <Ionicons name={'ellipse'} size={70}/>
-                <Text testID="9:210" style={styles.businessName2}>
-                  {selectedCard.name}
-                </Text>
-              </View>
-              <Text testID="9:212" style={styles.contactInfo}>
-                {selectedCard.contactInfo}
-              </Text>
-              <Text testID="9:208" style={styles.tagline}>
-                {selectedCard.description}
-              </Text>
-            </View>
-            <View testID="9:216" style={styles.frame30}>
-              <Text testID="9:218" style={styles.points}>
-                {`Points:`}
-              </Text>
-              <View testID="9:222" style={styles.frame31}>
-                <Text testID="9:220" style={styles.$124}>
-                  {selectedCard.points}
-                </Text>
-              </View>
-            </View>
-          </View>;
-  }
+
 export default function Landing({userId, cart, setCart, setCartReward, setCardPoints}: Props) {
   const { t } = useTranslation();
   const [sortType, setSortType] = useState("Lowest");
@@ -174,36 +138,56 @@ export default function Landing({userId, cart, setCart, setCartReward, setCardPo
       newArray.reverse()
       setSelectedRewards(newArray);
   }
-                  
+
+  const cardToElement = useCallback((selectedCard: CustomerCard | null) => {
+  return <View>
+            <Card card={selectedCard} emptyMessage={t("customer.emptyCardsMessage")}/>
+            <View testID="9:216" style={styles.pointFrame}>
+              <Text testID="9:218" style={styles.points}>
+                {`${t("points")}:`}
+              </Text>
+              <View testID="9:222" style={styles.pointTextFrame}>
+                <Text testID="9:220" style={styles.pointText}>
+                  {selectedCard? selectedCard.points: "      "}
+                </Text>
+              </View>
+            </View>
+          </View>;
+  }, [t]);
+  const rewardToElement = useCallback((cart: string, setCart: Function, setCartReward: Function, selectedRewards: CustomerReward[]) => {
+    if (selectedRewards.length === 0){
+      return <EmptyListItem message={t("customer.emptyRewardMessage")} points={`${t("points")}: `} km={t("customer.kmShorthand")}/>;
+    }
+    return selectedRewards.map((reward) => <ListItem cart={cart} setCart={setCart} setCartReward={setCartReward} key={reward.id} reward={reward} pointsString={`${t("points")}: `} kmString={t("customer.kmShorthand")} />);
+  }, [t]);
+
   useEffect(() => {console.log("used effect"); getCards(userId, setCards);performGetCustomerName(userId, setName) }, []);
   useEffect(() => {getAllRewards(userId, cards, setIdToRewards);}, [cards]);
   useEffect(() => {processData(cards, idToRewards, setIdToCard, setData, setSelectedCard, setSelectedRewards, setSelectedCardId);}, [idToRewards]);
   return (
     <SafeAreaProvider>
-    <SafeAreaView testID={"53:190"} style={styles.root} edges={["top"]}>
-      <ScrollView testID={"53:189"} contentContainerStyle={styles.scroll} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
-          <View style={styles.body}>
-            <View testID="9:230" style={styles.welcomeBox}>
-              <Text testID="9:231" style={styles.headerText}>
-                {t('customers.9:231')}{name}
-              </Text>
-            </View>
-            <View testID="9:188" style={styles.frame14}>
-              <View style={styles.dropdown}>
-                <DropdownComponent data={data} value={selectedCardId} setValue={setSelectedCardId} subFunction={changeBusiness} placeholder='Select Card' maxHeight={300} searchPlaceholder='Search...' placeholderTextStyle={{color: COLOURS.BLACK}}/>
+      <SafeAreaView testID={"53:190"} style={styles.root} edges={["top"]}>
+        <ScrollView testID={"53:189"} contentContainerStyle={styles.scroll} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}>
+            <View style={styles.body}>
+              <View testID="9:230" style={styles.welcomeBox}>
+                <Text testID="9:231" style={styles.headerText}>
+                  {`${t('welcome')}, ${name}`}
+                </Text>
               </View>
-            </View>
-              {cardToElement(selectedCard)}     
-            <Header headerTextStyle={styles.yourOffers} headerText={t('customers.yourOffers')} onPress={onSortByPress} sideText={`Sort by: `+sortType}/>
-            <View testID="9:254" style={styles.frame34}/>
-            <View style={styles.offerBox}>
-              <View testID="9:248" style={styles.offerListBox}>
-                {rewardToElement(cart, setCart, setCartReward, selectedRewards)}
+              <View testID="9:188" style={styles.frame14}>
+                <DropdownComponent style={styles.dropdown} data={data} value={selectedCardId} setValue={setSelectedCardId} subFunction={changeBusiness} placeholder={t('customer.selectCard')} maxHeight={300} searchPlaceholder={t('search')} placeholderTextStyle={{color: COLOURS.DARK_GRAY}}/>
               </View>
-            </View>
-          </View>         
-      </ScrollView>
-    </SafeAreaView>
+                {cardToElement(selectedCard)}     
+              <Header headerTextStyle={styles.yourOffers} headerText={t('customer.yourOffers')} onPress={onSortByPress} sideText={t('sortBy')+t(sortType.toLowerCase())}/>
+              <View testID="9:254" style={styles.frame34}/>
+              <View style={styles.offerBox}>
+                <View testID="9:248" style={styles.offerListBox}>
+                  {rewardToElement(cart, setCart, setCartReward, selectedRewards)}
+                </View>
+              </View>
+            </View>         
+        </ScrollView>
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }
@@ -263,13 +247,13 @@ const styles = StyleSheet.create({
     width: 220,
     alignSelf: 'stretch',
     borderRadius: 30,
-    backgroundColor: 'rgba(183, 230, 130, 1)',
+    backgroundColor: COLOURS.GRAY,
     justifyContent: 'center',
     alignItems: 'center',
     boxSizing: 'border-box',
     padding: 10
   },
-  businessName2: {
+  cardName: {
     color: 'rgba(255, 255, 255, 1)',
     fontFamily: FONTS.GOWUN_DODUM,
     fontSize: 24,
@@ -294,7 +278,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
-  frame29: {
+  nameAndIcon: {
     flexDirection: 'row',
     paddingTop: 10,
     paddingLeft: 0,
@@ -326,14 +310,14 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '400',
   },
-  $124: {
+  pointText: {
     color: 'rgba(0, 0, 0, 1)',
     fontFamily: FONTS.GOWUN_DODUM,
     fontSize: 18,
     fontStyle: 'normal',
     fontWeight: '400',
   },
-  frame30: {
+  pointFrame: {
     flexDirection: 'row',
     width: 320,
     padding: 10,
@@ -341,7 +325,7 @@ const styles = StyleSheet.create({
     columnGap: 10,
     marginBottom: 10,
   },
-  frame31: {
+  pointTextFrame: {
     flexDirection: 'row',
     paddingTop: 0,
     paddingLeft: 10,
@@ -422,7 +406,7 @@ const styles = StyleSheet.create({
     boxSizing: 'border-box',
   },
 
-  frame312: {
+  pointTextFrame2: {
     flexDirection: 'row',
     height: 131,
     paddingTop: 10,
@@ -439,7 +423,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
-  frame292: {
+  nameAndIcon2: {
     width: 202,
     paddingTop: 10,
     paddingLeft: 10,

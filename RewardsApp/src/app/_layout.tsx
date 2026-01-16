@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 import { AppProvider } from '@/store/AppContext';
 import { CartProvider } from '@/store/CartContext';
 import FONTS from '@/constants/fonts';
+import { I18nProvider } from '@/store/i18nProvider';
+import { ThemeProvider } from '@/store/ThemeContext';
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     'GowunDodum-Regular': require('@/assets/fonts/GowunDodum-Regular.ttf'),
@@ -25,16 +27,21 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+      
       <AppProvider>
-        <CartProvider>
-          <Stack screenOptions={
-      {title: "", headerTitleStyle:{fontSize: 24, fontFamily: FONTS.BALOO_BHAI, fontWeight: 800, color: 'rgba(58, 73, 117, 1)'},
-      headerBackButtonDisplayMode:'minimal', headerShadowVisible:false, headerTintColor:'rgba(58, 73, 117, 1)' }}>
-            <Stack.Screen name="index" options={{ headerShown: false}}/>
-            <Stack.Screen name="(user)" options={{ headerShown: false}}/>
-            <Stack.Screen name="(auth)" options={{ headerShown: false}}/>
-          </Stack>
-        </CartProvider>        
+        <ThemeProvider>
+        <I18nProvider>
+          <CartProvider>
+            <Stack screenOptions={
+        {title: "", headerTitleStyle:{fontSize: 24, fontFamily: FONTS.BALOO_BHAI, fontWeight: 800, color: 'rgba(58, 73, 117, 1)'},
+        headerBackButtonDisplayMode:'minimal', headerShadowVisible:false, headerTintColor:'rgba(58, 73, 117, 1)' }}>
+              <Stack.Screen name="index" options={{ headerShown: false}}/>
+              <Stack.Screen name="(user)" options={{ headerShown: false}}/>
+              <Stack.Screen name="(auth)" options={{ headerShown: false}}/>
+            </Stack>
+          </CartProvider> 
+        </I18nProvider> 
+         </ThemeProvider>     
       </AppProvider>
     </ClerkProvider>
   );
