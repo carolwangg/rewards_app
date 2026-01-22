@@ -22,15 +22,17 @@ function renderName(name: string){
 }
 export default function Editable({textStyle, textInputContainerStyle, contentContainerStyle, editing, name, placeHolder, value, setValue, maxLength, noValuePlaceholder}: Props) {
   const chosenLength = maxLength? maxLength: 100;
+  let additional_styles;
+  if (name===""){additional_styles = {padding: 0, columnGap: 0}}
   if (!editing) {
-        return <View style={[styles.root, contentContainerStyle]}>
+        return <View style={[styles.root, contentContainerStyle, additional_styles]}>
                 <View>{renderName(name)}</View>
-                <View style={[styles.textInputBox, textInputContainerStyle, {backgroundColor: "transparent", borderWidth: 0}]}>
+                <View style={[styles.textInputBox, textInputContainerStyle,  {backgroundColor: "transparent", borderWidth: 0}]}>
                   <Text style={[styles.textInput, textStyle]}>{!value && noValuePlaceholder? noValuePlaceholder : value}</Text>
                 </View>
             </View>
     }
-    return <View style={[styles.root, contentContainerStyle]}>
+    return <View style={[styles.root, contentContainerStyle, additional_styles]}>
               <View>{renderName(name)}</View>
               <View style={[styles.textInputBox, textInputContainerStyle]}>
                 <TextInput maxLength={chosenLength} style={[styles.textInput, textStyle]} placeholder = {placeHolder} value={value} onChangeText={(text: string)=>{console.log("change value"); setValue(text)}}/>
@@ -61,6 +63,7 @@ root: {
     fontSize: 16,
     fontStyle: 'normal',
     fontWeight: '400',
+    flex: 1,
   },
   textInputBox: {
     flexDirection: 'row',

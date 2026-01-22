@@ -3,7 +3,7 @@ import { Stack, router } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Alert, Animated, Dimensions, Image, Keyboard, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { Reward } from '@/constants/interfaces';
-import { updateReward } from '@/services/apiCalls';
+import { updateReward, updateRewardImage } from '@/services/apiCalls';
 import { useReward } from '@/constants/useReward';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Loading from '@/components/Loading';
@@ -39,6 +39,7 @@ export default function UpdateReward({prevReward}: Props) {
   const [charCount, setCharCount] = useState(0);
   const [rewardUpdatedText, setRewardUpdatedText] = useState("Save");
   const [loading, setLoading] = useState(false);
+  const imageEdited = useRef(false);
 
   const currentValue = useRef(new Animated.Value(0)).current;
   const currentBgColor = currentValue.interpolate({
@@ -54,6 +55,9 @@ export default function UpdateReward({prevReward}: Props) {
     //Check its valid
     if (reward.name != "" &&  reward.points != -1){
       console.log("Saving...")
+      if (imageEdited.current){
+        updateRewardImage(reward.id, reward.image_url)
+      }
       setLoading(true);
       performUpdateReward(reward, setLoading, setRewardUpdatedText);
     }else{
@@ -70,7 +74,7 @@ export default function UpdateReward({prevReward}: Props) {
   if (reward.image_url){
     imageChoice = (<Image source={{ uri: reward.image_url }} style={styles.image} />);
   }else{
-    imageChoice = (<View style={styles.frame7}>
+    imageChoice = (<View style={styles.noPhotoBox}>
     <Text testID="15:1620" style={styles.addPhoto}>
       {`Add photo`}
     </Text>
@@ -90,7 +94,7 @@ export default function UpdateReward({prevReward}: Props) {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={styles.scroll}>
           <View style={styles.body}>
-            <Pressable testID="15:1618" onPress={() => {pickImage(reward.setimage_url)}} style={styles.imagePicker}>
+            <Pressable testID="15:1618" onPress={() => {imageEdited.current = true; pickImage(reward.setimage_url)}} style={styles.imagePicker}>
                 {imageChoice}
             </Pressable>
             <View style={styles.textBody}>
@@ -173,7 +177,6 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     width: '100%',
     height: '100%',
-    
   },
   imagePicker: {
     alignSelf: 'stretch',
@@ -206,7 +209,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     textAlign: 'center',
   },
-  frame7: {
+  noPhotoBox: {
     alignSelf: 'stretch',
     height: '100%',
     paddingVertical: 10,

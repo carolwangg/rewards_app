@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Dimensions, Keyboard, Pressable, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Dimensions, Keyboard, Pressable, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { useRef, useState } from 'react';
 import AppleLogo from '@/assets/images/apple-logo.svg';
 import WelcomeBottomPattern from '@/assets/images/bottom-pattern.svg';
@@ -20,8 +20,12 @@ export default function SignIn({onSignIn}: props) {
   const [emailColour, setEmailColour] = useState("black");
 
   const performSignIn = () => {
-    const email = emailRef.current?emailRef.current: "";
+    const email = emailRef.current?emailRef.current.toLowerCase(): "";
     console.log("email: "+email)
+    if (!email.match(/.+@.+\..+/)){
+      Alert.alert(t("errors.invalidEmail"), t("errors.invalidEmailMessage"));
+      return;
+    }
     onSignIn(email);
   }
   
@@ -42,7 +46,7 @@ export default function SignIn({onSignIn}: props) {
             </Text>
           </View>
           <View testID="6:18" style={styles.loginBox}>
-            <View testID="6:19" style={styles.loginBox2}>
+            <View testID="6:19" style={styles.emailBox}>
               <TextInput
                 testID="6:20"
                 style={[styles.email, {outlineColor: emailColour}]}
@@ -62,24 +66,30 @@ export default function SignIn({onSignIn}: props) {
             </Pressable>
             <View testID="6:32" style={styles.whiteSpace}/>
             <View testID="6:33" style={[styles.companyLogIn, styles.googleLogIn]}>
-              <View testID="6:34" style={styles.frame15}>
+              <View testID="6:34" style={[styles.googleIconBox, {flex: 1}]}>
                 <GoogleLogo/>
               </View>
-              <Text testID="6:36" style={styles.logInWithGoogle}>
+              <View style={{flex: -1}}>
+                <Text testID="6:36" style={styles.bodyText}>
                 {`${t("auth.logInWith")} Google`}
-              </Text>
+                </Text>
+              </View>
             </View>
             <View testID="6:37" style={[styles.companyLogIn, styles.facebookLogIn]}>
               <FacebookLogo/>
-              <Text testID="6:44" style={styles.logInWithFacebook}>
+              <View style={{flex: 1}}>
+              <Text testID="6:44" style={styles.bodyText}>
                 {`${t("auth.logInWith")} Facebook`}
               </Text>
+              </View>
             </View>
             <View testID="112:262" style={[styles.companyLogIn, styles.appleLogIn]}>
               <AppleLogo/>
-              <Text testID="112:269" style={styles.logInWithAppleId}>
+              <View style={{flex: 1}}>
+              <Text testID="112:269" style={styles.bodyText}>
                 {`${t("auth.logInWith")} Apple ID`}
               </Text>
+              </View>
             </View>
           </View>
           <View style={styles.signUpPrompt}>
@@ -136,7 +146,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     rowGap: 10,
   },
-  loginBox2: {
+  emailBox: {
     justifyContent: 'center',
     width: '100%',
     flexDirection: 'row',
@@ -170,7 +180,7 @@ const styles = StyleSheet.create({
   googleLogIn: {
     backgroundColor: 'rgba(255, 255, 255, 1)',
   },
-  frame15: {
+  googleIconBox: {
     flexDirection: 'row',
     padding: 5,
     justifyContent: 'center',
@@ -178,7 +188,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: 'rgba(255, 255, 255, 1)',
   },
-  logInWithGoogle: {
+  bodyText: {
     color: 'rgba(0, 0, 0, 1)',
     fontFamily: FONTS.GOWUN_DODUM,
     fontSize: 18,
@@ -186,9 +196,11 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   companyLogIn: {
+    display: 'flex',
     flexDirection: 'row',
-    padding: 10,
     alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
     columnGap: 10,
     alignSelf: 'stretch',
     borderRadius: 30,
@@ -199,20 +211,6 @@ const styles = StyleSheet.create({
   },
   facebookLogIn: {
     backgroundColor: 'rgba(58, 73, 117, 1)',
-  },
-  logInWithFacebook: {
-    color: 'rgba(217, 217, 217, 1)',
-    fontFamily: FONTS.GOWUN_DODUM,
-    fontSize: 18,
-    fontStyle: 'normal',
-    fontWeight: '400',
-  },
-  logInWithAppleId: {
-    color: 'rgba(0, 0, 0, 1)',
-    fontFamily: FONTS.GOWUN_DODUM,
-    fontSize: 18,
-    fontStyle: 'normal',
-    fontWeight: '400',
   },
   appleLogIn: {
     backgroundColor: 'rgba(217, 217, 217, 1)',

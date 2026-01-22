@@ -12,4 +12,6 @@ const COLOURS = {
   BLACK: '#000000'
 };
 
+export const DEFAULT_CARD_COLOUR=COLOURS.GREEN;
+export const DEFAULT_CARD_TEXT_COLOUR=COLOURS.BLACK;
 export default COLOURS;

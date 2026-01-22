@@ -27,7 +27,8 @@
     "giveReward": "Give Reward",
     "yourCard": "Your Card",
     "contactInfo": "Contact Information",
-    "tagline": "Tagline"
+    "tagline": "Tagline",
+    "profile": "Profile"
   },
   "customer": {
     "kmShorthand": "km",
@@ -55,6 +56,14 @@
     "notifs": "Notifications",
     "selectLanguage": "Select Language",
     "selectTheme": "Select Theme"
+  },
+  "errors":{
+    "invalidEmail":"Enter a valid email",
+    "invalidEmailMessage":"Email should match user@domain.ext. For example, user@zinks.com",
+    "noUser": "User not found", 
+    "noUserMessage": "No account associated with that email. Please sign up first.",
+    "wrongAccountType": "Wrong account type", 
+    "wrongAccountTypeMessage":"Make sure you chose the right account type (customer vs business)"
   },
   "businessWord": "Business",
   "customerWord": "Customer",

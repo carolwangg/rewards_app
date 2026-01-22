@@ -1,129 +1,61 @@
-import { useState } from "react";
+import { useState } from "react"
+import { Location } from "./interfaces";
 
-export class Card{
-  id: number;
-  setId: Function;
-  name: string;
-  setName: Function;
-  description: string;
-  setDescription: Function;
-  image_url: string;
-  setimage_url: Function;
-  phoneNumber: string;
-  setPhoneNumber: Function;
-  points: number;
-  setPoints: Function;
-
-  constructor(id: number, name: string, description: string, image_url: string, phoneNumber: string, points: number){
-    [this.id, this.setId] = useState(id);
-    [this.name, this.setName] = useState(name);
-    [this.description, this.setDescription] = useState(description);
-    [this.image_url, this.setimage_url] = useState(image_url);
-    [this.phoneNumber, this.setPhoneNumber] = useState(phoneNumber);
-    [this.points, this.setPoints] = useState(points);
-  }
-
-  updateId(newId: number){
-    this.setId(newId);
-  }
-
-  updateName(newName: string){
-    this.setName(newName);
-  }
-
-  updateDescription(newDescription: string){
-    this.setDescription(newDescription);
-  }
-
-  updateimage_url(newimage_url: string){
-    this.setimage_url(newimage_url);
-  }
-
-  updatePhoneNumber(newPhoneNumber: string){
-    this.setPhoneNumber(newPhoneNumber);
-  }
-
-  updatePoints(newPoints: number){
-    this.setPoints(newPoints);
-  }
-
+export type CardHook = {
+    id: string,
+    name: string,
+    description: string,
+    image_url: string,
+    contactInfo: string,
+    colour: string,
+    textColour: string,
+    // expose both raw and custom setters:
+    setName: (name: string) => void,
+    setDescription: (description: string) => void,
+    setimage_url: (image_url: string) => void,
+    setContactInfo: (contactInfo: string) => void,
+    setColour: (colour: string) => void,
+    setTextColour: (textColour: string) => void
 }
 
-
-export class Reward{
-  id: number;
-  setId: Function;
-  name: string;
-  setName: Function;
-  description: string;
-  setDescription: Function;
-  image_url: string;
-  setimage_url: Function;
-  points: number;
-  setPoints: Function;
-  businessId: number;
-  setBusinessId: Function;
-
-  constructor(id: number, name: string, description: string, image_url: string, phoneNumber: string, points: number, businessId: number){
-    [this.id, this.setId] = useState(id);
-    [this.name, this.setName] = useState(name);
-    [this.description, this.setDescription] = useState(description);
-    [this.image_url, this.setimage_url] = useState(image_url);
-    [this.points, this.setPoints] = useState(points);
-    [this.businessId, this.setBusinessId] = useState(businessId);
-  }
-
-  updateId(newId: number){
-    this.setId(newId);
-  }
-
-  updateName(newName: string){
-    this.setName(newName);
-  }
-
-  updateDescription(newDescription: string){
-    this.setDescription(newDescription);
-  }
-
-  updateimage_url(newimage_url: string){
-    this.setimage_url(newimage_url);
-  }
-
-  updatePoints(newPoints: number){
-    this.setPoints(newPoints);
-  }
-
-  updateBusinessId(newBusinessId: number){
-    this.setBusinessId(newBusinessId);
-  }
-  
+export class LocationHook{
+    location: Location;
+    setLocation: (location: Location) => void;
+   
+    streetAddress: string;
+    setStreetAddress: (street_address: string) => void
+    constructor(og_latitude: number, og_longitude: number){
+        [this.location, this.setLocation] = useState(new Location(og_latitude, og_longitude));
+        [this.streetAddress, this.setStreetAddress] = useState("");
+    }
+    toString(){
+        return `(${this.location.latitude}, ${this.location.longitude})`;
+    }
 }
 
+export type BusinessHook = {
+    id: string,
+    name: string,
+    email: string,
+    description: string | null,
+    country: string,
+    longitude: number | null,
+    latitude: number | null,
+    streetAddress: string | null,
+    businessEmail: string | null,
+    businessPhone: string | null,
+    imageUrl: string | null,
+    bannerUrl: string | null,
 
-
-export class Customer{
-  id: number;
-  setId: Function;
-  name: string;
-  setName: Function;
-  email: string;
-  setEmail: Function;
-
-  constructor(id: number, name: string, email: string){
-    [this.id, this.setId] = useState(id);
-    [this.name, this.setName] = useState(name);
-    [this.email, this.setEmail] = useState(email);
-  }
-
-  updateId(newId: number){
-    this.setId(newId);
-  }
-
-  updateName(newName: string){
-    this.setName(newName);
-  }
-
-  updateEmail(newEmail: string){
-    this.setEmail(newEmail);
-  }
+    setName: (name: string) => void,
+    setEmail: (email: string) => void,
+    setDescription: (description: string) => void,
+    setCountry: (country: string) => void,
+    setLongitude: (longitude: number) => void,
+    setLatitude: (latitude: number) => void,
+    setStreetAddress: (streetAddress: string) => void,
+    setBusinessEmail: (businessEmail: string) => void,
+    setBusinessPhone: (businessPhone: string) => void,
+    setImageUrl: (imageUrl: string) => void,
+    setBannerUrl: (bannerUrl: string) => void,
 }

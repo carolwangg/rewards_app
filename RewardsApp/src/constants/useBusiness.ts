@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react";
 import { Business } from "./interfaces";
+import { BusinessHook } from "./hooks";
 
-export function useBusiness(business: Business) {
+export function useBusiness(business: Business): BusinessHook {
   const [id] = useState(business.id);
   const [name, setName] = useState(business.name);
   const [email, setEmail] = useState(business.email);

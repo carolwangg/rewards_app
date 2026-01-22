@@ -2,19 +2,36 @@ import {StyleSheet, Alert, View, Text, ScrollView, RefreshControl} from 'react-n
 
 import ChevronDown from '@/assets/images/chevron-down.svg';
 import FONTS from '@/constants/fonts';
-import { CustomerReward } from '@/constants/interfaces';
+import { CustomerReward, Location } from '@/constants/interfaces';
 import RewardCarousel from '../components/RewardCarousel';
 import Header from '../components/Header';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useState, useEffect, useCallback } from 'react';
-import { getRewards } from '@/services/apiCalls';
+import { getCustomer, getRewards, updateCustomerLocation } from '@/services/apiCalls';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { LocationHook } from '@/constants/hooks';
+import LocationChooser from '@/components/LocationChooser';
 
+type Props = {
+  userId: string
+}
 const onRewardsPress = () => {
   router.push("./itemList");
 }
-
+function performGetLocation(userId: string, location: LocationHook){
+  try{
+    getCustomer(userId).then(data => {
+      let latitude, longitude;
+      latitude = data.latitude?data.latitude: 0;
+      longitude = data.longitude?data.longitude: 0;
+      location.setLocation(new Location(latitude, longitude));
+      data.street_address?location.setStreetAddress(data.street_address):location.setStreetAddress("");
+    });
+  }catch (err){
+    console.error("Error fetching customer:"+err);
+  }
+}
 const loadRewards = async(setRewards: Function, setLoading: Function) => {
     try {
         const response = await getRewards();
@@ -27,48 +44,52 @@ const loadRewards = async(setRewards: Function, setLoading: Function) => {
         console.log("finished");
     }
 }
-export default function DiscoverComponent() {
+export default function DiscoverComponent({userId}: Props) {
+  const location = new LocationHook(1, 1);
   const [rewards, setRewards] = useState<CustomerReward[] | null>(null);
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
-  useEffect(() => {loadRewards(setRewards, setLoading);}, []);
-
+  const [changingLocation, setChangingLocation] = useState(false);
+  useEffect(() => {loadRewards(setRewards, setLoading); performGetLocation(userId, location);}, []);
   const [refreshing, setRefreshing] = useState(false);
   
     const onRefresh = useCallback(() => {
       setRefreshing(true);
       loadRewards(setRewards, setLoading);
+      performGetLocation(userId, location)
       setRefreshing(false);
     }, []);
 
   return (
     <SafeAreaProvider>
-    <SafeAreaView testID={"175:492"} style={styles.root}>
-      <ScrollView style={styles.scroll} refreshControl={<RefreshControl style={{borderWidth: 1}} refreshing={refreshing} onRefresh={onRefresh}/>}>
-          <View style={styles.body}>
-              <View testID="175:454" style={styles.locationRow}>
+      <SafeAreaView testID={"175:492"} style={styles.root}>
+        {changingLocation? <LocationChooser location={location} onSave={()=>{updateCustomerLocation(userId, location)}}/>:
+        <ScrollView style={styles.scroll} refreshControl={<RefreshControl style={{borderWidth: 1}} refreshing={refreshing} onRefresh={onRefresh}/>}>
+            <View style={styles.body}>
+                <View testID="175:454" style={styles.locationRow}>
                   <View testID="175:455" style={styles.locationButton}>
-                  <Text testID="175:456" style={styles.locationText}>
-                      {t('currentLocation')}
-                  </Text>
-                  <ChevronDown testID="175:457"/>
+                    <Text testID="175:456" style={styles.locationText}>
+                        {t('currentLocation')}
+                    </Text>
+                    <ChevronDown testID="175:457"/>
                   </View>
-              </View>
-              <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20, backgroundColor: 'rgba(183, 230, 130, 1)'}} headerText={t('customer.nearYou')} onPress={onRewardsPress} sideText={t('seeAll')}/>
-              <View style={[styles.rewardCarouselBox, {backgroundColor: 'rgba(183, 230, 130, 1)'}]}>
-                  <RewardCarousel rewards={rewards != null? rewards: []}/>
-              </View>    
-              <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20}} headerText={t('customer.recommended')} onPress={onRewardsPress} sideText={t('seeAll')}/>
-              <View style={styles.rewardCarouselBox}>
-                  <RewardCarousel rewards={rewards != null? rewards: []}/>
-              </View> 
-              <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20}} headerText={t('customer.newArrivals')} onPress={onRewardsPress} sideText={t('seeAll')}/>
-              <View style={styles.rewardCarouselBox}>
-                  <RewardCarousel rewards={rewards != null? rewards: []}/>
-              </View>                     
-          </View>
-      </ScrollView>
-    </SafeAreaView>
+                </View>
+                <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20, backgroundColor: 'rgba(183, 230, 130, 1)'}} headerText={t('customer.nearYou')} onPress={onRewardsPress} sideText={t('seeAll')}/>
+                <View style={[styles.rewardCarouselBox, {backgroundColor: 'rgba(183, 230, 130, 1)'}]}>
+                    <RewardCarousel rewards={rewards != null? rewards: []}/>
+                </View>    
+                <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20}} headerText={t('customer.recommended')} onPress={onRewardsPress} sideText={t('seeAll')}/>
+                <View style={styles.rewardCarouselBox}>
+                    <RewardCarousel rewards={rewards != null? rewards: []}/>
+                </View> 
+                <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20}} headerText={t('customer.newArrivals')} onPress={onRewardsPress} sideText={t('seeAll')}/>
+                <View style={styles.rewardCarouselBox}>
+                    <RewardCarousel rewards={rewards != null? rewards: []}/>
+                </View>                     
+            </View>
+        </ScrollView>
+        }
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }

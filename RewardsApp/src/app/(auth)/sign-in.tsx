@@ -1,14 +1,17 @@
 import Loading from '@/components/Loading';
 import EnterPin from '@/screens/auth/EnterPin';
 import SignIn from '@/screens/auth/SignIn';
+import { getUserTypeEmail } from '@/services/apiCalls';
 import { AppContext } from '@/store/AppContext';
 import { useAuth, useSignIn } from '@clerk/clerk-expo';
 import { ClerkAPIResponseError, EmailCodeFactor, SignInFirstFactor } from '@clerk/types';
 import { router } from 'expo-router';
 import { useCallback, useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 
 export default function SignInPage() {
+    const {t} = useTranslation();
     const {isSignedIn} = useAuth();
     const { isLoaded, signIn, setActive } = useSignIn()
     const { userId } = useAuth();
@@ -21,6 +24,20 @@ export default function SignInPage() {
       setUserId(userId);
     }, [userId])
     const onSignInPress = async (email: string) => {
+      const emailUserTypeResponse = await getUserTypeEmail(email);
+      const emailUserType = emailUserTypeResponse.user;
+      if (emailUserType === null){
+        Alert.alert(t("errors.noUser", "errors.noUserMessage"));
+        console.log("navigating to sign up");
+        router.replace('./sign-up');
+        return;
+      }
+      
+      if (emailUserType !== userType){
+        Alert.alert(t("errors.wrongAccountType"), t("errors.wrongAccountTypeMessage"));
+        console.log("navigating to sign up");
+        router.replace('./welcome');
+      }
       if (!isLoaded) return console.error("isLoaded is false")
       // Start the sign-in process using the email and password provided
       setLoading(true);
@@ -56,7 +73,7 @@ export default function SignInPage() {
         console.error('Error:', JSON.stringify(err, null, 2))
         const clerkErr = err as ClerkAPIResponseError;
         if (clerkErr.errors[0]?.code === 'form_identifier_not_found') {
-          Alert.alert("User not found", "No account associated with that email. Please sign up first.");
+          Alert.alert(t("errors.noUser", "errors.noUserMessage"));
           console.log("navigating to sign up");
           router.replace('./sign-up');
         }else{

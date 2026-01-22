@@ -33,6 +33,7 @@ export interface Card{
   image_url: string,
   contactInfo: string,
   colour: string,
+  textColour: string
 }
 
 export interface Reward{
@@ -149,6 +150,7 @@ export const EMPTY_CARD: Card = {
   image_url: "",
   contactInfo: "",
   colour: "",
+  textColour: ""
 }
 
 export const EMPTY_REWARD: Reward = {
@@ -233,4 +235,16 @@ export type APIResponse =
 {
   message: string,
   user: object | string
+}
+
+export class Location {
+  latitude: number;
+  longitude: number;
+  constructor(latitude: number, longitude: number){
+    this.latitude = latitude;
+    this.longitude = longitude;
+  }
+  toStringCustom(){
+    return `(${this.latitude}, ${this.longitude})`;
+  }
 }

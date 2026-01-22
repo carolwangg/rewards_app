@@ -1,124 +1,35 @@
-import FONTS from '@/constants/fonts';
-import { useBusiness } from '@/constants/useBusiness';
-import { useCard } from '@/constants/useCards';
-import { getBusiness, getCard, updateCardImage } from '@/services/apiCalls';
-import { useClerk } from '@clerk/clerk-expo';
+import Editable from "@/components/Editable"
+import Header from "@/components/Header"
+import COLOURS from "@/constants/colours"
+import FONTS from "@/constants/fonts"
+import { CardHook } from "@/constants/hooks"
+import { pickImage } from "@/helpers/imagePicker"
+import { RefObject, useCallback, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { View, Dimensions, Image, Pressable, StyleSheet, Text, TouchableWithoutFeedback, Keyboard } from "react-native"
+import ColorPicker, { HueSlider, InputWidget, Panel1 } from "reanimated-color-picker"
 import DefaultLogo from '@/assets/images/default-logo.svg';
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { RefreshControl, Pressable, ScrollView, StyleSheet, Text, View, Dimensions, Image } from 'react-native';
-import Editable from '@/components/Editable';
-import { updateBusiness, updateCard } from '@/services/apiCalls';
-import Header from '@/components/Header';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { EMPTY_BUSINESS, EMPTY_CARD } from '@/constants/interfaces';
-import Settings from '@/assets/images/settings-icon.svg'
-import { useTranslation } from 'react-i18next';
-import { router } from 'expo-router';
-import ColorPicker, {Panel1, HueSlider, InputWidget} from "reanimated-color-picker";
-import ColorWidget from "@/assets/images/color-widget.svg"
 import Pencil from "@/assets/images/pencil-icon.svg"
-import { pickImage } from '@/helpers/imagePicker';
-import COLOURS, { DEFAULT_CARD_COLOUR, DEFAULT_CARD_TEXT_COLOUR } from '@/constants/colours';
-import { UNIVERSAL_STYLES } from '@/constants/styles';
-import { CardHook } from '@/constants/hooks';
-import UpdateCard from './UpdateCard';
-import BusinessInfo from '@/components/BusinessInfo';
-import BusinessPage from './BusinessPage';
-import UpdateBusinessProfile from './UpdateBusinessProfile';
+import ColorWidget from "@/assets/images/color-widget.svg"
+import { UNIVERSAL_STYLES } from "@/constants/styles"
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context"
 
 type Props = {
-  userId: string, 
+    card: CardHook
+    onSave: (event: any) => void
+    imageEdited: RefObject<boolean>
 }
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-const BUSINESS_ATTRIBUTES = ["Email", "Business Name"];
 
-export default function Profile({userId}: Props) {
-  const {t} = useTranslation();
-  const { signOut } = useClerk()
-  const business = useBusiness(EMPTY_BUSINESS);
-
-  const card = useCard(EMPTY_CARD);
-
-  const [editingCard, setEditingCard] = useState(false);
-  const [editingDetails, setEditingDetails] = useState(false);
-  const [editingColourStrategy, setEditingColourStrategy] = useState("");
-  const imageEdited = useRef(false);
-
-  useEffect(()=>{
-    performGetBusiness(userId, business);
-    performGetCard(userId, card);
-  }, []);
-  console.log('image edited:'+imageEdited.current)
-  const onSignOut = () => {
-    signOut();
-    
-    router.replace('/welcome');
-    
-  }
-
-  const editToggle = () => {
-    const temp = !editingDetails;
-    setEditingDetails(temp);
-    if (!temp){//idk anymore 
-      updateBusiness(userId, business);
-      
-    }
-  }
-
-  const editToggleCard = () => {
-    const temp = !editingCard;
-    setEditingCard(temp);
-  }
-
-  const onSaveCard = () =>{
-    if (imageEdited.current){
-      updateCardImage(userId, card.image_url);
-    }
-    updateCard(userId, card);
-    setEditingCard(false);
-  }
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    performGetBusiness(userId, business);
-    performGetCard(userId, card);
-    setRefreshing(false);
-  }, []);
-  const [refreshing, setRefreshing] = useState(false);
-
-  const factory = useCallback((name: string) => {
-      let value, translatedName: string;
-      let setValue: (value: string) => void;
-      switch(name){
-          case "Business Name":
-            translatedName = t('name');
-            value = business.name;
-            setValue = business.setName;
-            break;
-          case "Email":
-            translatedName = t('email');
-            value = business.email;
-            setValue = business.setEmail;
-            break;
-          default:
-            translatedName = "default"
-            value = "default";
-            setValue = (value: string) => {};
-            break;
-      }
-      const placeholder = t('new') + translatedName;
-      return <Editable key={name} editing={editingDetails} name={translatedName} placeHolder={placeholder} value={value} setValue={setValue}/>
-    }, [business, editingDetails]);
-  
-    const editImage = useCallback( () =>{
-        
-        imageEdited.current = true;
-        pickImage((uri: string) =>{card.setimage_url(uri);}, [1, 1]);
-      }, []);
-      
-
-  const colorWidgetFactory = useCallback((attribute: string) => {
+export default function UpdateCard ({card, onSave, imageEdited}: Props) {
+    const {t} = useTranslation();
+    const [editingColourStrategy, setEditingColourStrategy] = useState("");
+    const editImage = useCallback( () =>{            
+            imageEdited.current = true;
+            pickImage((uri: string) =>{card.setimage_url(uri);}, [1, 1]);
+          }, []);
+    const colorWidgetFactory = useCallback((attribute: string) => {
     let component;
     switch (attribute){
       case "colour":
@@ -158,88 +69,49 @@ export default function Profile({userId}: Props) {
       return component;
     },[card] );
     console.log("card image:"+card.image_url);
-  if (editingCard) return <UpdateCard card={card} onSave={onSaveCard} imageEdited={imageEdited}/>
-  if (editingDetails) return <UpdateBusinessProfile card={card} onSave={onSaveCard} imageEdited={imageEdited}/>
-  return (
-    <SafeAreaProvider>
-      <SafeAreaView testID={"53:202"} style={styles.root}>
-        <ScrollView contentContainerStyle={styles.scroll} refreshControl={<RefreshControl style={{borderWidth: 1}} refreshing={refreshing} onRefresh={onRefresh}/>}>
-          <View>
-            
-            <View style={styles.body}>
-              <Pressable style={styles.settingsRow} onPress={()=>{router.replace("./options");}}><Settings/></Pressable>
-            <Header headerTextStyle={styles.headerText} headerText={t('business.profile')} onPress={editToggle} sideText={editingDetails? t('save'): t('edit')}/>
-            <View style={{width: '100%'}}>
-              <BusinessPage business={business}/>
-            </View>
-            {/* <View testID="9:500" style={styles.frame}> 
-              <Header headerTextStyle={styles.headerText} headerText={t('details')} onPress={editToggle} sideText={editingDetails? t('save'): t('edit')}/>
-              <View testID="15:136" style={styles.infoBox}>
-                {BUSINESS_ATTRIBUTES.map((attribute) => factory(attribute))}
-              </View>                
-            </View> */}
-              <View testID="9:28" style={styles.frame}>
-                <Header headerTextStyle={styles.headerText} headerText={t('business.yourCard')} onPress={editToggleCard} sideText={t('edit')}/>
+    return <SafeAreaProvider>
+    <SafeAreaView>
+        <Pressable onPress={() =>{Keyboard.dismiss(); setEditingColourStrategy("")}}>
+        <View  style={[UNIVERSAL_STYLES.root, {height: '100%', borderWidth: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}]}>
+
+        
+        <View testID="9:28" style={styles.frame}>
                 <View testID="9:580" style={[styles.cardBox, {backgroundColor: card.colour}]}>
                 <View style={styles.cardBody}>
-                  <View testID="9:581" style={styles.titleBox}>
+                <View style={styles.colorWidgetBody}>
+                    <Pressable style={styles.colorWidget} onPress={()=>{setEditingColourStrategy("colour")}}>
+                    <ColorWidget/>
+                    </Pressable>
+                    <Text style={{color: COLOURS.DARK_GRAY}}>{"Edit Card Colour"}</Text>
+                </View>
+                    <View testID="9:581" style={styles.titleBox}>
                     <View testID="154:1066" style={styles.imageBox}>
                     {card.image_url? <Image source={{uri: card.image_url}} style={styles.image}/> : <DefaultLogo width={70} height={70}/>}
+                    <Pressable style={styles.pencil} onPress={editImage}><Pencil/></Pressable>
                     </View>
                     <View style={styles.cardEdit}>
-                      <View style={styles.row}><Editable contentContainerStyle={{flex: 1}} textInputContainerStyle={{flex: 0}} maxLength={30} textStyle={[styles.businessName, {color: card.textColour}]} editing={false} name={""} placeHolder={'Business name'} value={card.name} setValue={card.setName}/></View>
+                      <View style={styles.row}><Editable contentContainerStyle={{flex: 1}} textInputContainerStyle={{flex: 0}} maxLength={30} textStyle={[styles.businessName, {color: card.textColour}]} editing={true} name={""} placeHolder={'Business name'} value={card.name} setValue={card.setName}/><Pressable style={[styles.colorWidget]} onPress={()=>{setEditingColourStrategy("textColour")}}><ColorWidget/></Pressable></View>
+                      {/* <Editable maxLength={7} textStyle={{color: 'white'}} contentContainerStyle={styles.colourBox} editing={editingCard} name={""} placeHolder={'HEX colour'} value={card.colour} setValue={card.setColour}/> */}
                     </View>
                   </View>
                   <View style={styles.cardInfoBox}>
-                    <Editable textStyle={{color: card.textColour}} editing={false} name={""} placeHolder={t('business.contactInfo')} value={card.contactInfo} setValue={card.setContactInfo} noValuePlaceholder={t('business.contactInfo')}/>
-                    <Editable textStyle={{color: card.textColour}} editing={false} name={""} placeHolder={t('business.tagline')} value={card.description} setValue={card.setDescription} noValuePlaceholder={t('business.tagline')}/>
+                    <Editable textStyle={{color: card.textColour}} editing={true} name={""} placeHolder={t('business.contactInfo')} value={card.contactInfo} setValue={card.setContactInfo} noValuePlaceholder={t('business.contactInfo')}/>
+                    <Editable textStyle={{color: card.textColour}} editing={true} name={""} placeHolder={t('business.tagline')} value={card.description} setValue={card.setDescription} noValuePlaceholder={t('business.tagline')}/>
                   </View>
                 </View> 
-                  {editingColourStrategy?colorWidgetFactory(editingColourStrategy): null}
+                  {editingColourStrategy? colorWidgetFactory(editingColourStrategy): null}
                 </View>
               </View>
-              
-              <Pressable testID="15:137" style={styles.signOutButton} onPress= {onSignOut}>
-              <Text testID="15:138" style={styles.signOutText}>
-                {t('signOut')}
-              </Text>
-            </Pressable>
+              <View style={styles.saveButtonRow}>
+                <Pressable style={styles.saveButton} onPress={onSave}><Text style={UNIVERSAL_STYLES.bodyText}>{"Save"}</Text></Pressable>
             </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </SafeAreaProvider>
-  );
-}
-function performGetBusiness(userId: string, business: any){
-  try{
-    getBusiness(userId).then(data => {
-      
-      data.user.name? business.setName(data.user.name): business.setName("");
-      data.user.email? business.setEmail(data.user.email): business.setEmail("");
-    });
-  }catch (err){
-    console.error("Error fetching customer:"+err);
-  }
+           
+            </View>
+             </Pressable>
+        </SafeAreaView>
+        </SafeAreaProvider>
 }
 
-function performGetCard(userId: string, card: CardHook){
-  try{
-    getCard(userId).then(data => {
-      
-      
-      if (!data.user) {console.error("No card exists for user:"+ userId); return;}
-      data.user.name? card.setName(data.user.name): card.setName("");
-      data.user.description? card.setDescription(data.user.description): card.setDescription("");
-      data.user.contact_info? card.setContactInfo(data.user.contact_info): card.setContactInfo("");
-      data.user.colour? card.setColour(data.user.colour): card.setColour(DEFAULT_CARD_COLOUR);
-      data.user.text_colour? card.setTextColour(data.user.text_colour): card.setTextColour(DEFAULT_CARD_TEXT_COLOUR);
-      data.user.image_url? card.setimage_url(data.user.image_url): null;
-    });
-  }catch (err){
-    console.error("Error fetching customer:"+err);
-  }
-}
 
 const styles = StyleSheet.create({
   root: {
@@ -612,5 +484,23 @@ const styles = StyleSheet.create({
     backgroundColor: COLOURS.LIGHT_GREEN,
     paddingVertical: 10,
     paddingHorizontal: 20
-  }
+  },
+  saveButtonRow: {
+        width: '100%',
+        paddingVertical: 15,
+        paddingHorizontal: 10,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        backgroundColor: 'transparent',
+        borderWidth: 1
+    },
+    saveButton: {
+        backgroundColor: COLOURS.WHITE,
+        borderColor: COLOURS.DARK_BLUE,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 45,
+        borderWidth: 1
+    }
 });

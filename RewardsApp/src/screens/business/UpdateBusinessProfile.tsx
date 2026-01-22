@@ -1,68 +1,45 @@
 import FONTS from '@/constants/fonts';
-import * as ImagePicker from 'expo-image-picker';
 import { Stack, router } from 'expo-router';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Alert, Animated, Dimensions, Image, Keyboard, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
-import { addReward } from '@/services/apiCalls';
-import Loading from '@/components/Loading';
 import { Reward } from '@/constants/interfaces';
+import { updateReward, updateRewardImage } from '@/services/apiCalls';
+import { useReward } from '@/constants/useReward';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const performSaveEvent = async (reward: Reward, setLoading: Function) => {
-  try {
-    console.log("start adding reward")
-    const response = await addReward(reward);
-    console.log(response.body);
-  } catch (error) {
-    Alert.alert("Error saving event", "We're having some issues on our end. Please try again later.")
-    console.error(error);
-  } finally {
-    setLoading(false);
-  }
-  router.dismiss()
-};
-
+import Loading from '@/components/Loading';
+import { pickImage } from '@/helpers/imagePicker';
 type Props={
-  userId: string;
+  prevReward: Reward;
 }
 
-export default function AddReward({userId}: Props) {
-  const [image, setImage] = useState(""); //image uri
-  const name = useRef("");
-  const description = useRef("");
-  const points = useRef(0);
+const SCREEN_WIDTH = Dimensions.get('window').width;
+
+const performUpdateReward = async(reward: any, setLoading: Function, setRewardUpdatedText: Function) => {
+  try{
+    setLoading(true);
+    const response = await updateReward(reward);
+    console.log("response:"+response);
+    if (response.user == "success"){
+      setRewardUpdatedText("Saved");
+    }else{
+      Alert.alert("Error updating reward", "We're having some issues on our end. Please try again later.");
+    }
+  }catch (err){
+    Alert.alert("Error updating reward", "We're having some issues on our end. Please try again later.")
+    console.error(err);
+  }finally{
+    setLoading(false);
+  }
+  router.dismiss();
+}
+
+
+export default function UpdateBusinessProfile({prevReward}: Props) {
+  const reward = useReward(prevReward);
   const [charCount, setCharCount] = useState(0);
-  const [eventAdded, setEventAdded] = useState(false);
-  const [eventAddedText, setEventAddedText] = useState("Save");
+  const [rewardUpdatedText, setRewardUpdatedText] = useState("Save");
   const [loading, setLoading] = useState(false);
-  console.log("name:"+name)
-  const onNameChange = useCallback((newName: string) => {
-    name.current = newName;
-  }, []);
-
-  const pickImage = async () => {
-    // Launch the image library
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (!permissionResult.granted) {
-      Alert.alert('Permission required', 'Permission to access the media library is required.');
-      return;
-    }
-
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    console.log(result);
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
-  };
+  const imageEdited = useRef(false);
 
   const currentValue = useRef(new Animated.Value(0)).current;
   const currentBgColor = currentValue.interpolate({
@@ -74,87 +51,86 @@ export default function AddReward({userId}: Props) {
     outputRange: ['#1C274C', '#B6BED8']
   })
 
-    const saveEventInteract = () => {
-    // Animate the load
-    if (!eventAdded) {
-      //Check its valid
-      if (name.current != "" && points.current != -1){
-        console.log("saving...")
-        setLoading(true);
-        performSaveEvent({id: "", business_id: userId, name: name.current, points: points.current, description: description.current, image_url: image}, setLoading);
-      }else{
-        console.error("error")
-        if(name.current == ""){
-          Alert.alert("Set Name", "You need to give the event a name.")
-        }else{
-          Alert.alert("Set Point Count", "You need to give the event a point count.")
-        }
+  const saveRewardUpdate = () => {
+    //Check its valid
+    if (reward.name != "" &&  reward.points != -1){
+      console.log("Saving...")
+      if (imageEdited.current){
+        updateRewardImage(reward.id, reward.image_url)
       }
-    } 
+      setLoading(true);
+      performUpdateReward(reward, setLoading, setRewardUpdatedText);
+    }else{
+      console.log("error")
+      if(reward.name == ""){
+        Alert.alert("Set Name", "You need to give the event a name.")
+      }else{
+        Alert.alert("Set Point Count", "You need to give the event a point count.")
+      }
+    }
   }
-  console.log("image:"+image);
+
   let imageChoice;
-  if (image){
-    imageChoice = (<Image source={{ uri: image }} style={styles.image} />);
+  if (reward.image_url){
+    imageChoice = (<Image source={{ uri: reward.image_url }} style={styles.image} />);
   }else{
-    imageChoice = (<View style={styles.photoBox}>
-                <Text testID="15:1620" style={styles.addPhoto}>
-                  {`Add photo`}
-                </Text>
-                <Text testID="104:945" style={styles.photoSpecification}>
-                  {`*Must be .jpeg, .jpg or .png`}
-                </Text>
-                </View>);
+    imageChoice = (<View style={styles.frame7}>
+    <Text testID="15:1620" style={styles.addPhoto}>
+      {`Add photo`}
+    </Text>
+    <Text testID="104:945" style={styles.photoSpecification}>
+      {`*Must be .jpeg, .jpg or .png`}
+    </Text>
+    </View>);
   }
   if (loading) return <Loading/>
   return (
     <SafeAreaProvider>
     <SafeAreaView testID={"53:204"} style={styles.root}>
-      <Stack.Screen options={{ title: "Add Event", headerBackButtonDisplayMode: 'minimal', 
+      <Stack.Screen options={{ title: reward.name, headerBackButtonDisplayMode: 'minimal', 
       headerShadowVisible: false, headerTintColor: 'black', 
       headerTitleStyle:{fontSize: 24, fontFamily: FONTS.BALOO_BHAI, fontWeight: 800, color: 'rgba(58, 73, 117, 1)'}, headerTitleAlign: 'center'
        }} />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView contentContainerStyle={styles.scroll}>
-            <View style={styles.body}>
-                <Pressable testID="15:1618" onPress={pickImage} style={styles.imagePicker}>
-                    {imageChoice}
-                </Pressable>
-
-                <View style={styles.textBody}>
-                <View testID="15:1623" style={styles.nameFrame}>
-                  <TextInput testID="15:1626" style={[styles.nameHere, styles.nameBox]} placeholder='Add name' placeholderTextColor={'#787792'} onChangeText={onNameChange}/>
-                  <Text style={{color: "#FF8383"}}>*</Text>
-                </View>
-                <View testID="15:1627" style={styles.frame37}>
-                  <View testID="15:1649" style={styles.nameBox2}>
-                    <TextInput testID="15:1626" style={styles.descriptionHere} multiline={true} maxLength={50} placeholder='Add description here...' placeholderTextColor={'#787792'} onChangeText={(newDescription) => {description.current=newDescription;setCharCount(newDescription.length)}}/>
-                    <Text testID="15:1652" style={styles.charCount}>
-                      {charCount}/50
-                    </Text>
-                  </View>
-                </View>
-                <View testID="15:1631" style={styles.nameFrame}>
-                  <TextInput testID="15:1626" style={[styles.ptsCountHere, styles.nameBox, {width: 'auto'}]} keyboardType="numeric" placeholder='Add points needed' placeholderTextColor={'#787792'} onChangeText={(pointCount) => {points.current = ((Number) (pointCount));}}/>
-                  <Text testID="15:1638" style={styles.pts}>
-                    {`pts`}
+        <ScrollView contentContainerStyle={styles.scroll}>
+          <View style={styles.body}>
+            <Pressable testID="15:1618" onPress={() => {imageEdited.current = true; pickImage(reward.setimage_url)}} style={styles.imagePicker}>
+                {imageChoice}
+            </Pressable>
+            <View style={styles.textBody}>
+              <View testID="15:1623" style={styles.nameRow}>
+                <TextInput testID="15:1626" style={[styles.nameHere, styles.nameBox]} placeholder='Add name' placeholderTextColor={'#787792'} value={reward.name} onChangeText={(name: string) => {reward.setName(name)}}/> 
+              <Text style={{color: "#FF8383"}}>*</Text>
+              </View>
+              <View testID="15:1627" style={styles.descriptionBox}>
+                <View testID="15:1649" style={styles.descriptionTextBox}>
+                  <TextInput testID="15:1626" style={styles.descriptionHere} multiline={true} maxLength={50} placeholder='Add description here...' value={reward.description} placeholderTextColor={'#787792'} onChangeText={(description) => {reward.setDescription(description);setCharCount(description.length)}}/>
+                  <Text testID="15:1652" style={styles.charCount}>
+                    {charCount}/50
                   </Text>
-                  <Text style={{color: "#FF8383"}}>*</Text>
                 </View>
-                <View style={styles.saveContainer}>
-                  <Pressable onPress={saveEventInteract}>
-                    <Animated.View testID="104:910" style={[styles.saveButton, 
-                    {backgroundColor: currentBgColor,}
-                    ]}>
-                        <Animated.Text testID="104:911" style={[styles.addToCart, {color: currentTextColor}]}>
-                            {eventAddedText}
-                        </Animated.Text>
-                    </Animated.View>
-                  </Pressable>
-                </View>
-                </View>
+              </View>
+              <View testID="15:1631" style={styles.frame36}>
+                <TextInput testID="15:1626" style={[styles.ptsCountHere, styles.pointBox]} keyboardType="numeric" placeholder='Add points needed' value={reward.points.toString()} placeholderTextColor={'#787792'} onChangeText={(pointCount) => {reward.setPoints((Number) (pointCount));}}/>
+                <Text testID="15:1638" style={styles.pts}>
+                  {`pts`}
+                </Text>
+                <Text style={{color: "#FF8383"}}>*</Text>
+              </View>
+              <View style={styles.saveContainer}>
+                <Pressable onPress={saveRewardUpdate}>
+                  <Animated.View testID="104:910" style={[styles.nameBox4, 
+                  {backgroundColor: currentBgColor,}
+                  ]}>
+                    <Animated.Text testID="104:911" style={[styles.addToCart, {color: currentTextColor}]}>
+                        {rewardUpdatedText}
+                    </Animated.Text>
+                  </Animated.View>
+                </Pressable>
+              </View>
             </View>
-          </ScrollView>
+          </View>
+        </ScrollView>
       </TouchableWithoutFeedback>
     </SafeAreaView>
     </SafeAreaProvider>
@@ -166,9 +142,10 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: "center",
-    height: '100%',    
+    height: '100%',
     width: SCREEN_WIDTH,
     backgroundColor: 'rgba(255, 255, 255, 1)',
+    
   },
   scroll: {
     height: 'auto',    
@@ -185,6 +162,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: "flex-start",
+    
   },
   textBody: {
     width: '85%',
@@ -231,15 +209,30 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     textAlign: 'center',
   },
-  photoBox: {
+  frame7: {
+    alignSelf: 'stretch',
+    height: '100%',
     paddingVertical: 10,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 25,
     backgroundColor: 'rgba(217, 217, 217, 1)',
     borderWidth: 3,
     borderColor: '#787792',
     borderStyle: 'dashed',
+  },
+  frame4: {
+    paddingTop: 10,
+    paddingLeft: 10,
+    paddingBottom: 10,
+    paddingRight: 10,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    rowGap: 10,
+    columnGap: 10,
+    alignSelf: 'stretch',
   },
   name: {
     color: 'rgba(0, 0, 0, 1)',
@@ -255,14 +248,24 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '400',
   },
-  nameFrame: {
+  itemBox: {
+    padding: 10,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    rowGap: 10,
+    columnGap: 10,
+  },
+  nameRow: {
     flexDirection: 'row',
     alignSelf: 'stretch',
+    padding: 10,
     alignItems: 'center',
     columnGap: 5,
   },
   nameBox: {
-    width: '100%',
+    width: 'auto',
+    maxWidth: '100%',
     paddingHorizontal: 10,
     paddingVertical: 5,
     alignItems: 'flex-start',
@@ -295,13 +298,14 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '400',
   },
-  frame37: {
-    width: '100%',
+  descriptionBox: {
+    width: 320,
+    padding: 10,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
-  nameBox2: {
+  descriptionTextBox: {
     position: 'relative',
     display: 'flex',
     height: 128,
@@ -309,10 +313,7 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     gridTemplateRows: 'repeat(4, minmax(0px, 1fr))',
     gridTemplateColumns: 'repeat(4, minmax(0px, 1fr))',
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
+    borderRadius: 15,
     backgroundColor: 'rgba(217, 217, 217, 1)',
   },
   descriptionHere:{
@@ -322,14 +323,32 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontStyle: 'normal',
     fontWeight: '400',
-    maxWidth: '100%',
-    height: '100%',
   },
   ptsCountHere: {
     fontFamily: FONTS.GOWUN_DODUM,
     fontSize: 18,
     fontStyle: 'normal',
     fontWeight: '400',
+  },
+  frame36: {
+    flexDirection: 'row',
+    width: 320,
+    paddingTop: 10,
+    paddingLeft: 10,
+    paddingBottom: 10,
+    paddingRight: 10,
+    alignItems: 'center',
+    rowGap: 10,
+    columnGap: 10,
+  },
+  pointBox: {
+    width: 'auto',
+    maxWidth: '100%',
+    flexDirection: 'row',
+    paddingVertical: 0,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    backgroundColor: 'rgba(217, 217, 217, 1)',
   },
   pts: {
     color: 'rgba(0, 0, 0, 1)',
@@ -352,7 +371,7 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '400',
   },
-  saveButton: {
+  nameBox4: {
     flexDirection: 'row',
     paddingVertical: 5,
     paddingHorizontal: 10,

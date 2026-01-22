@@ -32,8 +32,12 @@ export default function SignUp({userType, onSignUp}: props) {
       return;
     }
     const email = emailRef.current?emailRef.current: "";
+    if (!email.match(/.+@.+\..+/)){
+      Alert.alert("Enter a valid email", "Email should match user@domain.ext. For example, user@zinks.com");
+      return;
+    }
     console.log(COUNTRY_CODES[selectedCountry]);
-    onSignUp(email, name, COUNTRY_CODES[selectedCountry]);
+    onSignUp(email.toLowerCase(), name, COUNTRY_CODES[selectedCountry]);
   }
 
   const acceptTerms = () => {
@@ -61,10 +65,10 @@ export default function SignUp({userType, onSignUp}: props) {
   const { formContents } = useMemo(() => {
     let formContents = <View></View>;
     if (userType == "business"){
-      Alert.alert("set contents for business");
+      // Alert.alert("set contents for business");
       formContents = <TextInput style={[styles.bodyText, styles.containerStyle]} placeholder='Business Name' placeholderTextColor={'rgba(146, 144, 180, 1)'} onChangeText={(newName: string)=>{setName(newName)}} maxLength={30}/>;
     }else{
-      Alert.alert("set contents for customers");
+      // Alert.alert("set contents for customers");
     }
     return { formContents: formContents}}, []);
 

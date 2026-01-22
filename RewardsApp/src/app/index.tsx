@@ -7,6 +7,7 @@ import { useUser } from '@clerk/clerk-expo';
 import { Redirect } from "expo-router";
 import { useCallback, useContext, useEffect, useState } from 'react';
 
+
 export default function Index() {
     const {userType, setUserId, setUserType} = useContext(AppContext)!;
     const {isLoaded, isSignedIn} = useAuth();
@@ -71,3 +72,5 @@ export default function Index() {
     // user and server loaded properly, but user not signed in
     return <Redirect href="./welcome" />;
 }
+
+

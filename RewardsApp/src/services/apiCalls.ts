@@ -1,4 +1,5 @@
 import { SITE_URL } from "@/constants/constants";
+import { CardHook, LocationHook } from "@/constants/hooks";
 import { APIResponse, Reward } from "@/constants/interfaces";
 
 export const pingBackend = async (): Promise<boolean> => {
@@ -68,6 +69,31 @@ export const updateReward = async (reward: Reward) => {
     } catch (error) {
       throw error;
     } 
+}
+
+export const updateRewardImage = async (rewardId: string, image_url: string) => {
+  try {    
+    const backendUrl = `${SITE_URL}/rewards/${rewardId}/updateImage`;
+    const formData = new FormData();
+    formData.append("image", {
+      uri: image_url,
+      name: "card",
+      type: "image/jpeg,jpg,png,heif"
+    } as any);
+    const response = await fetch(backendUrl, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: formData
+    });
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.log("error updating reward in updateRewardImage()")
+    throw error;
+  }
 }
 
 export const redeemReward = async (cardId: string, customerId: string, rewardId: string) => {
@@ -346,6 +372,29 @@ export const updateCustomer = async (customer: any) => {
     } 
 }
 
+export const updateCustomerLocation = async (customerId: string, location: LocationHook) => {
+    try {
+      const backendUrl = `${SITE_URL}/customers/${customerId}/updateLocation`;
+      const response = await fetch(backendUrl, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        latitude: location.location.latitude,
+        longitude: location.location.longitude,
+        street_address: location.streetAddress,
+        }),
+      });
+      const json = await response.json();
+      return json;
+    } catch (error) {
+      throw error;
+    } 
+}
+
+
 export const updateCustomerImage = async (id: string, image_url: string) => {
     try {
       const backendUrl = `${SITE_URL}/customers/${id}/updateImage`;
@@ -516,7 +565,7 @@ export const getReward = async (rewardId: string) => {
   } 
 }
 
-export const updateCard = async (id: string, card: any) => {
+export const updateCard = async (id: string, card: CardHook) => {
     try {
       const backendUrl = `${SITE_URL}/cards/${id}/update`;
       const response = await fetch(backendUrl, {
@@ -528,9 +577,9 @@ export const updateCard = async (id: string, card: any) => {
       body: JSON.stringify({
         name: card.name,
         description: card.description,
-        image_url: card.image_url,
         contactInfo: card.contactInfo,
-        colour: card.colour
+        colour: card.colour,
+        textColour: card.textColour
         }),
       });
       const json = await response.json();
@@ -538,6 +587,32 @@ export const updateCard = async (id: string, card: any) => {
     } catch (error) {
       throw error;
     } 
+}
+
+export const updateCardImage = async (cardId: string, image_url: string) => {
+  try {    
+    console.log("image_url:"+image_url)
+    const backendUrl = `${SITE_URL}/cards/${cardId}/updateImage`;
+    const formData = new FormData();
+    formData.append("image", {
+      uri: image_url,
+      name: "card",
+      type: "image/jpeg,jpg,png,heif"
+    } as any);
+    const response = await fetch(backendUrl, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: formData
+    });
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.log("error updating card in updateCardImage()")
+    throw error;
+  }
 }
 
 
@@ -564,6 +639,23 @@ export const addCard = async (businessId: string, name: string) => {
     throw error;
   } 
 };
+
+export const getUserTypeEmail = async (email: string): Promise<APIResponse> => {
+  try {
+    const backendUrl = `${SITE_URL}/emails/${email}`;
+    const response = await fetch(backendUrl, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+    },
+    });
+    const json = await response.json();
+    console.log(json);
+    return json;
+  } catch (error) {
+    throw error;
+  } 
+}
 
 export const getUserType = async (userId: string): Promise<APIResponse> => {
   try {

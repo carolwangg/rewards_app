@@ -2,9 +2,9 @@ import FONTS from '@/constants/fonts';
 import { useClerk } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Editable from '@/components/Editable';
-import { getCustomer, updateCustomer } from '@/services/apiCalls';
+import { getCustomer, updateCustomer, updateCustomerImage } from '@/services/apiCalls';
 import Error from '@/components/Error';
 import { useCustomer } from '@/constants/useCustomer';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -34,13 +34,16 @@ export default function Profile({userId}: Props) {
   const customer = useCustomer(EMPTY_CUSTOMER);
   const [editingDetails, setEditingDetails] = useState(false);
   const [customerAttributes, setCustomerAttributes] = useState(DEFAULT_CUSTOMER_ATTRIBUTES);
-  
+  const imageEdited = useRef(false);
+
   useEffect(()=>{
     performGetCustomer(userId, customer);
   }, []);
 
   const editImage = useCallback( () =>{
-    pickImage(customer.setImageUrl);
+    console.log("start editing image");
+    imageEdited.current = true;
+    pickImage(customer.setImageUrl, [1, 1]);
   }, []);
 
   const onSignOut = () => {
@@ -62,6 +65,9 @@ export default function Profile({userId}: Props) {
     setEditingDetails(temp);
     setCustomerAttributes(temp? EDITING_CUSTOMER_ATTRIBUTES: DEFAULT_CUSTOMER_ATTRIBUTES);
     if (!temp){//idk anymore 
+      if (imageEdited && customer.image_url){
+        updateCustomerImage(userId, customer.image_url);
+      }
       updateCustomer(customer);
       console.log("updated");
     }
