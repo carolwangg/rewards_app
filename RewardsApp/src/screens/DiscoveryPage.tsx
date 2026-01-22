@@ -63,7 +63,8 @@ export default function DiscoverComponent({userId}: Props) {
   return (
     <SafeAreaProvider>
       <SafeAreaView testID={"175:492"} style={styles.root}>
-        {changingLocation? <LocationChooser location={location} onSave={()=>{updateCustomerLocation(userId, location)}}/>:
+         {/* <LocationChooser location={location} onSave={()=>{updateCustomerLocation(userId, location)}}/> */}
+        {changingLocation? null:
         <ScrollView style={styles.scroll} refreshControl={<RefreshControl style={{borderWidth: 1}} refreshing={refreshing} onRefresh={onRefresh}/>}>
             <View style={styles.body}>
                 <View testID="175:454" style={styles.locationRow}>

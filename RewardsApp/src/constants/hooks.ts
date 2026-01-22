@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Location } from "./interfaces";
+import { Business, Card, Location } from "./interfaces";
 
 export type CardHook = {
     id: string,
@@ -16,6 +16,7 @@ export type CardHook = {
     setContactInfo: (contactInfo: string) => void,
     setColour: (colour: string) => void,
     setTextColour: (textColour: string) => void
+    getCard: () => Card
 }
 
 export class LocationHook{
@@ -58,4 +59,5 @@ export type BusinessHook = {
     setBusinessPhone: (businessPhone: string) => void,
     setImageUrl: (imageUrl: string) => void,
     setBannerUrl: (bannerUrl: string) => void,
+    getBusiness: () => Business,
 }

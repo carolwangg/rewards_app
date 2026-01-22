@@ -65,6 +65,36 @@ export function useBusiness(business: Business): BusinessHook {
     setBannerUrl(newBannerUrl);
   }, []);
 
+  const populateBusiness = useCallback((business: Business) =>{
+    updateName(business.name),
+    updateEmail(business.email),
+    business.description? updateDescription(business.description): null,
+    updateCountry(business.country),
+    business.longitude? updateLongitude(business.longitude): null,
+    business.latitude? updateLatitude(business.latitude): null,
+    business.street_address? updateStreetAddress(business.street_address): null,
+    business.business_email? updateBusinessEmail(business.business_email): null,
+    business.business_phone? updateBusinessPhone(business.business_phone): null,
+    business.image_url? updateImageUrl(business.image_url): null,
+    business.banner_url? updateBannerUrl(business.banner_url): null
+  }, [])
+  const getBusiness = useCallback((): Business=>{
+    return {
+      id: id,
+      name: name,
+      email: email,
+      description: description,
+      country: country,
+      longitude: longitude,
+      latitude: latitude,
+      street_address: streetAddress,
+      business_email: businessEmail,
+      business_phone: businessPhone,
+      image_url: imageUrl,
+      banner_url: bannerUrl,
+      rating: 5
+    }
+  }, [])
   return {
     id,
     name,
@@ -91,5 +121,7 @@ export function useBusiness(business: Business): BusinessHook {
     setBusinessPhone: updateBusinessPhone,
     setImageUrl: updateImageUrl,
     setBannerUrl: updateBannerUrl,
+    getBusiness: getBusiness,
+    populate: populateBusiness,
   };
 }

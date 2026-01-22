@@ -1,80 +1,111 @@
 import FONTS from '@/constants/fonts';
 import { Stack, router } from 'expo-router';
-import { useRef, useState } from 'react';
-import { Alert, Animated, Dimensions, Image, Keyboard, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
-import { Reward } from '@/constants/interfaces';
-import { updateReward, updateRewardImage } from '@/services/apiCalls';
-import { useReward } from '@/constants/useReward';
+import { useCallback, useRef, useState } from 'react';
+import { Alert, Dimensions, Image, Keyboard, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Business } from '@/constants/interfaces';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Loading from '@/components/Loading';
 import { pickImage } from '@/helpers/imagePicker';
+import { useBusiness } from '@/constants/useBusiness';
+import { useTranslation } from 'react-i18next';
+import { UNIVERSAL_STYLES } from '@/constants/styles';
+import COLOURS from '@/constants/colours';
+import DefaultLogo from '@/assets/images/default-logo.svg';
+import LocationWidget from '@/components/LocationWidget';
+import LocationChooser from '@/components/LocationChooser';
+import { LocationHook } from '@/constants/hooks';
+import { DEFAULT_LATITUDE, DEFAULT_LONGITUDE } from '@/constants/constants';
+import Pencil from "@/assets/images/pencil-icon.svg"
+import { updateBusiness, updateBusinessBanner, updateBusinessImage } from '@/services/apiCalls';
+
 type Props={
-  prevReward: Reward;
+  businessInterface: Business;
+  userId: string,
 }
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-const performUpdateReward = async(reward: any, setLoading: Function, setRewardUpdatedText: Function) => {
-  try{
-    setLoading(true);
-    const response = await updateReward(reward);
-    console.log("response:"+response);
-    if (response.user == "success"){
-      setRewardUpdatedText("Saved");
-    }else{
-      Alert.alert("Error updating reward", "We're having some issues on our end. Please try again later.");
-    }
-  }catch (err){
-    Alert.alert("Error updating reward", "We're having some issues on our end. Please try again later.")
-    console.error(err);
-  }finally{
-    setLoading(false);
-  }
-  router.dismiss();
-}
+// const performUpdateReward = async(reward: any, setLoading: Function, setRewardUpdatedText: Function) => {
+//   try{
+//     setLoading(true);
+//     const response = await updateReward(reward);
+//     console.log("response:"+response);
+//     if (response.user == "success"){
+//       setRewardUpdatedText("Saved");
+//     }else{
+//       Alert.alert("Error updating reward", "We're having some issues on our end. Please try again later.");
+//     }
+//   }catch (err){
+//     Alert.alert("Error updating reward", "We're having some issues on our end. Please try again later.")
+//     console.error(err);
+//   }finally{
+//     setLoading(false);
+//   }
+//   router.dismiss();
+// }
 
 
-export default function UpdateBusinessProfile({prevReward}: Props) {
-  const reward = useReward(prevReward);
-  const [charCount, setCharCount] = useState(0);
-  const [rewardUpdatedText, setRewardUpdatedText] = useState("Save");
+export default function UpdateBusinessProfile({userId, businessInterface}: Props) {
+  const business = useBusiness(businessInterface);
   const [loading, setLoading] = useState(false);
   const imageEdited = useRef(false);
-
-  const currentValue = useRef(new Animated.Value(0)).current;
-  const currentBgColor = currentValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['rgba(255, 255, 255, 1)', 'rgba(28, 39, 76, 1)']
-  })
-  const currentTextColor = currentValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['#1C274C', '#B6BED8']
-  })
-
-  const saveRewardUpdate = () => {
-    //Check its valid
-    if (reward.name != "" &&  reward.points != -1){
-      console.log("Saving...")
-      if (imageEdited.current){
-        updateRewardImage(reward.id, reward.image_url)
-      }
-      setLoading(true);
-      performUpdateReward(reward, setLoading, setRewardUpdatedText);
-    }else{
-      console.log("error")
-      if(reward.name == ""){
-        Alert.alert("Set Name", "You need to give the event a name.")
-      }else{
-        Alert.alert("Set Point Count", "You need to give the event a point count.")
-      }
-    }
+  const bannerEdited = useRef(false);
+  const [charCount, setCharCount] = useState(0);
+  const {t} = useTranslation();
+  const [editingLocation, setEditingLocation] = useState(false);
+  // const location = new LocationHook(business.latitude? business.latitude: DEFAULT_LATITUDE, business.longitude? business.longitude: DEFAULT_LONGITUDE);
+  const saveLocation = (location: LocationHook) =>{
+    business.setLatitude(location.location.latitude);
+    business.setLongitude(location.location.longitude);
+    business.setStreetAddress(location.streetAddress);
+    setEditingLocation(false);
   }
+  const saveBusiness = async () => {
+    setLoading(true);
+    try{
+      let bannerUpdated, imageUpdated;
+      if (imageEdited && business.imageUrl){
+        bannerUpdated = await updateBusinessImage(userId, business.imageUrl);
+      }
+      if (bannerEdited && business.bannerUrl){
+        imageUpdated = await updateBusinessBanner(userId, business.bannerUrl);
+      }
+      const businessUpdated = await updateBusiness(userId, business.getBusiness());
+      if (!(businessUpdated.user=="success" && businessUpdated.user=="success" && businessUpdated.user=="success")){
+        Alert.alert("Error updating info", "A server issue occurred. Please try again later.")
+      }
+    }catch(err){
+      console.error("Error updating customer:"+err);
+      Alert.alert("Error updating info", "A server issue occurred. Please try again later.")
+    }    
+    setLoading(false);
+    router.back();
+  }
+  console.log("business:"+JSON.stringify(business.getBusiness()))
+  // const saveRewardUpdate = () => {
+  //   //Check its valid
+  //   if (reward.name != "" &&  reward.points != -1){
+  //     console.log("Saving...")
+  //     if (imageEdited.current){
+  //       updateRewardImage(reward.id, reward.image_url)
+  //     }
+  //     setLoading(true);
+  //     performUpdateReward(reward, setLoading, setRewardUpdatedText);
+  //   }else{
+  //     console.log("error")
+  //     if(reward.name == ""){
+  //       Alert.alert("Set Name", "You need to give the event a name.")
+  //     }else{
+  //       Alert.alert("Set Point Count", "You need to give the event a point count.")
+  //     }
+  //   }
+  // }
 
-  let imageChoice;
-  if (reward.image_url){
-    imageChoice = (<Image source={{ uri: reward.image_url }} style={styles.image} />);
+  let bannerChoice;
+  if (business.bannerUrl){
+    bannerChoice = (<Image source={{ uri: business.bannerUrl }} style={styles.banner} />);
   }else{
-    imageChoice = (<View style={styles.frame7}>
+    bannerChoice = (<View style={styles.frame7}>
     <Text testID="15:1620" style={styles.addPhoto}>
       {`Add photo`}
     </Text>
@@ -83,53 +114,64 @@ export default function UpdateBusinessProfile({prevReward}: Props) {
     </Text>
     </View>);
   }
+  const editImage = useCallback( () =>{            
+              imageEdited.current = true;
+              pickImage((uri: string) =>{business.setImageUrl(uri);}, [1, 1]);
+            }, []);
+  const editBanner = useCallback( () =>{            
+              bannerEdited.current = true;
+              pickImage((uri: string) =>{business.setBannerUrl(uri);}, [3, 1]);
+            }, []);
   if (loading) return <Loading/>
+  if (editingLocation) return <LocationChooser
+         latitude={business.latitude? business.latitude: DEFAULT_LATITUDE}
+          longitude={business.longitude? business.longitude: DEFAULT_LONGITUDE} 
+          initialStreetAddress={business.streetAddress? business.streetAddress: ''} 
+          onSave={saveLocation}/>
+  console.log(JSON.stringify(business))
+  
   return (
     <SafeAreaProvider>
     <SafeAreaView testID={"53:204"} style={styles.root}>
-      <Stack.Screen options={{ title: reward.name, headerBackButtonDisplayMode: 'minimal', 
+      <Stack.Screen options={{ title: business.name, headerBackButtonDisplayMode: 'minimal', 
       headerShadowVisible: false, headerTintColor: 'black', 
       headerTitleStyle:{fontSize: 24, fontFamily: FONTS.BALOO_BHAI, fontWeight: 800, color: 'rgba(58, 73, 117, 1)'}, headerTitleAlign: 'center'
        }} />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={styles.scroll}>
           <View style={styles.body}>
-            <Pressable testID="15:1618" onPress={() => {imageEdited.current = true; pickImage(reward.setimage_url)}} style={styles.imagePicker}>
-                {imageChoice}
+            <View style={styles.businessBox}>
+            <Pressable testID="15:1618" onPress={editBanner} style={styles.imagePicker}>
+                {bannerChoice}
             </Pressable>
             <View style={styles.textBody}>
-              <View testID="15:1623" style={styles.nameRow}>
-                <TextInput testID="15:1626" style={[styles.nameHere, styles.nameBox]} placeholder='Add name' placeholderTextColor={'#787792'} value={reward.name} onChangeText={(name: string) => {reward.setName(name)}}/> 
-              <Text style={{color: "#FF8383"}}>*</Text>
-              </View>
+              <View style={styles.titleAndImageBox}>
+                    <View testID="154:1066" style={styles.imageBox}>
+                      {business.imageUrl?<Image source={{uri: business.imageUrl}} style={styles.image}/>: <DefaultLogo width={80} height={80}/>}
+                      <Pressable style={styles.pencil} onPress={editImage}><Pencil/></Pressable>
+                    </View>
+                    <View style={styles.titleBox}>
+                      <TextInput style={[UNIVERSAL_STYLES.textInputBox, UNIVERSAL_STYLES.bodyText, {height: 'auto'}]} placeholderTextColor={COLOURS.DARK_GRAY} placeholder={'Business name'} value={business.name} onChangeText={business.setName}/>
+                      <LocationWidget location={business.streetAddress? business.streetAddress: t('currentLocation')} setFindLocation={setEditingLocation}/>
+                    </View>
+                </View>
               <View testID="15:1627" style={styles.descriptionBox}>
                 <View testID="15:1649" style={styles.descriptionTextBox}>
-                  <TextInput testID="15:1626" style={styles.descriptionHere} multiline={true} maxLength={50} placeholder='Add description here...' value={reward.description} placeholderTextColor={'#787792'} onChangeText={(description) => {reward.setDescription(description);setCharCount(description.length)}}/>
+                  <TextInput testID="15:1626" style={styles.descriptionHere} multiline={true} maxLength={50} placeholder='Add description here...' value={business.description?business.description: ''} placeholderTextColor={'#787792'} onChangeText={(description) => {business.setDescription(description);setCharCount(description.length)}}/>
                   <Text testID="15:1652" style={styles.charCount}>
                     {charCount}/50
                   </Text>
                 </View>
               </View>
-              <View testID="15:1631" style={styles.frame36}>
-                <TextInput testID="15:1626" style={[styles.ptsCountHere, styles.pointBox]} keyboardType="numeric" placeholder='Add points needed' value={reward.points.toString()} placeholderTextColor={'#787792'} onChangeText={(pointCount) => {reward.setPoints((Number) (pointCount));}}/>
-                <Text testID="15:1638" style={styles.pts}>
-                  {`pts`}
-                </Text>
-                <Text style={{color: "#FF8383"}}>*</Text>
               </View>
+              </View>
+
               <View style={styles.saveContainer}>
-                <Pressable onPress={saveRewardUpdate}>
-                  <Animated.View testID="104:910" style={[styles.nameBox4, 
-                  {backgroundColor: currentBgColor,}
-                  ]}>
-                    <Animated.Text testID="104:911" style={[styles.addToCart, {color: currentTextColor}]}>
-                        {rewardUpdatedText}
-                    </Animated.Text>
-                  </Animated.View>
+                <Pressable onPress={saveBusiness} style={styles.saveButton}>
+                  <Text style={[UNIVERSAL_STYLES.h2Text, {fontSize: 20}]}>{t("save")}</Text>
                 </Pressable>
               </View>
             </View>
-          </View>
         </ScrollView>
       </TouchableWithoutFeedback>
     </SafeAreaView>
@@ -145,10 +187,17 @@ const styles = StyleSheet.create({
     height: '100%',
     width: SCREEN_WIDTH,
     backgroundColor: 'rgba(255, 255, 255, 1)',
-    
+  },
+  businessBox: {
+    width: '100%',
+    height: 'auto',
+    rowGap: 10,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    flex: 1,
   },
   scroll: {
-    height: 'auto',    
+    flex: 1,
     width: SCREEN_WIDTH,
     display: 'flex',
     justifyContent: 'center',
@@ -156,33 +205,47 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
-    alignSelf: 'stretch',
-    rowGap: 10,
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: "flex-start",
-    
+    justifyContent: 'space-between',
   },
   textBody: {
     width: '85%',
     rowGap: 10,
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
+    alignItems: 'stretch',
     justifyContent: "flex-start",
+  },
+  banner:{
+    alignSelf: 'stretch',
+    resizeMode: 'cover',
+    width: '100%',
+    height: '100%',
   },
   image:{
     alignSelf: 'stretch',
     resizeMode: 'cover',
     width: '100%',
     height: '100%',
+    borderRadius: '100%'
+  },
+  imageBox: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    height: 80,
+    width: 80,
+    // backgroundColor: 'blue'
   },
   imagePicker: {
     alignSelf: 'stretch',
     display: 'flex',
-    maxHeight: 300,
+    maxHeight: 200,
     maxWidth: '100%',
+    borderWidth: 1
   },
   addEvent: {
     gridRowStart: '1',
@@ -216,7 +279,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 25,
     backgroundColor: 'rgba(217, 217, 217, 1)',
     borderWidth: 3,
     borderColor: '#787792',
@@ -299,8 +361,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   descriptionBox: {
-    width: 320,
-    padding: 10,
+    alignSelf: 'stretch',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-start',
@@ -389,5 +450,25 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     width: '100%',
+    padding: 10
+  },
+  saveButton: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderWidth: 2,
+    borderColor: COLOURS.DARK_BLUE,
+    borderRadius: 25,
+  },
+  titleAndImageBox:{
+    flexDirection: 'row',
+    columnGap: 20
+  },
+  titleBox: {
+    flexDirection: 'column',
+    rowGap: 10,
+    flex: 1
+  },
+  pencil: {
+    position: 'absolute',
   },
 });

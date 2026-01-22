@@ -1,6 +1,6 @@
 import { SITE_URL } from "@/constants/constants";
 import { CardHook, LocationHook } from "@/constants/hooks";
-import { APIResponse, Reward } from "@/constants/interfaces";
+import { APIResponse, Business, Reward } from "@/constants/interfaces";
 
 export const pingBackend = async (): Promise<boolean> => {
     try {
@@ -467,7 +467,6 @@ export const updateBusinessBanner = async (id: string, image_url: string) => {
       });
 
       const json = await response.json();
-      console.log(json);
       return json;
     } catch (error) {
       throw error;
@@ -498,7 +497,7 @@ export const addBusiness = async (businessId: string, email: string, country: st
   } 
 };
 
-export const updateBusiness = async (id: string, business: any) => {
+export const updateBusiness = async (id: string, business: Business) => {
     try {
       const backendUrl = `${SITE_URL}/businesses/${id}/update`;
       const response = await fetch(backendUrl, {
@@ -508,18 +507,16 @@ export const updateBusiness = async (id: string, business: any) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        id: business.id,
+        id: id,
         name: business.name,
         description: business.description,
         email: business.email,
         country: business.country,
         longitude: business.longitude,
         latitude: business.latitude,
-        street_address: business.streetAddress,
-        business_email: business.businessEmail,
-        business_phone: business.phoneNumber,
-        image_url: business.imageUrl,
-        banner_url: business.bannerUrl,      
+        street_address: business.street_address,
+        business_email: business.business_email,
+        business_phone: business.business_phone      
         }),
       });
       const json = await response.json();
@@ -540,7 +537,6 @@ export const getCard = async (businessId: string) => {
     },
     });
     const json = await response.json();
-    console.log(json);
     return json;
   } catch (error) {
     throw error;

@@ -49,5 +49,14 @@ export const UNIVERSAL_STYLES = StyleSheet.create({
         fontFamily: FONTS.BALOO_BHAI,
         fontSize: 18,
         color: COLOURS.DARK_BLUE
-    }
+    },
+    textInputBox: {
+        flexDirection: 'row',
+        paddingHorizontal: 10,
+        alignItems: 'flex-start',
+        borderRadius: 15,
+        backgroundColor: COLOURS.GRAY,
+        boxSizing: 'border-box',
+        flex: 1
+    },
 })

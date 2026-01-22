@@ -54,13 +54,13 @@ export default function Index() {
     useEffect(() => {
         setUserTypeCallback();
     }, [user]);
-
-    if (!isLoaded || !checked_server || !userLoaded) return <LogoPage/>
+    if (!isLoaded || !checked_server) return <LogoPage/>
     console.log("All loaded")
     if (!server_ping) return <Error error={"Cannot connect to server. Please try again later."} code={503}/>;
     console.log("Server can be pinged")
     console.log("userType:"+userType);
     if (isSignedIn) {
+        if (!userLoaded) return <LogoPage/>
         if (userType==="") return <Error error={"Error loading user data."} code={404}/>;
         console.log("signed in userType:"+ userType);
         if (userType == "customer"){

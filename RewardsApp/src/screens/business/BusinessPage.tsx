@@ -1,34 +1,35 @@
 import FONTS from '@/constants/fonts';
-import { BusinessHook } from '@/constants/hooks';
 import {StyleSheet, Alert, View, Text, Image, Pressable, ScrollView} from 'react-native';
 import DefaultLogo from '@/assets/images/default-logo.svg';
 import { UNIVERSAL_STYLES } from '@/constants/styles';
 import COLOURS from '@/constants/colours';
+import { Business } from '@/constants/interfaces';
 
 type Props = {
-    business: BusinessHook
+    business: Business
 }
 const redirect = () =>{
 
 }
 
 export default function BusinessPage({business}: Props){
+  console.log("business page:"+JSON.stringify(business))
     return <View testID={"104:955"} style={styles.root}>    
           <View testID="154:1061" style={styles.businessBox}>
             <View testID="154:1065" style={styles.bannerBox}>
-                {business.bannerUrl?<Image source={{uri: business.bannerUrl}} style={styles.image}/>: <View style={styles.noPhotoBox}/>}
+                {business.banner_url?<Image source={{uri: business.banner_url}} style={styles.banner}/>: <View style={styles.noPhotoBox}/>}
             </View>
             <View style={styles.titleAndDescription}>
                 <View style={styles.titleAndImageBox}>
-                    {business.imageUrl?<Image source={{uri: business.imageUrl}} style={styles.image}/>: <DefaultLogo/>}
+                    <View style={{width: 80, height: 80}}>{business.image_url?<Image source={{uri: business.image_url}} style={styles.image}/>: <DefaultLogo/>}</View>
                     <View style={styles.titleBox}>
                         <Text style={UNIVERSAL_STYLES.h2Text}>{business==null? '': business.name}</Text>
-                        <Text style={UNIVERSAL_STYLES.bodyTextLight}>{business==null || business.streetAddress == ''? 'No address set': business.streetAddress}</Text>
+                        <Text style={[UNIVERSAL_STYLES.bodyTextLight]} numberOfLines={1}>{(business==null || business.street_address == '')? 'No address set': business.street_address}</Text>
                     </View>
                 </View>
                 <View testID="154:1068" style={styles.description}>
                 <Text testID="154:1069" style={styles.bodyText}>
-                    {business==null || business.description == ''? 'No description': business.description}
+                    {(business==null || business.description == '')? 'No description': business.description}
                 </Text>
                 </View>
             </View>
@@ -46,7 +47,8 @@ const styles = StyleSheet.create({
     borderWidth: 1
   },
   titleAndDescription: {
-    padding: 10
+    width: '100%',
+    padding: 10,
   },
   body:{
     rowGap: 10,
@@ -58,14 +60,20 @@ const styles = StyleSheet.create({
     height: 'auto'
   },
   image:{
-    width: 310,
-    height: 230,
-    padding: 10,
+    width: '100%',
+    height: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-start',
     borderColor: 'black',
-    borderWidth: 2
+    borderWidth: 2,
+    borderRadius: '100%'
+  },
+  banner:{
+    width: '100%',
+    height: '100%',
+    alignSelf: 'stretch',
+    resizeMode: 'cover',
   },
   itemName: {
     alignSelf: 'stretch',
@@ -106,7 +114,6 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    borderWidth: 1,
     borderStyle: 'solid',
     borderColor: 'rgba(0, 0, 0, 1)',
   },
@@ -206,6 +213,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   businessBox: {
+    flex: 1,
     width: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -214,10 +222,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLOURS.WHITE
   },
   bannerBox: {
-    width: '100%',
-    height: 200,
-    justifyContent: 'center',
-    alignItems: 'center',
+    alignSelf: 'stretch',
+    display: 'flex',
+    maxHeight: 300,
+    maxWidth: '100%',
   },
   description: {
     flexDirection: 'row',
@@ -302,11 +310,14 @@ const styles = StyleSheet.create({
   },
   titleAndImageBox:{
     flexDirection: 'row',
-    columnGap: 20
+    columnGap: 20,
+    width: '100%',
+    flex: 1
   },
   titleBox: {
     flexDirection: 'column',
-    rowGap: 10
+    rowGap: 10,
+    flex: 1,
   },
   ratingBox: {
     flexDirection: 'row',

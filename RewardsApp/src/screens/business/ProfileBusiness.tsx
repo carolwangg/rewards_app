@@ -20,7 +20,7 @@ import Pencil from "@/assets/images/pencil-icon.svg"
 import { pickImage } from '@/helpers/imagePicker';
 import COLOURS, { DEFAULT_CARD_COLOUR, DEFAULT_CARD_TEXT_COLOUR } from '@/constants/colours';
 import { UNIVERSAL_STYLES } from '@/constants/styles';
-import { CardHook } from '@/constants/hooks';
+import { BusinessHook, CardHook } from '@/constants/hooks';
 import UpdateCard from './UpdateCard';
 import BusinessInfo from '@/components/BusinessInfo';
 import BusinessPage from './BusinessPage';
@@ -49,7 +49,6 @@ export default function Profile({userId}: Props) {
     performGetBusiness(userId, business);
     performGetCard(userId, card);
   }, []);
-  console.log('image edited:'+imageEdited.current)
   const onSignOut = () => {
     signOut();
     
@@ -57,27 +56,13 @@ export default function Profile({userId}: Props) {
     
   }
 
-  const editToggle = () => {
-    const temp = !editingDetails;
-    setEditingDetails(temp);
-    if (!temp){//idk anymore 
-      updateBusiness(userId, business);
-      
-    }
-  }
+  const editBusiness = useCallback(() => {
+    router.push({pathname: './edit-business', params: { userId: userId, business: JSON.stringify(business.getBusiness()) }})
+  }, [business]);
 
-  const editToggleCard = () => {
-    const temp = !editingCard;
-    setEditingCard(temp);
-  }
-
-  const onSaveCard = () =>{
-    if (imageEdited.current){
-      updateCardImage(userId, card.image_url);
-    }
-    updateCard(userId, card);
-    setEditingCard(false);
-  }
+  const editCard = useCallback(() => {
+    router.push({pathname: './edit-card', params: { userId: userId, card: JSON.stringify(card.getCard()) }})
+  }, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -117,7 +102,6 @@ export default function Profile({userId}: Props) {
         pickImage((uri: string) =>{card.setimage_url(uri);}, [1, 1]);
       }, []);
       
-
   const colorWidgetFactory = useCallback((attribute: string) => {
     let component;
     switch (attribute){
@@ -157,21 +141,17 @@ export default function Profile({userId}: Props) {
       }
       return component;
     },[card] );
-    console.log("card image:"+card.image_url);
-  if (editingCard) return <UpdateCard card={card} onSave={onSaveCard} imageEdited={imageEdited}/>
-  if (editingDetails) return <UpdateBusinessProfile card={card} onSave={onSaveCard} imageEdited={imageEdited}/>
   return (
     <SafeAreaProvider>
       <SafeAreaView testID={"53:202"} style={styles.root}>
         <ScrollView contentContainerStyle={styles.scroll} refreshControl={<RefreshControl style={{borderWidth: 1}} refreshing={refreshing} onRefresh={onRefresh}/>}>
           <View>
-            
             <View style={styles.body}>
               <Pressable style={styles.settingsRow} onPress={()=>{router.replace("./options");}}><Settings/></Pressable>
-            <Header headerTextStyle={styles.headerText} headerText={t('business.profile')} onPress={editToggle} sideText={editingDetails? t('save'): t('edit')}/>
-            <View style={{width: '100%'}}>
-              <BusinessPage business={business}/>
-            </View>
+              <Header headerTextStyle={styles.headerText} headerText={t('business.profile')} onPress={editBusiness} sideText={t('edit')}/>
+              <View style={{width: '100%'}}>
+                <BusinessPage business={business.getBusiness()}/>
+              </View>
             {/* <View testID="9:500" style={styles.frame}> 
               <Header headerTextStyle={styles.headerText} headerText={t('details')} onPress={editToggle} sideText={editingDetails? t('save'): t('edit')}/>
               <View testID="15:136" style={styles.infoBox}>
@@ -179,7 +159,7 @@ export default function Profile({userId}: Props) {
               </View>                
             </View> */}
               <View testID="9:28" style={styles.frame}>
-                <Header headerTextStyle={styles.headerText} headerText={t('business.yourCard')} onPress={editToggleCard} sideText={t('edit')}/>
+                <Header headerTextStyle={styles.headerText} headerText={t('business.yourCard')} onPress={editCard} sideText={t('edit')}/>
                 <View testID="9:580" style={[styles.cardBox, {backgroundColor: card.colour}]}>
                 <View style={styles.cardBody}>
                   <View testID="9:581" style={styles.titleBox}>
@@ -211,12 +191,10 @@ export default function Profile({userId}: Props) {
     </SafeAreaProvider>
   );
 }
-function performGetBusiness(userId: string, business: any){
+function performGetBusiness(userId: string, business: BusinessHook){
   try{
     getBusiness(userId).then(data => {
-      
-      data.user.name? business.setName(data.user.name): business.setName("");
-      data.user.email? business.setEmail(data.user.email): business.setEmail("");
+      business.populate(data.user);
     });
   }catch (err){
     console.error("Error fetching customer:"+err);
@@ -273,11 +251,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white'
   },
   settingsRow: {
-    width: '100%',
-    height: 'auto',
+    flex: 1,
+    alignSelf: 'stretch',
     alignItems: 'flex-end',
   },
   body: {
+    width: '80%',
     paddingTop: 20,
     backgroundColor: 'rgba(255, 255, 255, 1)',
     alignSelf: 'stretch',

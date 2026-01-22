@@ -1,10 +1,8 @@
 import Editable from "@/components/Editable"
-import Header from "@/components/Header"
 import COLOURS from "@/constants/colours"
 import FONTS from "@/constants/fonts"
-import { CardHook } from "@/constants/hooks"
 import { pickImage } from "@/helpers/imagePicker"
-import { RefObject, useCallback, useRef, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { View, Dimensions, Image, Pressable, StyleSheet, Text, TouchableWithoutFeedback, Keyboard } from "react-native"
 import ColorPicker, { HueSlider, InputWidget, Panel1 } from "reanimated-color-picker"
@@ -13,24 +11,31 @@ import Pencil from "@/assets/images/pencil-icon.svg"
 import ColorWidget from "@/assets/images/color-widget.svg"
 import { UNIVERSAL_STYLES } from "@/constants/styles"
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context"
+import { router } from "expo-router"
+import { updateCard, updateCardImage } from "@/services/apiCalls"
+import { Card } from "@/constants/interfaces"
+import { useCard } from "@/constants/useCards"
 
 type Props = {
-    card: CardHook
-    onSave: (event: any) => void
-    imageEdited: RefObject<boolean>
+  userId: string,
+  cardInterface: Card
 }
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-export default function UpdateCard ({card, onSave, imageEdited}: Props) {
+export default function UpdateCard ({userId, cardInterface}: Props) {
     const {t} = useTranslation();
     const [editingColourStrategy, setEditingColourStrategy] = useState("");
+    const imageEdited = useRef(false);
+    const card = useCard(cardInterface);
     const editImage = useCallback( () =>{            
             imageEdited.current = true;
             pickImage((uri: string) =>{card.setimage_url(uri);}, [1, 1]);
           }, []);
     const colorWidgetFactory = useCallback((attribute: string) => {
     let component;
+
+    
     switch (attribute){
       case "colour":
         component = <View style={styles.colourPickerBody}>
@@ -69,6 +74,14 @@ export default function UpdateCard ({card, onSave, imageEdited}: Props) {
       return component;
     },[card] );
     console.log("card image:"+card.image_url);
+    const onSave = () =>{
+      updateCard(userId, card);
+      if (imageEdited.current){
+        updateCardImage(card.id, card.image_url);
+      }
+
+      router.back();
+    }
     return <SafeAreaProvider>
     <SafeAreaView>
         <Pressable onPress={() =>{Keyboard.dismiss(); setEditingColourStrategy("")}}>

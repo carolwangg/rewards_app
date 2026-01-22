@@ -2,7 +2,7 @@ import { Alert } from "react-native";
 import * as ExpoLocation from "expo-location";
 import { Region } from "react-native-maps";
 
-export async function pickRegion(setRegion: (region: Region) => void){
+export async function pickRegion(): Promise<Region>{
     const { status } = await ExpoLocation.requestForegroundPermissionsAsync();
 
     if (status !== "granted") {
@@ -12,5 +12,6 @@ export async function pickRegion(setRegion: (region: Region) => void){
     const location = await ExpoLocation.getCurrentPositionAsync({
     accuracy: ExpoLocation.Accuracy.High,
     });
-    setRegion({latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01});
+
+    return {latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01}
 }

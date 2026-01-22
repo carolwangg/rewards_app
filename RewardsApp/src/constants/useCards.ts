@@ -42,6 +42,18 @@ export function useCard(card: Card): CardHook{
     setTextColour(newTextColour);
   }, []);
 
+  const getCard = useCallback((): Card => {
+    return {
+      id: id,
+      name: name,
+      description: description,
+      image_url: image_url,
+      contactInfo: contactInfo,
+      colour: colour,
+      textColour: textColour,
+    }
+  }, []);
+
   return {
     id,
     name,
@@ -56,6 +68,7 @@ export function useCard(card: Card): CardHook{
     setimage_url: updateimage_url,
     setContactInfo: updateContactInfo,
     setColour: updateColour,
-    setTextColour: updateTextColour
+    setTextColour: updateTextColour,
+    getCard: getCard
   };
 }

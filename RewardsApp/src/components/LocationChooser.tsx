@@ -8,11 +8,14 @@ import MapView, { Marker, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import Loading from "./Loading";
 import { geolocate, reverseGeocodeLocation, autocompleteSuggestions } from "@/services/googleMaps";
 import { LocationHook } from "@/constants/hooks";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 type Props = {
     iconURL?: ImageURISource,
-    location: LocationHook,
-    onSave: (event: GestureResponderEvent) => void
+    latitude: number,
+    longitude: number,
+    initialStreetAddress: string,
+    onSave: (location: LocationHook) => void
 }
 
 const factory_helper = (suggestion: string, id: string, setStreetAddress: Function, setStreetAddressChanged: Function, onMapTouch: Function) => {
@@ -30,10 +33,11 @@ const factory = (suggestions: any[], setStreetAddress: Function, setStreetAddres
     return temp;
 }
 
-export default function LocationChooser({location, onSave, iconURL}: Props) {
+export default function LocationChooser({latitude, longitude, initialStreetAddress, onSave, iconURL}: Props) {
     const [loading, setLoading] = useState(false);
     const [searching, setSearching] = useState(false);
-    const [streetAddress, setStreetAddress] = useState(location.streetAddress);
+    const location = new LocationHook(latitude, longitude);
+    const [streetAddress, setStreetAddress] = useState(initialStreetAddress);
     const [streetAddressChanged, setStreetAddressChanged] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
     const [region, setRegion] = useState({latitude: location.location.latitude, 
@@ -46,7 +50,9 @@ export default function LocationChooser({location, onSave, iconURL}: Props) {
         reverseGeocodeLocation(newLocation).then(data =>{
             console.log(data[0].formattedAddress);
             if (data.length > 0) {
-                location.setStreetAddress(data[0].formattedAddress);
+                const newAddress = data[0].formattedAddress;
+                location.setStreetAddress(newAddress);
+                setStreetAddress(newAddress);
             }
         });
     }, []);
@@ -75,37 +81,42 @@ export default function LocationChooser({location, onSave, iconURL}: Props) {
         }
     }, [streetAddressChanged, location]);
     useEffect(()=>{
+        console.log("loading own region")
         setLoading(true);
-        pickRegion(setRegion);
-        onRegionChange(region);
-        setLoading(false);
+        pickRegion().then(data =>{
+            setRegion(data);
+            onRegionChange(data);
+            setLoading(false);
+        });
     }, []) 
     if (loading) return <Loading message={"Retrieving your location..."}/>
     return (
-    <Pressable style={styles.root} onPress={onMapTouch}>
-        <MapView 
-        style={styles.map} 
-        provider={PROVIDER_GOOGLE}
-        // initialRegion={{latitude: location.latitude, longitude: location.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01}}
-        region={region}
-        onRegionChangeComplete={onRegionChange}
-        >
-            <Marker title={"Selected location"} coordinate={location.location}/>
-        </MapView>
-        <View style={styles.locationRow}>
-            <View testID="175:455" style={[styles.locationButton, {width: searching? '100%': 200}]}>
-                <TextInput testID="175:456" style={[UNIVERSAL_STYLES.bodyTextSmall, {flex: 1}]} onFocus={()=>{setSearching(true);}} onChangeText={onTextChange}>
-                    {streetAddress}
-                </TextInput>
-            </View>
-            <View style={[styles.suggestions, {display: searching? 'flex': 'none'}]}>
-                {factory(suggestions, setStreetAddress, setStreetAddressChanged, onMapTouch)}
-            </View>
-        </View>
-        <View style={styles.saveButtonRow}>
-            <Pressable style={styles.saveButton} onPress={onSave}><Text style={UNIVERSAL_STYLES.bodyText}>{"Save"}</Text></Pressable>
-        </View>
-    </Pressable>
+            <Pressable style={styles.root} onPress={onMapTouch}>
+                <MapView 
+                style={styles.map}
+                provider={PROVIDER_GOOGLE}
+                // initialRegion={{latitude: location.latitude, longitude: location.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01}}
+                region={region}
+                onRegionChangeComplete={onRegionChange}
+                >
+                    <Marker title={"Selected location"} coordinate={location.location}/>
+                </MapView>
+                
+                <SafeAreaView style={styles.locationRow}>
+                    <View testID="175:455" style={[styles.locationButton, {width: searching? '100%': 300}]}>
+                        <TextInput testID="175:456" style={[UNIVERSAL_STYLES.bodyTextSmall, {flex: 1}]} onFocus={()=>{setSearching(true);}} onChangeText={onTextChange}>
+                            {streetAddress}
+                        </TextInput>
+                    </View>
+                    <View style={[styles.suggestions, {display: searching? 'flex': 'none'}]}>
+                        {factory(suggestions, setStreetAddress, setStreetAddressChanged, onMapTouch)}
+                    </View>
+                </SafeAreaView>
+
+                <SafeAreaView style={styles.saveButtonRow}>
+                    <Pressable style={styles.saveButton} onPress={()=>{onSave(location)}}><Text style={UNIVERSAL_STYLES.h3Text}>{"Save"}</Text></Pressable>
+                </SafeAreaView>
+            </Pressable>
   );
 }
 
@@ -156,8 +167,8 @@ const styles = StyleSheet.create({
     saveButtonRow: {
         position: 'absolute',
         width: '100%',
-        paddingVertical: 15,
-        paddingHorizontal: 10,
+        height: 'auto',
+        padding: 10,
         flexDirection: 'column',
         alignItems: 'center',
         backgroundColor: 'transparent',
@@ -166,10 +177,10 @@ const styles = StyleSheet.create({
     saveButton: {
         backgroundColor: COLOURS.WHITE,
         borderColor: COLOURS.DARK_BLUE,
-        paddingVertical: 5,
-        paddingHorizontal: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
         borderRadius: 45,
-        borderWidth: 1
-    }
+        borderWidth: 2
+    },
 })
 

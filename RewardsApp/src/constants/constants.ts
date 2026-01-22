@@ -25,3 +25,6 @@ export const SUPPORTED_THEMES: string_key = {
 }
 
 export const FALLBACK_LANGUAGE_CODE = 'en';
+
+export const DEFAULT_LATITUDE = 0;
+export const DEFAULT_LONGITUDE = 0;
