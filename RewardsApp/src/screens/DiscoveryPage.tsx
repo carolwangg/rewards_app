@@ -1,41 +1,59 @@
-import {StyleSheet, Alert, View, Text, ScrollView, RefreshControl} from 'react-native';
+import {StyleSheet, Alert, View, Text, ScrollView, RefreshControl, Pressable} from 'react-native';
 
 import ChevronDown from '@/assets/images/chevron-down.svg';
 import FONTS from '@/constants/fonts';
-import { CustomerReward, Location } from '@/constants/interfaces';
+import { CustomerReward, Location, rewardToCustomerReward } from '@/constants/interfaces';
 import RewardCarousel from '../components/RewardCarousel';
 import Header from '../components/Header';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { useState, useEffect, useCallback } from 'react';
-import { getCustomer, getRewards, updateCustomerLocation } from '@/services/apiCalls';
+import { useState, useEffect, useCallback, useContext } from 'react';
+import { getCustomer, getRewards, getRewardsInRadius, updateCustomerLocation } from '@/services/apiCalls';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { LocationHook } from '@/constants/hooks';
 import LocationChooser from '@/components/LocationChooser';
+import { DEFAULT_LATITUDE, DEFAULT_LONGITUDE } from '@/constants/constants';
+import { AppContext } from '@/store/AppContext';
 
 type Props = {
   userId: string
 }
-const onRewardsPress = () => {
-  router.push("./itemList");
+const onRewardsPress = (rewards: CustomerReward[]) => {
+  router.push({pathname: './itemList',
+          params: { rewards: JSON.stringify(rewards) }})
 }
+
+const SEARCH_RADIUS = 0.01
 function performGetLocation(userId: string, location: LocationHook){
   try{
     getCustomer(userId).then(data => {
+      if (!data || !data.user){
+        console.error("Backend error fetching customer");
+      }
       let latitude, longitude;
-      latitude = data.latitude?data.latitude: 0;
-      longitude = data.longitude?data.longitude: 0;
+      latitude = data.user.latitude?data.user.latitude: null;
+      longitude = data.user.longitude?data.user.longitude: null;
       location.setLocation(new Location(latitude, longitude));
-      data.street_address?location.setStreetAddress(data.street_address):location.setStreetAddress("");
+      data.user.street_address?location.setStreetAddress(data.user.street_address):location.setStreetAddress("");
     });
   }catch (err){
     console.error("Error fetching customer:"+err);
   }
 }
-const loadRewards = async(setRewards: Function, setLoading: Function) => {
+const loadRewards = async(setRewards: Function, setNearbyRewards: Function, setLoading: Function, location: Location) => {
     try {
-        const response = await getRewards();
-        setRewards(response.user);
+        const rewards = await getRewards();
+        const nearbyRewards = await getRewardsInRadius(location.latitude, location.longitude, SEARCH_RADIUS)
+        const customerRewards = [];
+        const customerNearbyRewards = [];
+        for (let i = 0; i < rewards.user.length; i++){
+          customerRewards.push(rewardToCustomerReward(rewards.user[i], location));
+        }
+        for (let i = 0; i < nearbyRewards.user.length; i++){
+          customerNearbyRewards.push(rewardToCustomerReward(nearbyRewards.user[i], location));
+        }
+        setRewards(customerRewards);
+        setNearbyRewards(customerNearbyRewards)
         setLoading(false);
     } catch (error) {
         Alert.alert("Error fetching card reward data", "We're having some issues on our end. Please try again later.")
@@ -44,21 +62,50 @@ const loadRewards = async(setRewards: Function, setLoading: Function) => {
         console.log("finished");
     }
 }
-export default function DiscoverComponent({userId}: Props) {
-  const location = new LocationHook(1, 1);
+
+
+export default function DiscoverComponent() {
+  const {userId} = useContext(AppContext)!;
+  const location = new LocationHook(0, 0);
   const [rewards, setRewards] = useState<CustomerReward[] | null>(null);
+  const [nearbyRewards, setNearbyRewards] = useState<CustomerReward[] | null>(null);
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
   const [changingLocation, setChangingLocation] = useState(false);
-  useEffect(() => {loadRewards(setRewards, setLoading); performGetLocation(userId, location);}, []);
+  useEffect(() => {loadRewards(setRewards, setNearbyRewards, setLoading, location.location); performGetLocation(userId, location);}, []);
   const [refreshing, setRefreshing] = useState(false);
-  
-    const onRefresh = useCallback(() => {
-      setRefreshing(true);
-      loadRewards(setRewards, setLoading);
-      performGetLocation(userId, location)
-      setRefreshing(false);
-    }, []);
+  const [editingLocation, setEditingLocation] = useState(false);
+
+  const saveLocation = useCallback(async(newLocation: LocationHook) =>{
+    try{
+      const result = await updateCustomerLocation(userId, newLocation);
+      if (result.user != "success"){
+        console.error("Backend error editing location");
+        Alert.alert(t("locationSave", "locationSaveMessage"))
+      }
+    }catch(err){
+      console.error("Error editing location:"+err);
+      Alert.alert(t("locationSave", "locationSaveMessage"))
+    }
+    setEditingLocation(false);
+    location.setLocation(new Location(newLocation.location.latitude, newLocation.location.longitude));
+    location.setStreetAddress(newLocation.streetAddress);
+  }, [userId, location]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    loadRewards(setRewards, setNearbyRewards, setLoading, location.location);
+    performGetLocation(userId, location)
+    setRefreshing(false);
+  }, [userId, location]);
+
+  console.log("locationHook:"+JSON.stringify(location))
+
+  if (editingLocation) return <LocationChooser
+           latitude={location.location.latitude? location.location.latitude: DEFAULT_LATITUDE}
+            longitude={location.location.longitude? location.location.longitude: DEFAULT_LONGITUDE} 
+            initialStreetAddress={location.streetAddress? location.streetAddress: ''} 
+            onSave={saveLocation}/>
 
   return (
     <SafeAreaProvider>
@@ -68,22 +115,22 @@ export default function DiscoverComponent({userId}: Props) {
         <ScrollView style={styles.scroll} refreshControl={<RefreshControl style={{borderWidth: 1}} refreshing={refreshing} onRefresh={onRefresh}/>}>
             <View style={styles.body}>
                 <View testID="175:454" style={styles.locationRow}>
-                  <View testID="175:455" style={styles.locationButton}>
-                    <Text testID="175:456" style={styles.locationText}>
-                        {t('currentLocation')}
+                  <Pressable testID="175:455" style={styles.locationButton} onPress={()=>{const temp = editingLocation; setEditingLocation(!temp)}}>
+                    <Text testID="175:456" style={styles.locationText} numberOfLines={1}>
+                        {location.streetAddress? location.streetAddress: t('noLocation')}
                     </Text>
                     <ChevronDown testID="175:457"/>
-                  </View>
+                  </Pressable>
                 </View>
-                <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20, backgroundColor: 'rgba(183, 230, 130, 1)'}} headerText={t('customer.nearYou')} onPress={onRewardsPress} sideText={t('seeAll')}/>
+                <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20, backgroundColor: 'rgba(183, 230, 130, 1)'}} headerText={t('customer.nearYou')} onPress={()=>{onRewardsPress(nearbyRewards?nearbyRewards: [])}} sideText={t('seeAll')}/>
                 <View style={[styles.rewardCarouselBox, {backgroundColor: 'rgba(183, 230, 130, 1)'}]}>
-                    <RewardCarousel rewards={rewards != null? rewards: []}/>
+                    <RewardCarousel rewards={nearbyRewards != null? nearbyRewards: []}/>
                 </View>    
-                <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20}} headerText={t('customer.recommended')} onPress={onRewardsPress} sideText={t('seeAll')}/>
+                <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20}} headerText={t('customer.recommended')} onPress={()=>{onRewardsPress(rewards?rewards:[])}} sideText={t('seeAll')}/>
                 <View style={styles.rewardCarouselBox}>
                     <RewardCarousel rewards={rewards != null? rewards: []}/>
                 </View> 
-                <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20}} headerText={t('customer.newArrivals')} onPress={onRewardsPress} sideText={t('seeAll')}/>
+                <Header contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 20}} headerText={t('customer.newArrivals')} onPress={()=>{onRewardsPress(rewards?rewards: [])}} sideText={t('seeAll')}/>
                 <View style={styles.rewardCarouselBox}>
                     <RewardCarousel rewards={rewards != null? rewards: []}/>
                 </View>                     
@@ -260,6 +307,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: 'normal',
     fontWeight: '400',
+    marginHorizontal: 10
   },
   locationRow: {
     alignSelf: 'stretch',
@@ -271,13 +319,10 @@ const styles = StyleSheet.create({
   },
   locationButton: {
     flexDirection: 'row',
-    paddingTop: 5,
-    paddingLeft: 10,
-    paddingBottom: 5,
-    paddingRight: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    rowGap: 10,
     columnGap: 10,
     borderRadius: 30,
     borderWidth: 2,

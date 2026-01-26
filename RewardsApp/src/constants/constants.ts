@@ -7,9 +7,9 @@ interface string_key {
 };
 
 export const COUNTRY_CODES: string_key = {
-    "Canada": "CA",
-    "USA": "US",
-    "Spain": "ES"
+    "Canada": "ca",
+    "USA": "us",
+    "Spain": "es"
 }
 
 export const SUPPORTED_LANGUAGES: string_key = {
@@ -26,5 +26,5 @@ export const SUPPORTED_THEMES: string_key = {
 
 export const FALLBACK_LANGUAGE_CODE = 'en';
 
-export const DEFAULT_LATITUDE = 0;
-export const DEFAULT_LONGITUDE = 0;
+export const DEFAULT_LATITUDE = 43.5423;
+export const DEFAULT_LONGITUDE = -79.6580;

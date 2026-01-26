@@ -1,7 +1,7 @@
 import FONTS from '@/constants/fonts';
 import { useClerk } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Editable from '@/components/Editable';
 import { getCustomer, updateCustomer, updateCustomerImage } from '@/services/apiCalls';
@@ -16,6 +16,9 @@ import COLOURS from '@/constants/colours';
 import Pencil from '@/assets/images/pencil-icon.svg';
 import { useTranslation } from 'react-i18next';
 import { pickImage } from '@/helpers/imagePicker';
+import DefaultPfp from '@/assets/images/default-pfp.svg';
+import Loading from '@/components/Loading';
+import { CustomerHook } from '@/constants/hooks';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -35,6 +38,7 @@ export default function Profile({userId}: Props) {
   const [editingDetails, setEditingDetails] = useState(false);
   const [customerAttributes, setCustomerAttributes] = useState(DEFAULT_CUSTOMER_ATTRIBUTES);
   const imageEdited = useRef(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(()=>{
     performGetCustomer(userId, customer);
@@ -60,18 +64,32 @@ export default function Profile({userId}: Props) {
     console.log("Rerouted")
   }
 
-  const editToggle = () => {
+  const editToggle = async() => {
     const temp = !editingDetails;
     setEditingDetails(temp);
     setCustomerAttributes(temp? EDITING_CUSTOMER_ATTRIBUTES: DEFAULT_CUSTOMER_ATTRIBUTES);
     if (!temp){//idk anymore 
-      if (imageEdited && customer.image_url){
-        updateCustomerImage(userId, customer.image_url);
+      setLoading(true)
+      try{
+        if (imageEdited && customer.image_url){
+          const response = await updateCustomerImage(userId, customer.image_url);
+          console.log(`response: ${JSON.stringify(response)}`)
+          if (!response || response.user != "success"){
+            console.error("Backend error updating customer image")
+          }
+        }
+        const response2 = await updateCustomer(userId, customer);
+        if (!response2 || response2.user != "success"){
+          console.error("Backend error updating customer")
+        }
+      }catch(err){
+        console.error("Error updating customer");
+        Alert.alert(t("errors.updatingCustomer", "errors.updatingCustomerMessage"))
       }
-      updateCustomer(customer);
+      setLoading(false)
+      }
       console.log("updated");
     }
-  }
 
   const factory = useCallback((name: string) => {
     let value, translatedName: string;
@@ -96,14 +114,14 @@ export default function Profile({userId}: Props) {
     return <Editable key={name} editing={editingDetails} name={translatedName} placeHolder={value} value={value} setValue={setValue}/>
   }, [customer, editingDetails]);
 
-  if (customer === null){return <Error error={"Customer data not found."}/>}
-
+  if (customer === null){return <Error error={t("errors.customerNotFound")}/>}
+  if (loading){return <Loading message={t("updatingCustomer")}/>}
+  console.log("customer:"+JSON.stringify(customer))
   return (
     <SafeAreaProvider>
       <SafeAreaView testID={"53:192"} style={styles.root}>
         <ScrollView contentContainerStyle={styles.scroll}>
           <View style={styles.body}>
-            <Pressable style={styles.settingsRow} onPress={()=>{router.replace("./options");}}><Settings/></Pressable>
             <Pressable style ={styles.edit} onPress={editToggle}>
               <Text testID="9:623" style={styles.editText}>
                 {editingDetails? t("save"): t("edit")}
@@ -111,7 +129,7 @@ export default function Profile({userId}: Props) {
             </Pressable>
             <View style={styles.imageAndName}>
               <View testID="154:1066" style={styles.imageBox}>
-                <Image source={{uri: customer.image_url? customer.image_url: undefined}} style={styles.image}/>
+                {customer.image_url?<Image source={{uri: customer.image_url}} style={styles.image}/>: <DefaultPfp/>}
                 {editingDetails? <Pressable style={styles.pencil} onPress={editImage}><Pencil/></Pressable>: null}
               </View>
               {editingDetails? null: <Text style={styles.nameText}>{customer.name}</Text>}
@@ -120,7 +138,8 @@ export default function Profile({userId}: Props) {
               {editingDetails? null: <Header headerTextStyle={styles.headerText} headerText={t('details')}/>}
               {customerAttributes.map((attribute) => factory(attribute))}
             </View>
-            <Pressable testID="15:137" style={styles.signOutButton} onPress= {onSignOut}>
+            <View style={{flex: 1, width: '100%', justifyContent: 'flex-end', padding: 10, rowGap: 10}}>
+              <Pressable testID="15:137" style={styles.signOutButton} onPress= {onSignOut}>
               <Text testID="15:138" style={styles.signOutText}>
                 {t('signOut')}
               </Text>
@@ -130,6 +149,8 @@ export default function Profile({userId}: Props) {
                 {t('deleteAccount')}
               </Text>
             </Pressable>
+            </View>
+            
           </View>
         </ScrollView>  
       </SafeAreaView>
@@ -138,16 +159,10 @@ export default function Profile({userId}: Props) {
   );
 }
 
-function performGetCustomer(userId: string, customer: any){
+function performGetCustomer(userId: string, customer: CustomerHook){
   try{
     getCustomer(userId).then(data => {
-      data.user.name?customer.setName(data.user.name):customer.setName("");
-      data.user.email?customer.setEmail(data.user.email):customer.setEmail("");
-      data.latitude?customer.setLatitude(data.latitude):customer.setLatitude(0);
-      data.longitude?customer.setLongitude(data.longitude):customer.setLongitude(0);
-      data.country?customer.setCountry(data.country):customer.setCountry("");
-      data.street_address?customer.setStreetAddress(data.street_address):customer.setStreetAddress("");
-      data.image_url?customer.setImageUrl(data.image_url):customer.setImageUrl("");
+      customer.populate(data.user)
     });
   }catch (err){
     console.error("Error fetching customer:"+err);
@@ -172,7 +187,6 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH
   },
   body: {
-    paddingTop: 30,
     width: '90%',
     height: '100%',
     display: 'flex',
@@ -244,7 +258,6 @@ const styles = StyleSheet.create({
     display: "flex",
     alignSelf: 'stretch',
     padding: 10,
-    marginVertical: 20,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 30,

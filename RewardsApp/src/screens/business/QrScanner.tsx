@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useRef } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, Pressable } from 'react-native';
 import { CameraView, useCameraPermissions, BarcodeScanningResult, BarcodeBounds } from 'expo-camera';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import FONTS from '@/constants/fonts';
@@ -8,12 +8,15 @@ import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import QrMask from '@/assets/images/qr-scanner-border.svg'
+import { useTranslation } from 'react-i18next';
+import { UNIVERSAL_STYLES } from '@/constants/styles';
+import COLOURS from '@/constants/colours';
 const QrScanner = () => {
     const [barcodeBounds, setBarcodeBounds] = useState<BarcodeBounds>({origin: {x: 0, y: 0}, size: {height: 0, width: 0}});
     const [permission, requestPermission] = useCameraPermissions();
     const [buttonVisible, setButtonVisible] = useState<boolean>(false);
     const scannedRef = useRef(false);
-
+    const {t} = useTranslation();
     useFocusEffect(
     useCallback(() => {
         // Screen is focused
@@ -27,10 +30,10 @@ const QrScanner = () => {
     }
     if (!permission.granted) {
         return (
-        <SafeAreaView style={{width: '100%', height: '100%'}}>
-            <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                <Text>We need your permission to show the camera</Text>
-                <Button onPress={requestPermission} title="grant permission" />
+        <SafeAreaView style={{width: '100%', height: '100%', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: COLOURS.WHITE}}>
+            <View style={{justifyContent: 'center', alignItems: 'center', paddingTop: 30, rowGap: 20, width: '90%'}}>
+                <Text style={[UNIVERSAL_STYLES.bodyText]}>{t('cameraPermission')}</Text>
+                <Pressable style={[UNIVERSAL_STYLES.button, {width: 'auto'}]} onPress={requestPermission}><Text style={[UNIVERSAL_STYLES.bodyText, {color: COLOURS.DARK_BLUE}]}>{t('grantPermission')}</Text></Pressable>
             </View>
         </SafeAreaView>
         );

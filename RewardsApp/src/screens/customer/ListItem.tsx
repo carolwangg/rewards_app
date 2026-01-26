@@ -32,13 +32,12 @@ interface RotatingViewProps {
 }
 
 export const EmptyListItem = ({message, points, km}: {message: string, points: string, km: string}) => {
-  return <View style = {styles.item}>
+  return <View style = {[styles.item, {borderColor: COLOURS.DARK_GRAY}]}>
           <View style={{width: '100%', justifyContent: 'center', alignItems: 'flex-start'}}>
             <View style={styles.detailsBox}>
-              <View style={[styles.photoBox, {backgroundColor: COLOURS.GRAY}]}/>
+              <View style={[styles.photoBox, {backgroundColor: COLOURS.LIGHT_GRAY}]}/>
               <View style={styles.info}>
-                <Text style={[styles.title, {width: '100%', color: COLOURS.DARK_GRAY}]} numberOfLines={1} ellipsizeMode='tail'>{message}</Text>
-                <Text style={[styles.text, {backgroundColor: COLOURS.GRAY, width: '100%'}]} numberOfLines={2} ellipsizeMode='tail'/>
+                <Text style={[styles.title, {width: '100%', color: COLOURS.DARK_GRAY}]} numberOfLines={2} ellipsizeMode='tail'>{message}</Text>
                 <View testID="175:395" style={styles.pointFrame}>
                   <Text testID="175:396" style={[styles.pointText, {color: COLOURS.DARK_GRAY}]}>
                     {points}{"     "}
@@ -190,8 +189,8 @@ export default function ListItem({cart, setCart, setCartReward, reward, pointsSt
     }
   }
   return <View style = {styles.item}>
-            <Link style={styles.section} href={{pathname: './item/[item]',
-        params: { item: reward.id, reward: JSON.stringify(reward)}}}>
+            <Link style={styles.section} href={{pathname: './item',
+        params: { reward: JSON.stringify(reward)}}}>
               <ListInteriorCustomer reward={reward} pointsString={pointsString} kmString={kmString}/>
             </Link>
             <RotatingView selected={selected} setSelected={setSelected} cart={cart} itemId={reward.id} updateCart={updateCart}/>

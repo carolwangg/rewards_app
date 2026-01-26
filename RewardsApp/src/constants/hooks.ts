@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Business, Card, Location } from "./interfaces";
+import { Business, Card, Customer, Location } from "./interfaces";
 
 export type CardHook = {
     id: string,
@@ -25,9 +25,10 @@ export class LocationHook{
    
     streetAddress: string;
     setStreetAddress: (street_address: string) => void
-    constructor(og_latitude: number, og_longitude: number){
+    constructor(og_latitude: number, og_longitude: number, og_street_address?: string){
+        const street_address = og_street_address? og_street_address: "";
         [this.location, this.setLocation] = useState(new Location(og_latitude, og_longitude));
-        [this.streetAddress, this.setStreetAddress] = useState("");
+        [this.streetAddress, this.setStreetAddress] = useState(street_address);
     }
     toString(){
         return `(${this.location.latitude}, ${this.location.longitude})`;
@@ -60,4 +61,26 @@ export type BusinessHook = {
     setImageUrl: (imageUrl: string) => void,
     setBannerUrl: (bannerUrl: string) => void,
     getBusiness: () => Business,
+    populate: (business: Business) => void,
+}
+
+
+export type CustomerHook = {
+  id: string,
+  name: string,
+  email: string,
+  latitude: number | null,
+  longitude: number | null,
+  country: string
+  street_address: string | null,
+  image_url: string | null,
+
+  setName: (name: string) => void,
+  setEmail: (email: string) => void,
+  setLatitude: (latitude: number) => void,
+  setLongitude: (longitude: number) => void,
+  setCountry: (country: string) => void,
+  setStreetAddress: (street_address: string) => void,
+  setImageUrl: (image_url: string) => void,
+  populate: (customer: Customer) => void
 }

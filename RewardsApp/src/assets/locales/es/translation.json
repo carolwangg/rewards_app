@@ -42,7 +42,8 @@
   "emptyRewardMessage": "Desbloquea recompensas visitando negocios",
   "emptyCardsMessage": "Agrega tarjetas de negocios desde la página de descubrimiento",
   "favourites": "Favoritos",
-  "lastVisited": "Última visita"
+  "lastVisited": "Última visita",
+  "addToCart": "Añadir al carrito"
 },
 "settings":{
     "accountDetails": "Detalles de la cuenta",
@@ -57,6 +58,32 @@
     "selectLanguage": "Seleccionar idioma",
     "selectTheme": "Seleccionar tema"
   },
+  "errors": {
+"pageNotFoundTitle": "¡Uy! Página no encontrada",
+"pageNotFoundMessage": "Página no encontrada",
+"loadingData": "Error al cargar los datos del usuario",
+"serverConn": "No se puede conectar al servidor. Inténtalo de nuevo más tarde",
+"awardingPoints": "Error al otorgar puntos",
+"serverIssues": "Tenemos problemas. Inténtalo de nuevo más tarde",
+"customerNotFound": "No se encontraron los datos del cliente",
+"invalidEmail": "Ingrese un correo electrónico válido",
+"invalidEmailMessage": "El correo electrónico debe coincidir con usuario@dominio.ext. Por ejemplo, usuario@zinks.com",
+"noUser": "Usuario no encontrado",
+"noUserMessage": "No hay ninguna cuenta asociada a ese correo electrónico. Regístrese primero.",
+"wrongAccountType": "Tipo de cuenta incorrecto",
+"wrongAccountTypeMessage": "Asegúrese de elegir el tipo de cuenta correcto (cliente o empresa)"
+},
+
+"addToCart": "Añadir al carrito",
+"addedToCart": "Añadido al carrito",
+"pointsAdded": "Puntos añadidos :)",
+"givePoints": "Regalar puntos",
+"retrievingLocation": "Obteniendo tu ubicación...",
+"selectedLocation": "Ubicación seleccionada",
+"noContactInfo": "Sin información de contacto",
+"noDescription": "Sin descripción",
+"addBusinessCards": "Añadir tarjetas de presentación desde la página de descubrimiento",
+"rewardRedeemed": "Recompensa canjeada correctamente :)",
 "businessWord": "Negocio",
 "customerWord": "Cliente",
 "welcome": "Bienvenido",
@@ -75,5 +102,12 @@
 "currentLocation": "Ubicación actual",
 "search": "Buscar...",
 "country": "País",
-"new" : "Nuevo "
+"new" : "Nuevo ",
+"comingSoon": "Próximamente :)",
+"cameraPermission": "Necesitamos tu permiso para acceder a la cámara. Esta función es necesaria para escanear los códigos QR de los clientes.",
+"grantPermission": "Cambiar permisos",
+"delete": "Eliminar",
+"openMaps": "Abrir en Maps",
+"noLocation": "No hay ubicación establecida",
+"noName": "Sin nombre"
 }

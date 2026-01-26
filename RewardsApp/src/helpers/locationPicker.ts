@@ -10,7 +10,7 @@ export async function pickRegion(): Promise<Region>{
     }
 
     const location = await ExpoLocation.getCurrentPositionAsync({
-    accuracy: ExpoLocation.Accuracy.High,
+        // accuracy: ExpoLocation.Accuracy.High,
     });
 
     return {latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01}

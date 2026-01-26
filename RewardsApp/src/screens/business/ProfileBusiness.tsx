@@ -57,6 +57,7 @@ export default function Profile({userId}: Props) {
   }
 
   const editBusiness = useCallback(() => {
+    console.log("getbusiness:"+JSON.stringify(business.getBusiness()) )
     router.push({pathname: './edit-business', params: { userId: userId, business: JSON.stringify(business.getBusiness()) }})
   }, [business]);
 
@@ -150,7 +151,7 @@ export default function Profile({userId}: Props) {
               <Pressable style={styles.settingsRow} onPress={()=>{router.replace("./options");}}><Settings/></Pressable>
               <Header headerTextStyle={styles.headerText} headerText={t('business.profile')} onPress={editBusiness} sideText={t('edit')}/>
               <View style={{width: '100%'}}>
-                <BusinessPage business={business.getBusiness()}/>
+                <BusinessPage business={business} onPress={editBusiness}/>
               </View>
             {/* <View testID="9:500" style={styles.frame}> 
               <Header headerTextStyle={styles.headerText} headerText={t('details')} onPress={editToggle} sideText={editingDetails? t('save'): t('edit')}/>
@@ -192,20 +193,20 @@ export default function Profile({userId}: Props) {
   );
 }
 function performGetBusiness(userId: string, business: BusinessHook){
+  console.log("id:"+userId)
   try{
     getBusiness(userId).then(data => {
       business.populate(data.user);
     });
+    console.log("business populated:"+JSON.stringify(business))
   }catch (err){
-    console.error("Error fetching customer:"+err);
+    console.error("Error fetching business:"+err);
   }
 }
 
 function performGetCard(userId: string, card: CardHook){
   try{
-    getCard(userId).then(data => {
-      
-      
+    getCard(userId).then(data => {      
       if (!data.user) {console.error("No card exists for user:"+ userId); return;}
       data.user.name? card.setName(data.user.name): card.setName("");
       data.user.description? card.setDescription(data.user.description): card.setDescription("");
@@ -256,7 +257,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   body: {
-    width: '80%',
+    width: '90%',
     paddingTop: 20,
     backgroundColor: 'rgba(255, 255, 255, 1)',
     alignSelf: 'stretch',

@@ -1,14 +1,17 @@
 import Error from '@/components/Error';
 import COLOURS from '@/constants/colours';
-import { Stack } from 'expo-router';
+import { router, Stack, usePathname } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 export default function NotFoundScreen(){
+    console.log("Current path:"+usePathname())
+    const {t} = useTranslation();
     return(
         <View  style={styles.container}>
-            <Stack.Screen options={{ title: 'Oops! Page Not Found'}} />
+            <Stack.Screen options={{ title: t('errors.pageNotFoundTitle')}} />
             <View>
-                <Error error={"Page not found"} code={404}>
+                <Error error={t("errors.pageNotFoundMessage")} code={404}>
                 </Error>
             </View>
         </View>

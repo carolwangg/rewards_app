@@ -18,7 +18,6 @@
     "resendPin": "Resend PIN"
   },
   "business": {
-    "givePoints": "Give Points",
     "addPhoto": "Add photo",
     "mustBePhotoType": "*Must be .jpeg, .jpg or .png",
     "pointsShortHand": "pts",
@@ -42,7 +41,8 @@
     "emptyRewardMessage": "Unlock rewards by visiting businesses",
     "emptyCardsMessage": "Add business cards from the discovery page",
     "favourites": "Favourites",
-    "lastVisited": "Last Visited"
+    "lastVisited": "Last Visited",
+    "addToCart": "Add to cart"
   },
   "settings":{
     "accountDetails": "Account Details",
@@ -55,7 +55,8 @@
     "dark": "Dark",
     "notifs": "Notifications",
     "selectLanguage": "Select Language",
-    "selectTheme": "Select Theme"
+    "selectTheme": "Select Theme",
+    "analytics": "Analytics"
   },
   "errors":{
     "invalidEmail":"Enter a valid email",
@@ -63,8 +64,26 @@
     "noUser": "User not found", 
     "noUserMessage": "No account associated with that email. Please sign up first.",
     "wrongAccountType": "Wrong account type", 
-    "wrongAccountTypeMessage":"Make sure you chose the right account type (customer vs business)"
+    "wrongAccountTypeMessage":"Make sure you chose the right account type (customer vs business)",
+    "pageNotFoundTitle":"Oops! Page Not Found",
+    "pageNotFoundMessage": "Page not found",
+    "loadingData": "Error loading user data.",
+    "serverConn": "Cannot connect to server. Please try again later.",
+    "awardingPoints": "Error awarding points",
+    "serverIssues": "We're having some issues on our end. Please try again later.",
+    "customerNotFound": "Customer data not found."
   },
+"addToCart": "Add to cart",
+"addedToCart": "Added to cart",
+"pointsAdded": "Points added :)",
+"givePoints": "Give Points",
+"retrievingLocation": "Retrieving your location...",
+"selectedLocation": "Selected location",
+"noContactInfo": "No contact info",
+"noDescription": "No description",
+"addBusinessCards": "Add business cards from the discovery page",
+"rewardRedeemed": "Reward successfully redeemed :)",
+
   "businessWord": "Business",
   "customerWord": "Customer",
   "welcome": "Welcome",
@@ -83,5 +102,12 @@
   "currentLocation": "Current Location",
   "search": "Search...",
   "country": "Country",
-  "new" : "New "
+  "new" : "New ",
+  "comingSoon": "Coming Soon :)",
+  "cameraPermission": "We need your permission to access the camera. This feature is necessary for scanning customer QR codes.",
+  "grantPermission": "Change permissions",
+  "delete": "Delete",
+  "openMaps": "Open on Maps",
+  "noLocation": "No location set",
+  "noName": "No name"
 }

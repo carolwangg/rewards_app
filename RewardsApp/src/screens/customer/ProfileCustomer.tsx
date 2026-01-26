@@ -37,16 +37,16 @@ export default function Profile({userId}: Props) {
     performGetCustomer(userId, customer);
   }, []);
 
-  if (customer === null){return <Error error={"Customer data not found."}/>}
+  if (customer === null){return <Error error={t("errors.customerNotFound")}/>}
   const favourites: CustomerReward[] = [defaultCustomerReward, defaultCustomerReward, defaultCustomerReward];
   const lastVisited: CustomerReward[] = [defaultCustomerReward, defaultCustomerReward, defaultCustomerReward];
   return (
     <SafeAreaProvider>
       <SafeAreaView testID={"53:192"} style={styles.root}>
-        <Pressable style={styles.settingsRow} onPress={()=>{router.replace("./options");}}><Settings/></Pressable>
         <ScrollView contentContainerStyle={styles.scroll}>
           <View style={styles.body}>
-            
+            <Pressable style={styles.settingsRow} onPress={()=>{router.replace("./options");}}><Settings/></Pressable>
+
             <View style={styles.imageAndName}>
               <View testID="154:1066" style={styles.imageBox}>
                 {customer.image_url?<Image source={{uri: customer.image_url}} style={styles.image}/>: <DefaultPfp width={100} height={100}/>}
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: "center",
-    borderWidth: 1
+    // borderWidth: 1
   },
   scroll: {
     display: 'flex',
@@ -109,7 +109,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: "space-between",
     rowGap: 20,
-    borderWidth: 1
   },
   nameText: {
     color: COLOURS.DARK_BLUE,

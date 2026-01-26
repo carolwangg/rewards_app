@@ -1,6 +1,8 @@
 import { Stack } from "expo-router";
 import FONTS from "@/constants/fonts";
+import { useTranslation } from "react-i18next";
 export default function TabLayout() {
+  const {t} = useTranslation();
   return (
     <Stack>
       <Stack screenOptions={
@@ -8,8 +10,10 @@ export default function TabLayout() {
       headerBackButtonDisplayMode:'minimal', headerShadowVisible:false, headerTintColor:'rgba(58, 73, 117, 1)' }}></Stack>
       <Stack.Screen name="discover" options={{ headerShown: false}}/>
       <Stack.Screen name="temp"/>
-      <Stack.Screen name="item"/>
-      <Stack.Screen name="business"/>
+      <Stack.Screen name="item" options={{ headerShown: true}}/>
+      <Stack.Screen name="business" options={{ headerShown: false}}/>
+      <Stack.Screen name="itemList" options={{title: t("rewardList"), headerTitleStyle:{fontSize: 24, fontFamily: FONTS.BALOO_BHAI, fontWeight: 800, color: 'rgba(58, 73, 117, 1)'},
+      headerBackButtonDisplayMode:'minimal', headerShadowVisible:false, headerTintColor:'rgba(58, 73, 117, 1)' }}/>
     </Stack>
   );
 }

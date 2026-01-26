@@ -3,6 +3,7 @@ import { SUPPORTED_LANGUAGES } from "@/constants/constants";
 import { UNIVERSAL_STYLES } from "@/constants/styles";
 import { useTranslation } from "react-i18next";
 import { View, Text, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type Props = {
   language: string,
@@ -16,7 +17,7 @@ export default function LanguagePage({language, setLanguage}: Props) {
     data.push({label: key, value: SUPPORTED_LANGUAGES[key]})
   }
   return (
-    <View style={UNIVERSAL_STYLES.root}>
+    <SafeAreaView style={UNIVERSAL_STYLES.root}>
       <View style={[UNIVERSAL_STYLES.body, {paddingTop: '10%'}]}>
         <View style={styles.container}>
           <Text style={UNIVERSAL_STYLES.bodyTextLight}>
@@ -25,14 +26,14 @@ export default function LanguagePage({language, setLanguage}: Props) {
           <DropdownComponent data={data} value={language} setValue={setLanguage} placeholder={t('settings.selectLanguage')} maxHeight={200} searchPlaceholder="Search languages..." style={{borderWidth: 1}}/>
         </View>        
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     rowGap: 10,
-    width: '100%',
+    width: '90%',
     height: 'auto',
   }
 })

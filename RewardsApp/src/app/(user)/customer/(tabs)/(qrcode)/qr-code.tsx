@@ -7,16 +7,19 @@ export default function QrCode(){
     const {cart, cartReward} = useContext(CartContext)!;
     
     let data;
-    if (cart !== "reward_0" && cartReward !== null){
-        data = {
-            customer_id: userId,
-            reward_id: cart,
-            reward_name: cartReward.name
-        }
-    }else{
-        data = {
-            customer_id: userId,
-        }
+    // if (cart !== "reward_0" && cartReward !== null){
+    //     data = {
+    //         customer_id: userId,
+    //         reward_id: cart,
+    //         reward_name: cartReward.name
+    //     }
+    // }else{
+    //     data = {
+    //         customer_id: userId,
+    //     }
+    // }
+    if (cartReward){
+        return <QRcodeCustomer userId={userId} reward={cartReward}/>
     }
-    return <QRcodeCustomer data={data}/>
+    return <QRcodeCustomer userId={userId}/>
 }

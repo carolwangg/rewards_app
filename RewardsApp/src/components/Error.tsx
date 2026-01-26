@@ -1,5 +1,6 @@
 import COLOURS from "@/constants/colours"
 import FONTS from "@/constants/fonts"
+import { UNIVERSAL_STYLES } from "@/constants/styles"
 import { StyleSheet, View, Text } from "react-native"
 type Props = {
     error?: string
@@ -7,8 +8,10 @@ type Props = {
 }
 export default function Error({error, code}: Props){
     return <View style={styles.root}>
+            <View style={[UNIVERSAL_STYLES.body, {width: '80%'}]}>
                 <Text style={styles.heading}>{`${code? code + ' ': ''}Error`}</Text>
                 <Text style={styles.body}>{error}</Text>
+            </View>                
             </View>
 }
 const styles = StyleSheet.create({

@@ -2,13 +2,15 @@ import COLOURS from "@/constants/colours";
 import { Location } from "@/constants/interfaces";
 import { UNIVERSAL_STYLES } from "@/constants/styles";
 import { pickRegion } from "@/helpers/locationPicker";
-import { useCallback, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { GestureResponderEvent, ImageURISource, Keyboard, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import Loading from "./Loading";
 import { geolocate, reverseGeocodeLocation, autocompleteSuggestions } from "@/services/googleMaps";
 import { LocationHook } from "@/constants/hooks";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
+import { getRewardsInRadius } from "@/services/apiCalls";
 
 type Props = {
     iconURL?: ImageURISource,
@@ -17,43 +19,68 @@ type Props = {
     initialStreetAddress: string,
     onSave: (location: LocationHook) => void
 }
-
-const factory_helper = (suggestion: string, id: string, setStreetAddress: Function, setStreetAddressChanged: Function, onMapTouch: Function) => {
-    return <Pressable key={id} style={styles.suggestionBox} onPress={()=>{setStreetAddress(suggestion); setStreetAddressChanged(true), onMapTouch();}}>
-        <Text style={UNIVERSAL_STYLES.bodyTextSmall}> {suggestion} </Text>
-    </Pressable>
-}
-
-const factory = (suggestions: any[], setStreetAddress: Function, setStreetAddressChanged: Function, onMapTouch: Function) => {
-    const temp = [];
-    for (let i = 0; i < suggestions.length; i++){
-        temp.push(factory_helper(suggestions[i].description, i.toString(), setStreetAddress, setStreetAddressChanged, onMapTouch));
-        i++;
-    }
-    return temp;
-}
-
+const SEARCH_RADIUS = 0.01;
 export default function LocationChooser({latitude, longitude, initialStreetAddress, onSave, iconURL}: Props) {
+    const {t} = useTranslation();
     const [loading, setLoading] = useState(false);
     const [searching, setSearching] = useState(false);
-    const location = new LocationHook(latitude, longitude);
+    const location = new LocationHook(latitude, longitude, initialStreetAddress);
     const [streetAddress, setStreetAddress] = useState(initialStreetAddress);
     const [streetAddressChanged, setStreetAddressChanged] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
+    const [markerList, setMarkerList] = useState<ReactNode>([]);
     const [region, setRegion] = useState({latitude: location.location.latitude, 
         longitude: location.location.longitude,
         latitudeDelta: 0.01, longitudeDelta: 0.01
     });
+
+    const factory_helper = useCallback((suggestion: string, id: string, setStreetAddress: Function, setStreetAddressChanged: Function, onMapTouch: Function) => {
+        if (suggestion.toLowerCase()=="current location"){
+            return <Pressable key={id} style={styles.suggestionBox} onPress={()=>{pickCurrentLocation(); setStreetAddress(suggestion); setStreetAddressChanged(true), onMapTouch();}}>
+            <Text style={UNIVERSAL_STYLES.bodyTextSmall}> {suggestion} </Text>
+        </Pressable>
+        }
+        return <Pressable key={id} style={styles.suggestionBox} onPress={()=>{setStreetAddress(suggestion); setStreetAddressChanged(true), onMapTouch();}}>
+            <Text style={UNIVERSAL_STYLES.bodyTextSmall}> {suggestion} </Text>
+        </Pressable>
+    }, []);
+
+    const factory = useCallback((suggestions: any[], setStreetAddress: Function, setStreetAddressChanged: Function, onMapTouch: Function) => {
+        const temp = [];
+        for (let i = 0; i < suggestions.length; i++){
+            temp.push(factory_helper(suggestions[i].description, i.toString(), setStreetAddress, setStreetAddressChanged, onMapTouch));
+            i++;
+        }
+        temp.push(factory_helper("Current location", "currentLocation", setStreetAddress, setStreetAddressChanged, onMapTouch))
+        return temp;
+    }, []);
+
+    const pickCurrentLocation = () => {
+        setLoading(true)      
+        pickRegion().then(data =>{
+            setRegion(data);
+            onRegionChange(data);
+            setLoading(false)  
+        });
+    }
     const onRegionChange = useCallback((region: Region) => {
         const newLocation = new Location(region.latitude, region.longitude);
         location.setLocation(newLocation);
         reverseGeocodeLocation(newLocation).then(data =>{
-            console.log(data[0].formattedAddress);
-            if (data.length > 0) {
+            if (data && data.length > 0) {
                 const newAddress = data[0].formattedAddress;
                 location.setStreetAddress(newAddress);
                 setStreetAddress(newAddress);
             }
+        });
+        getRewardsInRadius(region.latitude, region.longitude, SEARCH_RADIUS).then(data =>{
+            const markers = []
+            if (data && data.user) {
+                for (let i = 0; i < data.user.length; i++){
+                    markers.push(<Marker key={data.user[i].id} pinColor={COLOURS.DARK_BLUE} coordinate={{latitude: data.user[i].latitude, longitude: data.user[i].longitude}}/>)
+                }
+            }
+            setMarkerList(markers);
         });
     }, []);
     const onTextChange = useCallback((text: string) => {
@@ -70,7 +97,6 @@ export default function LocationChooser({latitude, longitude, initialStreetAddre
         Keyboard.dismiss(); 
         if (streetAddressChanged){
             geolocate(streetAddress).then(data =>{
-            console.log(data[0]);
             if (data.length > 0) {
                 const newRegion = {latitude: data[0].location.latitude, longitude: data[0].location.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01};
                 setRegion(newRegion);
@@ -81,15 +107,25 @@ export default function LocationChooser({latitude, longitude, initialStreetAddre
         }
     }, [streetAddressChanged, location]);
     useEffect(()=>{
-        console.log("loading own region")
-        setLoading(true);
-        pickRegion().then(data =>{
-            setRegion(data);
-            onRegionChange(data);
-            setLoading(false);
+        if (!location.streetAddress){
+            console.log("loading own region")
+            pickCurrentLocation();
+        }  
+        getRewardsInRadius(region.latitude, region.longitude, SEARCH_RADIUS).then(data =>{
+            const markers = []
+            if (data && data.user) {
+                for (let i = 0; i < data.user.length; i++){
+                    const reward = data.user[i]
+                    markers.push(<Marker title={reward.name}pinColor={COLOURS.DARK_BLUE} coordinate={{latitude: reward.latitude, longitude: reward.longitude}}/>)
+                }
+            }
+            setMarkerList(markers);
         });
+        
     }, []) 
-    if (loading) return <Loading message={"Retrieving your location..."}/>
+
+    if (loading) return <Loading message={t("retrievingLocation")}/>
+    
     return (
             <Pressable style={styles.root} onPress={onMapTouch}>
                 <MapView 
@@ -99,7 +135,8 @@ export default function LocationChooser({latitude, longitude, initialStreetAddre
                 region={region}
                 onRegionChangeComplete={onRegionChange}
                 >
-                    <Marker title={"Selected location"} coordinate={location.location}/>
+                    <Marker title={t("selectedLocation")} coordinate={location.location}/>
+                    {markerList}
                 </MapView>
                 
                 <SafeAreaView style={styles.locationRow}>
@@ -114,7 +151,7 @@ export default function LocationChooser({latitude, longitude, initialStreetAddre
                 </SafeAreaView>
 
                 <SafeAreaView style={styles.saveButtonRow}>
-                    <Pressable style={styles.saveButton} onPress={()=>{onSave(location)}}><Text style={UNIVERSAL_STYLES.h3Text}>{"Save"}</Text></Pressable>
+                    <Pressable style={styles.saveButton} onPress={()=>{onSave(location)}}><Text style={UNIVERSAL_STYLES.h3Text}>{t("save")}</Text></Pressable>
                 </SafeAreaView>
             </Pressable>
   );
@@ -156,9 +193,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
     suggestionBox:{
+        padding: 10,
         backgroundColor: COLOURS.WHITE,
     },
     suggestions:{
+        width: '100%',
         backgroundColor: COLOURS.WHITE,
         flex: 1,
         rowGap: 5,

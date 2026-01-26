@@ -20,7 +20,7 @@ const navigateToBusiness = (businessId: string) => {
   router.push({pathname:'../business', params: { businessId: businessId}});
 }
 
-export default function EventName({userId, reward}: Props) {
+export default function ItemMinimal({userId, reward}: Props) {
   const {t} = useTranslation();
   const {cart, setCart, setCartReward} = useContext(CartContext)!;
   const texts = [t("customer.addToCart"), t("addedToCart")];
@@ -28,11 +28,11 @@ export default function EventName({userId, reward}: Props) {
   const textColours = ['rgba(28, 39, 76, 1)', "white"];
   const [customerPoints, setCustomerPoints] = useState(0);
   const { useTexts, useBgColours, useTextColours } = useMemo(() => {
-  const useTexts = (cart==reward.id)?[...texts].reverse(): texts;
-  const  useBgColours = (cart==reward.id)?[...bgColours].reverse(): bgColours;
-  const  useTextColours = (cart==reward.id)?[...textColours].reverse(): textColours;
-  return { useTexts: useTexts, useBgColours: useBgColours, useTextColours: useTextColours };
-}, []);
+    const useTexts = (cart==reward.id)?[...texts].reverse(): texts;
+    const  useBgColours = (cart==reward.id)?[...bgColours].reverse(): bgColours;
+    const  useTextColours = (cart==reward.id)?[...textColours].reverse(): textColours;
+    return { useTexts: useTexts, useBgColours: useBgColours, useTextColours: useTextColours };
+  }, []);
 
 
   const addToCart = useCallback(() => {
@@ -105,22 +105,6 @@ export default function EventName({userId, reward}: Props) {
                 </View>
               </View>
             </View>
-            <Pressable onPress={()=>{navigateToBusiness(reward.business_id)}} testID="154:1001" style={styles.storeInfoRow}>
-              <View testID="154:1002" style={styles.storeInfoRowAndChevron}>
-                <View testID="154:1003" style={styles.storeInfoRowBox}>
-                  <Text testID="154:1004" style={styles.storeInfoRowrmation}>
-                    {`Store information`}
-                  </Text>
-                  <Text testID="154:1005" style={styles.locationInformationHere}>
-                    {`Location information here `}
-                  </Text>
-                </View>
-                <Chevron testID="154:1006"/>
-              </View>
-            </Pressable>
-            <View style={{width: '90%'}}>
-              {addToCartView(reward.points, customerPoints)}
-            </View>        
           </View>
       </ScrollView>
     </View>

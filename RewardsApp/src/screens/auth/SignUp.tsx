@@ -36,7 +36,8 @@ export default function SignUp({userType, onSignUp}: props) {
       Alert.alert("Enter a valid email", "Email should match user@domain.ext. For example, user@zinks.com");
       return;
     }
-    console.log(COUNTRY_CODES[selectedCountry]);
+    console.log("selectedCountry:"+selectedCountry);
+    console.log("countrycode:"+COUNTRY_CODES[selectedCountry]);
     onSignUp(email.toLowerCase(), name, COUNTRY_CODES[selectedCountry]);
   }
 
@@ -51,7 +52,7 @@ export default function SignUp({userType, onSignUp}: props) {
   const changeSelectedCountry = (countryID: number) => {
       //change selected country based on dropdown selection
       //dummy country data for now
-      const countries = ["USA", "Canada", "UK", "Germany", "France"];
+      const countries = ["USA", "Canada", "Spain"];
       setSelectedCountry(countries[countryID]);
   }
 

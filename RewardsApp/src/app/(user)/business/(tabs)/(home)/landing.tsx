@@ -6,15 +6,13 @@ import { router } from 'expo-router';
 import { useContext } from 'react';
 import Loading from '@/components/Loading';
 export default function Login() {
-    const { isLoaded, user } = useUser();
-    const {userId, setUserId} = useContext(AppContext)!;
+    const { isLoaded } = useUser();
+    const {userId} = useContext(AppContext)!;
 
-    if (!isLoaded) return <Loading message="Loading business data"/>
-    if (userId === undefined && user){setUserId(user.id)} //mcgyver solution
-    
+    if (!isLoaded) return <Loading message="Loading business data"/>    
     const addEvent = () => {
         router.push(`./add`);
     }
-    
+    console.log("userId:"+userId)
     return (<LandingBusiness userId={userId} onPressFunction={addEvent}/>);  
 }

@@ -33,9 +33,10 @@ type Props = {
 }
 
 function performGetBusinessName(userId: string, setBusinessName: any){
+  console.log(userId)
+  
   try{
     getBusiness(userId).then(data => {
-      console.log("data fetched:"+data.user);
       if (data.user) data.user.name? setBusinessName(data.user.name): setBusinessName("");
     });
   }catch (err){

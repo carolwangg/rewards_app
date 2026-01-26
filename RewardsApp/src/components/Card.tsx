@@ -3,32 +3,37 @@ import FONTS from "@/constants/fonts";
 import { CustomerCard } from "@/constants/interfaces";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { View, Text, StyleSheet, Image } from "react-native";
+import DefaultLogo from '@/assets/images/default-logo.svg';
+import { useTranslation } from "react-i18next";
 
 type Props = {
     card: CustomerCard | null
     emptyMessage?: string
 }
 export default function Card({ card, emptyMessage }: Props) {
+  const {t} = useTranslation();
     if (card == null){
         return <View testID="9:207" style={[styles.cardBox, {backgroundColor: COLOURS.GREEN}]}>
             <Text testID="9:208" style={[styles.tagline, {color: COLOURS.WHITE}]}>
-                {emptyMessage? emptyMessage: "Add business cards from the discovery page"}
+                {emptyMessage? emptyMessage: t("addBusinessCards")}
             </Text>
             <Ionicons name={'compass-sharp'} color={COLOURS.WHITE} size={24}/>
         </View>
     }
-  return <View testID="9:207" style={[styles.cardBox, {backgroundColor: card.colour}]}>
+  
+    let cardTextColour = card.text_colour?card.text_colour: COLOURS.BLACK;
+  return <View testID="9:207" style={[styles.cardBox, {backgroundColor: card.colour?card.colour: COLOURS.LIGHT_GRAY}]}>
             <View testID="9:214" style={styles.nameAndIcon}>
-            <Image source={{uri: card.image_url}} style={styles.image}/>
-            <Text testID="9:210" style={styles.cardName}>
+            {card.image_url?<Image source={{uri: card.image_url}} style={styles.image}/>: <DefaultLogo width={80} height={80}/>}
+            <Text testID="9:210" style={[styles.cardName, {color: card.name?cardTextColour: COLOURS.GRAY_OVERLAY}]}>
                 {card.name}
             </Text>
             </View>
-            <Text testID="9:212" style={styles.contactInfo}>
-            {card.contactInfo}
+            <Text testID="9:212" style={[styles.contactInfo, {color: card.contactInfo? cardTextColour: COLOURS.GRAY_OVERLAY}]}>
+              {card.contactInfo? card.contactInfo: t("noContactInfo")}
             </Text>
-            <Text testID="9:208" style={styles.tagline}>
-            {card.description}
+            <Text testID="9:208" style={[styles.tagline, {color: card.description? cardTextColour: COLOURS.GRAY_OVERLAY}]}>
+              {card.description? card.description: t("noDescription")}
             </Text>
         </View>
 }

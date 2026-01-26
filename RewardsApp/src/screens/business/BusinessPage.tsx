@@ -1,40 +1,47 @@
 import FONTS from '@/constants/fonts';
-import {StyleSheet, Alert, View, Text, Image, Pressable, ScrollView} from 'react-native';
+import {StyleSheet, Alert, View, Text, Image, Pressable, ScrollView, GestureResponderEvent} from 'react-native';
 import DefaultLogo from '@/assets/images/default-logo.svg';
 import { UNIVERSAL_STYLES } from '@/constants/styles';
 import COLOURS from '@/constants/colours';
 import { Business } from '@/constants/interfaces';
+import { BusinessHook } from '@/constants/hooks';
+import { GestureEvent } from 'react-native-gesture-handler/lib/typescript/handlers/gestureHandlerCommon';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
-    business: Business
+    business: BusinessHook,
+    onPress: (e: GestureResponderEvent)=>void
 }
 const redirect = () =>{
 
 }
 
-export default function BusinessPage({business}: Props){
+export default function BusinessPage({business, onPress}: Props){
+  const {t} = useTranslation();
   console.log("business page:"+JSON.stringify(business))
-    return <View testID={"104:955"} style={styles.root}>    
+    return <Pressable testID={"104:955"} style={styles.root} onPress={onPress}> 
+    <View style={{overflow: 'hidden', flex: 1, borderRadius: 15}}>
           <View testID="154:1061" style={styles.businessBox}>
             <View testID="154:1065" style={styles.bannerBox}>
-                {business.banner_url?<Image source={{uri: business.banner_url}} style={styles.banner}/>: <View style={styles.noPhotoBox}/>}
+                {business.bannerUrl?<Image source={{uri: business.bannerUrl}} style={styles.banner}/>: <View style={styles.noPhotoBox}/>}
             </View>
             <View style={styles.titleAndDescription}>
                 <View style={styles.titleAndImageBox}>
-                    <View style={{width: 80, height: 80}}>{business.image_url?<Image source={{uri: business.image_url}} style={styles.image}/>: <DefaultLogo/>}</View>
+                    <View style={{width: 80, height: 80}}>{business.imageUrl?<Image source={{uri: business.imageUrl}} style={styles.image}/>: <DefaultLogo width={80} height={80}/>}</View>
                     <View style={styles.titleBox}>
-                        <Text style={UNIVERSAL_STYLES.h2Text}>{business==null? '': business.name}</Text>
-                        <Text style={[UNIVERSAL_STYLES.bodyTextLight]} numberOfLines={1}>{(business==null || business.street_address == '')? 'No address set': business.street_address}</Text>
+                        <Text style={[UNIVERSAL_STYLES.h2Text, {fontSize: 22}]}>{business==null? '': business.name}</Text>
+                        <Text style={[UNIVERSAL_STYLES.bodyTextLight, {fontSize: 16}]} numberOfLines={1}>{(business==null || business.streetAddress == '')? t('noLocation'): business.streetAddress}</Text>
                     </View>
                 </View>
                 <View testID="154:1068" style={styles.description}>
-                <Text testID="154:1069" style={styles.bodyText}>
-                    {(business==null || business.description == '')? 'No description': business.description}
+                <Text testID="154:1069" style={[styles.bodyText, {color: business.description|| !business.description? COLOURS.DARK_GRAY: COLOURS.BLACK}]}>
+                    {(business==null || business.description == '')? t('noDescription'): business.description}
                 </Text>
                 </View>
             </View>
         </View>
-    </View>
+        </View>   
+    </Pressable>
 }
 
 
@@ -44,7 +51,14 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems:'center',
     backgroundColor: COLOURS.WHITE,
-    borderWidth: 1
+    borderRadius: 15,
+    shadowOpacity: 1,
+    boxSizing: 'border-box',
+    // borderWidth: 1,
+    shadowColor: 'rgba(0, 0, 0, 0.250980406999588)',
+    shadowRadius: 4,
+    shadowOffset: {"width":3,"height":1},
+    
   },
   titleAndDescription: {
     width: '100%',
@@ -215,17 +229,18 @@ const styles = StyleSheet.create({
   businessBox: {
     flex: 1,
     width: '100%',
+    height: 'auto',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-start',
     rowGap: 10,
-    backgroundColor: COLOURS.WHITE
+    backgroundColor: COLOURS.WHITE,
   },
   bannerBox: {
     alignSelf: 'stretch',
     display: 'flex',
-    maxHeight: 300,
     maxWidth: '100%',
+    height: 200,
   },
   description: {
     flexDirection: 'row',
@@ -312,7 +327,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     columnGap: 20,
     width: '100%',
-    flex: 1
+    flex: 1,
   },
   titleBox: {
     flexDirection: 'column',

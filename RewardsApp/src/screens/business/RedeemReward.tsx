@@ -2,32 +2,16 @@ import {Alert, View, Text, StyleSheet, Pressable} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, router } from 'expo-router';
 import FONTS from '@/constants/fonts';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getCustomerCard, getCustomerCards, getReward, redeemReward } from '@/services/apiCalls';
 import { CustomerCard, CustomerReward, RedeemInfo } from '@/constants/interfaces';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   userId: string,
   data: RedeemInfo
 }
 
-const performRedeemReward = async(cardId: string, customerId: string, rewardId: string, setLoading: Function) => {
-  try{
-    const response = await redeemReward(cardId, customerId, rewardId)
-    console.log("redeem result:"+ response.user)
-    if (response.user === "success"){
-      router.replace({pathname:"./success", params:{message:"Reward successfully redeemed :)"}});
-    }else{
-      Alert.alert("Error redeeming reward", "We're having some issues on our end. Please try again later.");
-      router.replace("./qr-code");
-    }
-  }catch (err){
-    Alert.alert("Error redeeming reward", "We're having some issues on our end. Please try again later.")
-    console.error(err);
-  }finally{
-    setLoading(false);
-  }
-}    
 
 async function performGetReward(cart: string, setReward: Function){
   try{ 
@@ -59,9 +43,28 @@ async function performGetCustomerCard(customerId: string, businessId: string, se
 }
 
 export function RedeemReward({userId, data}: Props) {
+  const {t} = useTranslation();
   const [loading, setLoading] = useState(false);
   const [reward, setReward] = useState<CustomerReward|null>(null);
   const [customerCard, setCustomerCard] = useState<CustomerCard|null>(null);
+  const performRedeemReward = useCallback(async(cardId: string, customerId: string, rewardId: string, setLoading: Function) => {
+  try{
+    const response = await redeemReward(cardId, customerId, rewardId)
+    console.log("redeem result:"+ response.user)
+    if (response.user === "success"){
+      router.replace({pathname:"./success", params:{message:t("rewardRedeemed")}});
+    }else{
+      Alert.alert("Error redeeming reward", "We're having some issues on our end. Please try again later.");
+      router.replace("./qr-code");
+    }
+  }catch (err){
+    Alert.alert("Error redeeming reward", "We're having some issues on our end. Please try again later.")
+    console.error(err);
+  }finally{
+    setLoading(false);
+  }
+},[]);
+
   const giveReward = () =>{
     console.log("Redeeming reward...")
     performRedeemReward(userId, data.customer_id, data.reward_id, setLoading);

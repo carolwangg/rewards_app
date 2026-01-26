@@ -5,6 +5,7 @@ import NotifsIcon from '@/assets/images/notifs-icon.svg';
 import SettingsIcon from '@/assets/images/settings-icon.svg';
 import ThemeIcon from '@/assets/images/theme-icon.svg';
 import ProfileIcon from '@/assets/images/profile-icon.svg';
+import AnalyticsIcon from '@/assets/images/profile-icon.svg';
 import FONTS from '@/constants/fonts';
 import COLOURS from '@/constants/colours';
 import { RelativePathString, router } from 'expo-router';
@@ -14,15 +15,18 @@ import { useTranslation } from 'react-i18next';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const DEFAULT_SELECTED_ID = "account";
-const IDS = ["account", "settings", "language", "theme", "notifs"];
+// const IDS = ["account", "settings", "language", "theme", "notifs"];
 type Props = {
     selectedId: string
     setSelectedId: Function
+    userType: string
 }
 
 
-export default function SettingsPage({selectedId, setSelectedId}: Props) {
+export default function SettingsPage({selectedId, setSelectedId, userType}: Props) {
   const {t} = useTranslation();
+  const IDS = userType == "business"?["account", "settings", "language", "analytics"]: ["account", "settings", "language"];
+
   const factory = useCallback((id: string, selectedId: string, setSelectedId: Function) => {
     let icon, text;
     let url: RelativePathString;
@@ -48,6 +52,11 @@ export default function SettingsPage({selectedId, setSelectedId}: Props) {
             icon = <ThemeIcon/>;
             text = t("settings.theme");
             url = "./theme";
+            break;
+        case "analytics":
+            icon = <AnalyticsIcon/>;
+            text = t("settings.analytics");
+            url = "./analytics";
             break;
         case "notifs":
             icon = <NotifsIcon/>;
@@ -93,7 +102,7 @@ const styles = StyleSheet.create({
     minHeight: '100%',
   },
   body:{
-    marginTop: 20,
+    marginTop: 50,
     width: '80%',
     flex: 1,
     justifyContent: 'flex-start',

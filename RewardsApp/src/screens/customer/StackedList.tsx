@@ -1,6 +1,7 @@
 import FONTS from "@/constants/fonts";
+import { Reward } from "@/constants/interfaces";
 import { router } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 const GRAY = 'rgba(146, 144, 180, 1)'
 type PropsStackedList = {
   items: Array<any>;
@@ -20,18 +21,18 @@ function StackedList({items}: PropsStackedList) {
 }
 
 type PropsListItem = {
-  id: string
-  name: string
+  reward: Reward
   offset: number
 }
-export default function ListItem({id, name, offset}: PropsListItem) {
+export default function ListItem({reward, offset}: PropsListItem) {
   return <Pressable style= {styles.root} onPress={() => 
-    {router.push({ pathname: "/",  params: { item: id, itemName: name}})}}>
+    {router.push({pathname: './item/[item]',
+          params: { item: reward.id, reward: JSON.stringify(reward)}})}}>
             <View testID="9:384" style={[styles.itemBody, {["top" as string]: offset}]}  >
-              <View testID="9:409" style={styles.picture}/>
+              <View testID="9:409" style={styles.imageBox}><Image style={styles.image} source={{uri: reward.image_url}}/></View>
               <View testID="9:385" style={styles.textBody}>
                 <Text testID="9:386" style={styles.itemName}>
-                {name}
+                {reward.name}
                 </Text>
               </View>
             </View>
@@ -58,10 +59,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  picture: {
+  imageBox: {
     width: 70,
     height: 70,
     backgroundColor: 'rgba(217, 217, 217, 1)',
+  },
+  image: {
+    width: '100%',
+    height: '100%'
   },
   itemBody: {
     width: "100%",

@@ -24,6 +24,7 @@ export interface CustomerCard{
   contactInfo: string,
   colour: string,
   points: number,
+  text_colour: string
 }
 
 export interface Card{
@@ -42,9 +43,10 @@ export interface Reward{
   description: string, 
   image_url: string,
   points: number,
-  business_id: string
-}
-
+  business_id: string,
+  longitude: number | null, 
+  latitude: number | null
+} 
 
 export interface CustomerReward{
   id: string,
@@ -55,7 +57,60 @@ export interface CustomerReward{
   business_id: string,
   longitude: number, 
   latitude: number,
-  distance: number
+  distance: number | '?'
+}
+
+export function rewardToCustomerReward(reward: Reward, customerLocation: Location){
+  let distance: string | '?' = '?';
+  console.log('reward.latitude:'+reward.latitude)
+   console.log('reward.longitude:'+reward.longitude)
+    console.log('customerLocation.latitude:'+customerLocation.latitude)
+     console.log('customerLocation.longitude:'+customerLocation.longitude)
+  if (reward.latitude && reward.longitude && customerLocation.latitude && customerLocation.longitude){
+    distance = measure(reward.latitude, reward.longitude, customerLocation.latitude, customerLocation.longitude).toFixed(2);
+  }
+  return {
+    id: reward.id,
+    name: reward.name,
+    description: reward.description, 
+    image_url: reward.image_url,
+    points: reward.points,
+    business_id: reward.business_id,
+    longitude: reward.longitude, 
+    latitude: reward.latitude,
+    distance: distance,
+  } 
+}
+
+// function measure(lat1: number, lon1: number, lat2: number, lon2: number): number{  // generally used geo measurement function
+//     var R = 6378.137; // Radius of earth in KM
+//     var dLat = lat2 * Math.PI / 180 - lat1 * Math.PI / 180;
+//     var dLon = lon2 * Math.PI / 180 - lon1 * Math.PI / 180;
+//     var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+//     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+//     Math.sin(dLon/2) * Math.sin(dLon/2);
+//     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+//     var d = R * c;
+//     return d; // km
+// }
+
+function measure(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+  var dLon = deg2rad(lon2-lon1); 
+  var a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+    ; 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  var d = R * c; // Distance in km
+  console.log("measure:"+d);
+  return d;
+}
+
+function deg2rad(deg: number) {
+  return deg * (Math.PI/180)
 }
 
 export const defaultCustomerReward = {
@@ -160,6 +215,8 @@ export const EMPTY_REWARD: Reward = {
   image_url: "",
   points: 0,
   business_id: "",
+  longitude: null, 
+  latitude: null,
 }
 
 export const defaultBusiness = {

@@ -3,11 +3,13 @@ import { Stack, router } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Alert, Animated, Dimensions, Image, Keyboard, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { Reward } from '@/constants/interfaces';
-import { updateReward, updateRewardImage } from '@/services/apiCalls';
+import { deleteReward, updateReward, updateRewardImage } from '@/services/apiCalls';
 import { useReward } from '@/constants/useReward';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Loading from '@/components/Loading';
 import { pickImage } from '@/helpers/imagePicker';
+import COLOURS from '@/constants/colours';
+import { useTranslation } from 'react-i18next';
 type Props={
   prevReward: Reward;
 }
@@ -33,6 +35,23 @@ const performUpdateReward = async(reward: any, setLoading: Function, setRewardUp
   router.dismiss();
 }
 
+const performDeleteReward = async(rewardId: string, setLoading: Function) => {
+  try{
+    setLoading(true);
+    const response = await deleteReward(rewardId);
+    console.log("response:"+response);
+    if (response.user !== "success"){
+      Alert.alert("Error updating reward", "We're having some issues on our end. Please try again later.");
+    }
+  }catch (err){
+    Alert.alert("Error updating reward", "We're having some issues on our end. Please try again later.")
+    console.error(err);
+  }finally{
+    setLoading(false);
+  }
+  router.dismiss();
+}
+
 
 export default function UpdateReward({prevReward}: Props) {
   const reward = useReward(prevReward);
@@ -40,7 +59,7 @@ export default function UpdateReward({prevReward}: Props) {
   const [rewardUpdatedText, setRewardUpdatedText] = useState("Save");
   const [loading, setLoading] = useState(false);
   const imageEdited = useRef(false);
-
+  const {t} = useTranslation();
   const currentValue = useRef(new Animated.Value(0)).current;
   const currentBgColor = currentValue.interpolate({
     inputRange: [0, 1],
@@ -69,7 +88,6 @@ export default function UpdateReward({prevReward}: Props) {
       }
     }
   }
-
   let imageChoice;
   if (reward.image_url){
     imageChoice = (<Image source={{ uri: reward.image_url }} style={styles.image} />);
@@ -118,6 +136,13 @@ export default function UpdateReward({prevReward}: Props) {
                 <Text style={{color: "#FF8383"}}>*</Text>
               </View>
               <View style={styles.saveContainer}>
+                <Pressable onPress={()=>{performDeleteReward(reward.id, setLoading)}}>
+                  <View testID="104:910" style={[styles.deleteButton]}>
+                    <Text testID="104:911" style={styles.deleteButtonText}>
+                        {t('delete')}
+                    </Text>
+                  </View>
+                </Pressable>
                 <Pressable onPress={saveRewardUpdate}>
                   <Animated.View testID="104:910" style={[styles.nameBox4, 
                   {backgroundColor: currentBgColor,}
@@ -126,7 +151,7 @@ export default function UpdateReward({prevReward}: Props) {
                         {rewardUpdatedText}
                     </Animated.Text>
                   </Animated.View>
-                </Pressable>
+                </Pressable>                
               </View>
             </View>
           </View>
@@ -162,7 +187,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: "flex-start",
-    
+    marginBottom: 10
   },
   textBody: {
     width: '85%',
@@ -386,8 +411,23 @@ const styles = StyleSheet.create({
   },
   saveContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
+    rowGap: 10,
   },
+  deleteButton: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    backgroundColor: COLOURS.RED,
+    borderColor: COLOURS.DARK_RED, 
+    borderWidth: 2,
+    borderRadius: 20,
+    padding: 10,
+  }, 
+  deleteButtonText:{
+    color: COLOURS.WHITE,
+    fontFamily: FONTS.BALOO_BHAI,
+    fontSize: 18
+  }
 });

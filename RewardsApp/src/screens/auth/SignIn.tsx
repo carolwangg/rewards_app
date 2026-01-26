@@ -64,8 +64,8 @@ export default function SignIn({onSignIn}: props) {
                 {t("auth.logIn")}
               </Text>
             </Pressable>
-            <View testID="6:32" style={styles.whiteSpace}/>
-            <View testID="6:33" style={[styles.companyLogIn, styles.googleLogIn]}>
+            {/* <View testID="6:32" style={styles.whiteSpace}/> */}
+            {/* <View testID="6:33" style={[styles.companyLogIn, styles.googleLogIn]}>
               <View testID="6:34" style={[styles.googleIconBox, {flex: 1}]}>
                 <GoogleLogo/>
               </View>
@@ -78,7 +78,7 @@ export default function SignIn({onSignIn}: props) {
             <View testID="6:37" style={[styles.companyLogIn, styles.facebookLogIn]}>
               <FacebookLogo/>
               <View style={{flex: 1}}>
-              <Text testID="6:44" style={styles.bodyText}>
+              <Text testID="6:44" style={[styles.bodyText, {color: COLOURS.LIGHT_GRAY}]}>
                 {`${t("auth.logInWith")} Facebook`}
               </Text>
               </View>
@@ -90,7 +90,7 @@ export default function SignIn({onSignIn}: props) {
                 {`${t("auth.logInWith")} Apple ID`}
               </Text>
               </View>
-            </View>
+            </View> */}
           </View>
           <View style={styles.signUpPrompt}>
             <Text style={styles.signUpText}>
@@ -211,6 +211,7 @@ const styles = StyleSheet.create({
   },
   facebookLogIn: {
     backgroundColor: 'rgba(58, 73, 117, 1)',
+    color: COLOURS.WHITE
   },
   appleLogIn: {
     backgroundColor: 'rgba(217, 217, 217, 1)',

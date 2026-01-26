@@ -12,6 +12,7 @@ type Props = {
 export default function RewardPage({style, rewards}: Props){
     return <SafeAreaProvider>
         <SafeAreaView style={[styles.root, style]}>
+
             <ScrollView style={styles.scroll}>
                 <RewardList rewards = {rewards}/>
             </ScrollView>

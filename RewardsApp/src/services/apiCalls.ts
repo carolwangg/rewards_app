@@ -64,7 +64,7 @@ export const updateReward = async (reward: Reward) => {
       });
 
       const json = await response.json();
-      console.log(json);
+      
       return json;
     } catch (error) {
       throw error;
@@ -112,7 +112,7 @@ export const redeemReward = async (cardId: string, customerId: string, rewardId:
       }),
     });
     const json = await response.json();
-    console.log(json);
+    
     return json;
   } catch (error) {
     throw error;
@@ -130,13 +130,30 @@ export const getRewards = async () => {
     },
     });
     const json = await response.json();
-    console.log(json);
+    
     return json;
   } catch (error) {
     throw error;
   } 
 }
 
+export const getRewardsInRadius = async (latitude: number, longitude: number, radius: number) => {
+  try {
+    const backendUrl = `${SITE_URL}/rewards?latitude=${latitude}&longitude=${longitude}&radius=${radius}`;
+    console.log("backendUrl:"+backendUrl);
+    const response = await fetch(backendUrl, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+    },
+    });
+    const json = await response.json();
+    
+    return json;
+  } catch (error) {
+    throw error;
+  } 
+}
 
 export const getCustomer = async (userId: string) => {
   try {
@@ -148,7 +165,24 @@ export const getCustomer = async (userId: string) => {
     },
     });
     const json = await response.json();
-    console.log(json);
+    
+    return json;
+  } catch (error) {
+    throw error;
+  } 
+}
+
+export const deleteCustomer = async (customerId: string) => {
+  try {
+    const backendUrl = `${SITE_URL}/customers/${customerId}`;
+    console.log(backendUrl);
+    const response = await fetch(backendUrl, {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json', 
+    },
+    });
+    const json = await response.json();
     return json;
   } catch (error) {
     throw error;
@@ -165,7 +199,7 @@ export const getCustomerRewards = async (userId: string) => {
     },
     });
     const json = await response.json();
-    console.log(json);
+    
     return json;
   } catch (error) {
     throw error;
@@ -183,7 +217,7 @@ export const getBusinessRewards = async (userId: string) => {
     },
     });
     const json = await response.json();
-    console.log(json);
+    
     return json;
   } catch (error) {
     throw error;
@@ -212,7 +246,7 @@ export const addReward = async (reward: Reward) => {
             body: formData
         });
         const json = await response.json();
-        console.log(json);
+        
         return json;
     } catch (error) {
         throw error;
@@ -230,7 +264,7 @@ export const getCustomerCards = async (userId: string) => {
     },
     });
     const json = await response.json();
-    console.log(json);
+    
     return json;
   } catch (error) {
     throw error;
@@ -248,7 +282,25 @@ export const getCustomerCard = async (userId: string, cardId: string) => {
     },
     });
     const json = await response.json();
-    console.log(json);
+    
+    return json;
+  } catch (error) {
+    throw error;
+  } 
+}
+
+export const deleteCustomerCard = async (userId: string, cardId: string) => {
+  try {
+    const backendUrl = `${SITE_URL}/customers/${userId}/cards/${cardId}`;
+    console.log(backendUrl);
+    const response = await fetch(backendUrl, {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json', 
+    },
+    });
+    const json = await response.json();
+    
     return json;
   } catch (error) {
     throw error;
@@ -267,11 +319,29 @@ export const getCustomerCardRewards = async (customerId: string, cardId: string)
     });
     console.log("response for rewards");
     const json = await response.json();
-    console.log(json);
+    
     return json;
   } catch (error) {
     throw error;
   }
+}
+
+export const deleteBusiness = async (userId: string) => {
+  try {
+    const backendUrl = `${SITE_URL}/businesses/${userId}`;
+    console.log(backendUrl);
+    const response = await fetch(backendUrl, {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json', 
+    },
+    });
+    const json = await response.json();
+    
+    return json;
+  } catch (error) {
+    throw error;
+  } 
 }
 
 export const getBusiness = async (userId: string) => {
@@ -285,7 +355,7 @@ export const getBusiness = async (userId: string) => {
     },
     });
     const json = await response.json();
-    console.log(json);
+    
     return json;
   } catch (error) {
     throw error;
@@ -295,12 +365,11 @@ export const getBusiness = async (userId: string) => {
 export const addCustomerCard = async (userId: string, businessId: string) => {
   console.log("userId:"+userId);
   console.log("businessId:"+businessId);
-  const tempUserId = "user_3631ytWKA51u1CLDkuuppqtu8LZ";
   console.log(JSON.stringify({
         businessId: businessId,
       }))
   try {
-    const backendUrl = `${SITE_URL}/customers/${tempUserId}/cards/create`;
+    const backendUrl = `${SITE_URL}/customers/${userId}/cards/create`;
     console.log(backendUrl);
     const response = await fetch(backendUrl, {
     method: 'POST',
@@ -313,7 +382,7 @@ export const addCustomerCard = async (userId: string, businessId: string) => {
       }),
     });
     const json = await response.json();
-    console.log(json);
+    
     return json;
   } catch (error) {
     throw error;
@@ -345,9 +414,9 @@ export const addCustomer = async (customerId: string, email: string, country: st
 };
 
 
-export const updateCustomer = async (customer: any) => {
+export const updateCustomer = async (userId: string, customer: any) => {
     try {
-      const backendUrl = `${SITE_URL}/customers/${customer.id}/update`;
+      const backendUrl = `${SITE_URL}/customers/${userId}/update`;
       const response = await fetch(backendUrl, {
       method: 'POST',
       headers: {
@@ -355,7 +424,6 @@ export const updateCustomer = async (customer: any) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        customerId: customer.id,
         name: customer.name,
         email: customer.email,
         longitude: customer.longitude,
@@ -414,7 +482,7 @@ export const updateCustomerImage = async (id: string, image_url: string) => {
       });
 
       const json = await response.json();
-      console.log(json);
+      
       return json;
     } catch (error) {
       throw error;
@@ -440,7 +508,7 @@ export const updateBusinessImage = async (id: string, image_url: string) => {
           body: formData
       });
       const json = await response.json();
-      console.log(json);
+      
       return json;
     } catch (error) {
       throw error;
@@ -543,6 +611,23 @@ export const getCard = async (businessId: string) => {
   } 
 }
 
+export const deleteReward = async (rewardId: string) => {
+  try {
+    const backendUrl = `${SITE_URL}/rewards/${rewardId}`;
+    console.log(backendUrl);
+    const response = await fetch(backendUrl, {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/json', 
+    },
+    });
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    throw error;
+  } 
+}
+
 export const getReward = async (rewardId: string) => {
   try {
     const backendUrl = `${SITE_URL}/rewards/${rewardId}`;
@@ -554,7 +639,7 @@ export const getReward = async (rewardId: string) => {
     },
     });
     const json = await response.json();
-    console.log(json);
+    
     return json;
   } catch (error) {
     throw error;
@@ -646,7 +731,7 @@ export const getUserTypeEmail = async (email: string): Promise<APIResponse> => {
     },
     });
     const json = await response.json();
-    console.log(json);
+    
     return json;
   } catch (error) {
     throw error;
@@ -663,7 +748,7 @@ export const getUserType = async (userId: string): Promise<APIResponse> => {
     },
     });
     const json = await response.json();
-    console.log(json);
+    
     return json;
   } catch (error) {
     throw error;
@@ -680,7 +765,7 @@ export const deleteClerkUser = async (userId: string) => {
     },
     });
     const json = await response.json();
-    console.log(json);
+    
     return json;
   } catch (error) { 
     throw error;

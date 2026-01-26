@@ -4,34 +4,46 @@ import ListItem from './StackedList';
 import QRCode from 'react-native-qrcode-svg';
 import { useCallback, useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { RedeemInfo, AddPointInfo, isRedeemInfo } from '@/constants/interfaces';
+import { RedeemInfo, AddPointInfo, isRedeemInfo, Reward } from '@/constants/interfaces';
 import { useTranslation } from 'react-i18next';
+const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height
 const TABBAR_HEIGHT = 60
 
 type Props = {
-  data: RedeemInfo | AddPointInfo
+  userId: string, 
+  reward?: Reward
+  // data: RedeemInfo | AddPointInfo
 }
 
 
-export default function QRcodeCustomer({data}: Props) {
-  const [qrSize, setQrSize] = useState<number>(100);
+export default function QRcodeCustomer({userId, reward}: Props) {
+  const [qrSize, setQrSize] = useState<number>(SCREEN_WIDTH - 100);
   const { t } = useTranslation();
-
+  let data;
+  if (reward){
+    data = {
+      customer_id: userId,
+      reward_id: reward.id,
+      reward_name: reward.name
+    }
+  }else{
+    data = {
+      customer_id: userId,
+    }
+  }
   const getCartView = useCallback(() => {
-    console.log("customer cart:"+data);
-    if (isRedeemInfo(data)){
-      console.log("cart: "+data)
+    if (reward){
       return <View testID="15:3" style={styles.frame51}>
               <View testID="9:369" style={styles.dataBox}>
                 <Text testID="9:370" style={styles.data}>
                   {t('customer.cart')}
                 </Text>
               </View>
-              <ListItem id={data.reward_id} name={data.reward_name} offset={0}/>
+              <ListItem reward={reward} offset={0}/>
             </View>
     }
-  }, [data]);
+  }, [reward]);
   
   return (
     <SafeAreaProvider>
@@ -47,11 +59,10 @@ export default function QRcodeCustomer({data}: Props) {
           <View
             testID="14:5"
             style={styles.qrCodeBox}
-            onLayout={({ nativeEvent }) => setQrSize(nativeEvent.layout.width - 100)}
           >
             <View style = {styles.blueBox}>
               <QRCode
-              value={JSON.stringify(data)}
+              value={JSON.stringify({data})}
               size={qrSize}
               />
             </View>

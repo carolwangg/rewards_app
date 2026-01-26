@@ -42,7 +42,8 @@
   "emptyRewardMessage": "Voir des récompenses en visitant des entreprises",
   "emptyCardsMessage": "Ajoutez des cartes d'entreprise depuis la page de découverte",
   "favourites": "Favoris",
-  "lastVisited": "Dernière visite"
+  "lastVisited": "Dernière visite",
+  "addToCart" : "Ajouter au panier"
 },
 "settings":{
     "accountDetails": "Détails du compte",
@@ -57,6 +58,45 @@
     "selectLanguage": "Sélectionner la langue",
     "selectTheme": "Sélectionner le thème"
   },
+  "erreurs" : {
+"pageNotFoundTitle":"Oups ! Page introuvable",
+"pageNotFoundMessage": "Page introuvable",
+"loadingData": "Erreur lors du chargement des données utilisateur.",
+"serverConn": "Impossible de se connecter au serveur. Veuillez réessayer plus tard.",
+"AwardingPoints" : "Erreur lors de l'attribution des points",
+"serverIssues": "On a des problèmes de notre côté. Veuillez réessayer plus tard.",
+"customerNotFound": "Données client introuvables.",
+"invalidEmail":"Entrez une adresse courriel valide",
+
+"invalidEmailMessage":"L'adresse courriel doit correspondre à utilisateur@domaine.ext. Par exemple : utilisateur@zinks.com",
+
+"noUser":"Utilisateur introuvable",
+
+"noUserMessage":"Aucun compte n'est associé à cette adresse e-mail. Veuillez vous inscrire.",
+
+"wrongAccountType":"Type de compte incorrect",
+
+"wrongAccountTypeMessage":"Veuillez vérifier que vous avez sélectionné le type de compte approprié (particulier ou professionnel)"
+},
+
+"addToCart" : "Ajouter au panier",
+
+"addedToCart" : "Ajouté au panier",
+
+"pointsAdded": "Points ajoutés :)",
+"givePoints" : "Donner des points",
+
+"retrievingLocation" : "Récupération de votre position...",
+
+"SelectedLocation": "Position sélectionnée",
+
+"noContactInfo" : "Aucune information de contact",
+
+"noDescription"  : "Aucune description",
+
+"addBusinessCards" : "Ajouter des cartes professionnelles à partir de la page de découverte",
+
+"rewardRedeemed": "Récompense utilisée avec succès :)",
 "businessWord": "Entreprise",
 "customerWord": "Client",
 "welcome": "Bienvenue",
@@ -75,5 +115,12 @@
 "currentLocation": "Emplacement choisi",
 "search": "Chercher...",
 "country": "Pays",
-"new" : "Nouveau "
+"new" : "Nouveau ",
+"comingSoon": "En développement :)",
+"cameraPermission": "Nous avons besoin de votre autorisation pour accéder à la caméra. Cette fonctionnalité est nécessaire pour scanner les codes QR des clients.",
+"grantPermission": "Modifier les autorisations",
+"delete": "Supprimer",
+"OpenMaps" : "Ouvrir sur Maps",
+"noLocation" : "Aucun emplacement défini",
+"noName": "Sans nom"
 }

@@ -6,6 +6,7 @@ import { useAuth } from '@clerk/clerk-expo';
 import { useUser } from '@clerk/clerk-expo';
 import { Redirect } from "expo-router";
 import { useCallback, useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 
 export default function Index() {
@@ -17,7 +18,7 @@ export default function Index() {
     const [userLoaded, setUserLoaded] = useState(false);
     // console.log("user at index:"+user);
     // console.log("user id at index:"+user?.id);
-        
+    const {t} = useTranslation();
     const setUserTypeCallback = useCallback(async () => {
         try {
             if (user) {
@@ -56,12 +57,12 @@ export default function Index() {
     }, [user]);
     if (!isLoaded || !checked_server) return <LogoPage/>
     console.log("All loaded")
-    if (!server_ping) return <Error error={"Cannot connect to server. Please try again later."} code={503}/>;
+    if (!server_ping) return <Error error={t("errors.serverConn")} code={503}/>;
     console.log("Server can be pinged")
     console.log("userType:"+userType);
     if (isSignedIn) {
         if (!userLoaded) return <LogoPage/>
-        if (userType==="") return <Error error={"Error loading user data."} code={404}/>;
+        if (userType==="") return <Error error={t("errors.loadingData")} code={404}/>;
         console.log("signed in userType:"+ userType);
         if (userType == "customer"){
             return <Redirect href="./customer/landing" />;

@@ -25,10 +25,12 @@ const DropdownComponent = ({data, value, setValue, subFunction, placeholder, sty
       placeholderStyle={[styles.bodyText, styles.placeholderTextStyle, placeholderTextStyle]}
       selectedTextStyle={[styles.bodyText, styles.selectedTextStyle, textStyle]}
       inputSearchStyle={[styles.bodyText, styles.inputSearchStyle, textStyle]}
+      itemTextStyle={styles.bodyText}
       iconStyle={styles.iconStyle}
       iconColor={COLOURS.BLACK}
       data={data}
       maxHeight={maxHeight}
+      itemContainerStyle={styles.itemContainer}
       labelField="label"
       valueField="value"
       placeholder={placeholder}
@@ -57,6 +59,7 @@ const styles = StyleSheet.create({
   },
   containerStyle: {
     width: 200,
+    borderRadius: 10
   },
   placeholderTextStyle: {
     color: 'rgba(146, 144, 180, 1)',
@@ -69,18 +72,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontStyle: 'normal',
     fontWeight: '400',
-    
   },
   iconStyle: {
     width: 20,
     height: 20,
     color: COLOURS.BLACK,
-    
   },
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
   },
+  itemContainer: {
+    borderRadius: 10
+  }
 });
 
 export default DropdownComponent;

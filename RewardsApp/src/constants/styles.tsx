@@ -59,4 +59,14 @@ export const UNIVERSAL_STYLES = StyleSheet.create({
         boxSizing: 'border-box',
         flex: 1
     },
+    button: {
+        display: "flex",
+        padding: 10,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 30,
+        borderWidth: 2,
+        borderStyle: "solid",
+        borderColor: COLOURS.DARK_BLUE
+  },
 })

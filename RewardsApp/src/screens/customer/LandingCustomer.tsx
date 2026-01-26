@@ -4,7 +4,7 @@ import { Alert, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react
 import DropdownComponent from '@/components/DropdownComponent';
 import ListItem, { EmptyListItem } from './ListItem';
 import { getCustomerCards, getCustomerCardRewards, getCustomer } from '@/services/apiCalls';
-import { CustomerCard, CustomerReward } from '@/constants/interfaces';
+import { CustomerCard, CustomerReward, Location, rewardToCustomerReward } from '@/constants/interfaces';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Header from '@/components/Header';
 import COLOURS from '@/constants/colours';
@@ -35,10 +35,19 @@ const getCards = async (userId: string, setCards: Function) => {
   }
 }
 
-const getRewardsFromCard = async (customerId: string, cardId: string, setCardRewards: Function) => {
+const getRewardsFromCard = async (customerId: string, cardId: string, setCardRewards: Function, location: Location) => {
   try {
     const response = await getCustomerCardRewards(customerId, cardId);
-    setCardRewards(response.user);
+    const customerRewards = []
+      console.log("response:"+JSON.stringify(response))
+
+    if (response.user){
+      for(let i = 0; i < response.user.length; i++){
+        customerRewards.push(rewardToCustomerReward(response.user[i], location));
+      }
+      setCardRewards(customerRewards);
+    }
+    
   } catch (error) {
     Alert.alert("Error fetching card reward data", "We're having some issues on our end. Please try again later.")
     console.error(error);
@@ -46,13 +55,13 @@ const getRewardsFromCard = async (customerId: string, cardId: string, setCardRew
     console.log("finished");
   }
 }
-const getAllRewards = async (customerId: string, cards: CustomerCard[], setAllRewards: Function) => {
+const getAllRewards = async (customerId: string, cards: CustomerCard[], setAllRewards: Function, location: Location) => {
   const allRewards: Map<string, CustomerReward[]> = new Map();
   for(let i = 0; i < cards.length; i++){
     let temp: CustomerReward[] = [];
     console.log(cards[i]);
     console.log(cards[i].id)
-    await getRewardsFromCard(customerId, cards[i].id, (rewards: CustomerReward[])=>{temp = rewards});
+    await getRewardsFromCard(customerId, cards[i].id, (rewards: CustomerReward[])=>{temp = rewards}, location);
     allRewards.set(cards[i].id, temp);
   }
   setAllRewards(allRewards);
@@ -100,6 +109,7 @@ export default function Landing({userId, cart, setCart, setCartReward, setCardPo
   const [selectedCardId, setSelectedCardId] = useState("user_0");
   const [idToCard, setIdToCard] = useState<Map<string, CustomerCard>>(new Map());
   const [idToRewards, setIdToRewards] = useState<Map<string, CustomerReward[]>>(new Map());
+  const [idToNearbyRewards, setIdToNearbyRewards] = useState<Map<string, CustomerReward[]>>(new Map());
   const [selectedRewards, setSelectedRewards] = useState<CustomerReward[]>([]);
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -113,7 +123,6 @@ export default function Landing({userId, cart, setCart, setCartReward, setCardPo
     setCartReward(null);
     setRefreshing(false);
   }, []);
-
   const changeBusiness = (cardId: string) =>{
     // console.log(id)
     const temp = idToCard.get(cardId);
@@ -155,14 +164,14 @@ export default function Landing({userId, cart, setCart, setCartReward, setCardPo
           </View>;
   }, [t]);
   const rewardToElement = useCallback((cart: string, setCart: Function, setCartReward: Function, selectedRewards: CustomerReward[]) => {
-    if (selectedRewards.length === 0){
+    if (!selectedRewards || selectedRewards.length === 0){
       return <EmptyListItem message={t("customer.emptyRewardMessage")} points={`${t("points")}: `} km={t("customer.kmShorthand")}/>;
     }
     return selectedRewards.map((reward) => <ListItem cart={cart} setCart={setCart} setCartReward={setCartReward} key={reward.id} reward={reward} pointsString={`${t("points")}: `} kmString={t("customer.kmShorthand")} />);
   }, [t]);
 
   useEffect(() => {console.log("used effect"); getCards(userId, setCards);performGetCustomerName(userId, setName) }, []);
-  useEffect(() => {getAllRewards(userId, cards, setIdToRewards);}, [cards]);
+  useEffect(() => {getCustomer(userId).then(data => {console.log("user:"+JSON.stringify(data.user)); getAllRewards(userId, cards, setIdToRewards, new Location(data.user.latitude, data.user.longitude));})}, [cards]);
   useEffect(() => {processData(cards, idToRewards, setIdToCard, setData, setSelectedCard, setSelectedRewards, setSelectedCardId);}, [idToRewards]);
   return (
     <SafeAreaProvider>
@@ -171,7 +180,7 @@ export default function Landing({userId, cart, setCart, setCartReward, setCardPo
             <View style={styles.body}>
               <View testID="9:230" style={styles.welcomeBox}>
                 <Text testID="9:231" style={styles.headerText}>
-                  {`${t('welcome')}, ${name}`}
+                  {`${t('welcome')}${name?`, ${name}`: ''}`}
                 </Text>
               </View>
               <View testID="9:188" style={styles.frame14}>

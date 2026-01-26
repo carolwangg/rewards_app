@@ -13,7 +13,7 @@ type ListInteriorProps = {
 
 export default function ListItem({itemId, reward}: Props) {
   if(itemId === "reward_0") return <View style={styles.item}/>
-    return <Pressable style={styles.item} onPress={() => {router.push({pathname: './item/edit/[editItem]',
+    return <Pressable style={styles.item} onPress={() => {router.push({pathname: './(item)/edit/[editItem]',
           params: { editItem: itemId, reward: JSON.stringify(reward) }})}}>
           <ListInterior reward={reward}/>
         </Pressable>

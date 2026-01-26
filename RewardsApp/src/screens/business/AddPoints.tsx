@@ -2,37 +2,22 @@ import {Alert, View, Text, StyleSheet, Pressable} from 'react-native';
 import Stamp from '@/assets/images/stamp.svg';
 import Minus from '@/assets/images/minus.svg';
 import Plus from '@/assets/images/green-plus.svg';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Stack, router } from 'expo-router';
 import FONTS from '@/constants/fonts';
 import { addPointsToCustomerCard } from '@/services/apiCalls';
 import { AddPointInfo } from '@/constants/interfaces';
 import Loading from '@/components/Loading';
+import { useTranslation } from 'react-i18next';
 type Props = {
   
   userId: string
   data: AddPointInfo
 }
 
-const performAddPoints  = async(cardId: string, customerId: string, points: number, setLoading: Function) => {
-  try{
-    setLoading(true);
-    console.log("points:"+points);
-    const response = await addPointsToCustomerCard(cardId, customerId, points);
-    if (response.user == "success"){
-      router.replace({pathname:"./success", params:{message:"Points added :)"}});
-    }else{
-      Alert.alert("Error awarding points", "We're having some issues on our end. Please try again later.");
-      router.replace("./qr-code");
-    }
-  }catch (err){
-    Alert.alert("Error awarding points", "We're having some issues on our end. Please try again later.")
-    console.error(err);
-  }finally{
-    setLoading(false);
-  }
-}
+
 export function AddPoints({userId, data}: Props) {
+  const {t} = useTranslation();
     const [points, setPoints] = useState(0);
     const [loading, setLoading] = useState(false);
     const givePoints = () =>{
@@ -41,6 +26,25 @@ export function AddPoints({userId, data}: Props) {
       console.log("give userId:"+ userId);
       performAddPoints(userId, data.customer_id, points, setLoading);
     }
+
+  const performAddPoints  = useCallback(async(cardId: string, customerId: string, points: number, setLoading: Function) => {
+  try{
+    setLoading(true);
+    console.log("points:"+points);
+    const response = await addPointsToCustomerCard(cardId, customerId, points);
+    if (response.user == "success"){
+      router.replace({pathname:"./success", params:{message:t("pointsAdded")}});
+    }else{
+      Alert.alert(t("errors.awardingPoints"), t("errors.serverIssues"));
+      router.replace("./qr-code");
+    }
+  }catch (err){
+    Alert.alert(t("errors.awardingPoints"), t("errors.serverIssues"))
+    console.error(err);
+  }finally{
+    setLoading(false);
+  }
+}, []);
   if (loading) return <Loading/>
   return (  
     <View testID={"161:382"} style={styles.root}>  
@@ -67,7 +71,7 @@ export function AddPoints({userId, data}: Props) {
         <View testID="154:1213" style={styles.pointButtonBox}>
           <Pressable testID="154:1214" style={styles.pointButton} onPress={givePoints}>
             <Text testID="154:1215" style={styles.givePointsText}>
-              {`Give Points`}
+              {t("givePoints")}
             </Text>
           </Pressable>
         </View>

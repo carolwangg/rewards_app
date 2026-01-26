@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react";
 import { Customer } from "./interfaces";
+import { CustomerHook } from "./hooks";
 
-export function useCustomer(customer: Customer)  {
+export function useCustomer(customer: Customer): CustomerHook  {
   const [id] = useState(customer.id);
   const [name, setName] = useState(customer.name);
   const [email, setEmail] = useState(customer.email);
@@ -41,6 +42,15 @@ export function useCustomer(customer: Customer)  {
     setImageUrl(newImageUrl);
   }, []); 
 
+  const populateCustomer = useCallback((customer: Customer)=>{
+    setName(customer.name);
+    setEmail(customer.email);
+    setLatitude(customer.latitude);
+    setLongitude(customer.longitude);
+    setCountry(customer.country);
+    setStreetAddress(customer.street_address);
+    setImageUrl(customer.image_url);
+  }, [])
   return {
     id,
     name,
@@ -58,25 +68,7 @@ export function useCustomer(customer: Customer)  {
     setLongitude: updateLongitude,
     setCountry: updateCountry,
     setStreetAddress: updateStreetAddress,
-    setImageUrl: updateImageUrl
+    setImageUrl: updateImageUrl,
+    populate: populateCustomer
   };
-}
-
-export type CustomerHook = {
-  id: string,
-  name: string,
-  email: string,
-  latitude: number | null,
-  longitude: number | null,
-  country: string
-  street_address: string | null,
-  image_url: string | null,
-
-  setName: (name: string) => void,
-  setEmail: (email: string) => void,
-  setLatitude: (latitude: number) => void,
-  setLongitude: (longitude: number) => void,
-  setCountry: (country: string) => void,
-  setStreetAddress: (street_address: string) => void,
-  setImageUrl: (image_url: string) => void,
 }

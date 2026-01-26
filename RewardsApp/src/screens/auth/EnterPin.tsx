@@ -68,7 +68,7 @@ export default function EnterPin({ setLoading, setVerifying, handleVerification 
   }
 
   const factory = (index: number, refs: React.RefObject<TextInput|null>[]) => {
-    return <View testID={"6:"+index} style={styles.digitBox}>
+    return <View  key={"6:1"+index} testID={"6:"+index} style={styles.digitBox}>
               <TextInput key={"6:1"+index} ref={refs[index]} testID={"6:1"+index} placeholderTextColor={GRAY} style={styles.textInput} onKeyPress={keyPressFunction(index)} onChangeText={changeTextFunction(index)} maxLength={1} keyboardType="numeric"/>
             </View>
   }

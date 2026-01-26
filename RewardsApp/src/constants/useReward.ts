@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { Reward } from "./interfaces";
 
-export function useReward(  reward: Reward) {
+export function useReward(reward: Reward) {
   const [id] = useState(reward.id);
   const [name, setName] = useState(reward.name);
   const [description, setDescription] = useState(reward.description);

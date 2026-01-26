@@ -7,8 +7,8 @@ type Props = {
 }
 export default function ListInteriorCustomer ({reward}: Props) {
   return  <View style={styles.item}>
-            <Link style={styles.section} href={{pathname: './item/[item]',
-            params: { item: reward.id, reward: JSON.stringify(reward)}}}>
+            <Link style={styles.section} href={{pathname: './item',
+            params: { reward: JSON.stringify(reward)}}}>
             <View style={styles.detailsBox}>
               <View style={styles.photo}/>
               <View style={styles.info}>

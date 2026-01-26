@@ -8,7 +8,7 @@ type Props = {
 
 export default function VerticalList({style, children}: Props){
     return <ListContainer horizontal={false} style={[{flexDirection: 'column', padding: 10, 
-    justifyContent: 'flex-start', alignItems: 'center', rowGap: 10, height: '100%', borderColor: 'red', borderWidth: 2}, style]}>
+    justifyContent: 'flex-start', alignItems: 'center', rowGap: 10, height: '100%'}, style]}>
         {children}
     </ListContainer>
 }

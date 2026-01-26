@@ -20,7 +20,7 @@ const goToItem = (reward: CustomerReward) => {
         points: reward.points,
         business_id: reward.business_id
     }
-    router.push({pathname:'./item/[item]', params: { item: reward.id, reward: JSON.stringify(rewardParsed)}});
+    router.push({pathname:'./item', params: { reward: JSON.stringify(rewardParsed)}});
 }
 
 export default function DiscoverComponent({loading, reward}: Props) {

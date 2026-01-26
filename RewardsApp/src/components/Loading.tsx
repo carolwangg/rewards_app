@@ -1,3 +1,5 @@
+import COLOURS from "@/constants/colours"
+import { UNIVERSAL_STYLES } from "@/constants/styles"
 import LottieView from "lottie-react-native"
 import { StyleSheet, View, Text } from "react-native"
 type Props = {
@@ -5,7 +7,7 @@ type Props = {
 }
 export default function Loading({message}: Props){
     return <View style={styles.root}>
-                <Text>{message}</Text>
+                <Text style={UNIVERSAL_STYLES.bodyText}>{message}</Text>
                 <LottieView
                 source={require("@/assets/images/loading.json")}
                 loop
@@ -20,10 +22,10 @@ const styles = StyleSheet.create({
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: COLOURS.WHITE
     },
     animation: {
-        width: '200%',
-        height: '200%',
-        backgroundColor: 'transparent'
+        width: 400,
+        height: 400,
     }
 })
